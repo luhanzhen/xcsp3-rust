@@ -80,7 +80,7 @@ pub struct XIntegerInterval {
 }
 
 impl XIntegerInterval {
-    pub fn new(max: i32, min: i32) -> XIntegerInterval {
+    pub fn new(min: i32, max: i32) -> XIntegerInterval {
         XIntegerInterval { max, min }
     }
 
@@ -120,27 +120,109 @@ impl XIntegerEntity for XIntegerInterval {
         return self.min == arg.minimum() && self.max == arg.maximum();
     }
 }
+//
+// pub struct XDomainInteger<T: XIntegerEntity> {
+//     size: usize,
+//     top: i32,
+//     pub values: Vec<T>,
+// }
+//
+// impl<T: XIntegerEntity> XDomainInteger<T> {
+//     pub fn new() -> XDomainInteger<T> {
+//         XDomainInteger {
+//             size: 0,
+//             top: i32::MIN,
+//             values: vec![],
+//         }
+//     }
+//     fn add_entity(&mut self, entity: T) {
+//         self.size += entity.width();
+//         self.values.push(entity);
+//
+//     }
+//
+//     pub fn equals(&self, arg: &XDomainInteger<T>) -> bool {
+//         if self.nb_values() != arg.nb_values() {
+//             return false;
+//         }
+//         if self.values.len() != arg.values.len() {
+//             return false;
+//         }
+//         for (i, e) in arg.values.iter().enumerate() {
+//             if !self.values[i].equals(e as &T) {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
+//
+//     pub fn add_value(&mut self, value:i32) {
+//         if value > self.top
+//         {
+//            // self.add_entity((XIntegerValue::new(value) as T));
+//             let entity = XIntegerValue::new(value);
+//             self.size += entity.width();
+//             self.values.push(entity);
+//         }
+//         else {
+//             panic!("not sequence domain");
+//         }
+//
+//     }
+//
+//     pub fn nb_values(&self) -> usize {
+//         self.size
+//     }
+//     pub fn minimum(&self) -> i32 {
+//         self.values[0].minimum()
+//     }
+//
+//     pub fn maximum(&self) -> i32 {
+//         self.values[self.values.len() - 1].maximum()
+//     }
+//
+//     pub fn is_interval(&self) -> bool {
+//         self.size == (self.maximum() - self.minimum() + 1) as usize
+//     }
+//
+//     pub fn drop(&mut self) {
+//         // for i in self.values.into_iter()
+//         // {
+//         //     drop(i)
+//         // }
+//     }
+// }
+//
+// impl< T: XIntegerEntity> Drop for XDomainInteger<T> {
+//     fn drop(&mut self) {
+//         // std::mem::drop(self.values);
+//         // for (i,_) in self.values.iter().enumerate()
+//         // {
+//         //     drop(self.values[i].clone())
+//         // }
+//     }
+// }
 
-pub struct XDomainInteger<'a, T: XIntegerEntity> {
+pub struct XDomainInteger {
     size: usize,
     top: i32,
-    pub values: Vec<Box<&'a T>>,
+    pub values: Vec<Box<dyn XIntegerEntity>>,
 }
 
-impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
-    pub fn new() -> XDomainInteger<'a, T> {
+impl XDomainInteger {
+    pub fn new() -> XDomainInteger {
         XDomainInteger {
             size: 0,
             top: i32::MIN,
             values: vec![],
         }
     }
-    fn add_entity(&mut self, entity: &'a T) {
+    fn add_entity(&mut self, entity: Box<dyn XIntegerEntity>) {
         self.size += entity.width();
-        self.values.push(Box::new(entity));
+        self.values.push(entity);
     }
 
-    pub fn equals(&self, arg: &XDomainInteger<T>) -> bool {
+    pub fn equals(&self, arg: &XDomainInteger) -> bool {
         if self.nb_values() != arg.nb_values() {
             return false;
         }
@@ -148,11 +230,31 @@ impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
             return false;
         }
         for (i, e) in arg.values.iter().enumerate() {
-            if !self.values[i].equals(e as &T) {
+            if !self.values[i].equals(e.deref()) {
                 return false;
             }
         }
         return true;
+    }
+
+    pub fn add_value(&mut self, value: i32) {
+        if value > self.top {
+            let b = Box::new(XIntegerValue::new(value));
+            self.add_entity(b);
+            self.top = value;
+        } else {
+            panic!("not sequence domain");
+        }
+    }
+
+    pub fn add_interval(&mut self, min: i32, max: i32) {
+        if min > self.top && min <= max {
+            let b = Box::new(XIntegerInterval::new(min, max));
+            self.add_entity(b);
+            self.top = max;
+        } else {
+            panic!("not sequence domain");
+        }
     }
 
     pub fn nb_values(&self) -> usize {
@@ -178,7 +280,7 @@ impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
     }
 }
 
-impl<'a, T: XIntegerEntity> Drop for XDomainInteger<'a, T> {
+impl Drop for XDomainInteger {
     fn drop(&mut self) {
         // std::mem::drop(self.values);
         // for (i,_) in self.values.iter().enumerate()
