@@ -1,12 +1,7 @@
 pub mod xcsp3constants;
-
-use xcsp3constants::*;
-
 pub mod xcsp3variable;
-
-use xcsp3variable::*;
-
-mod xcsp3domain;
+pub mod xcsp3domain;
+pub mod xcsp3utils;
 
 /**
  * <p>@project_name: XCSP3-Rust
@@ -23,8 +18,11 @@ mod xcsp3domain;
 
 #[cfg(test)]
 mod test_xcsp3domain {
-    use super::*;
-    use crate::xcsp3domain::{XIntegerInterval, *};
+
+    use super::xcsp3domain::xcsp3_core;
+
+    use super::xcsp3domain::xcsp3_core::*;
+
 
     #[test]
     fn test_xinteger_value() {

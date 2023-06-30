@@ -11,82 +11,85 @@
  * <p/>
  */
 
-enum InstanceType {
-    CPS,
-    COP,
-}
+pub mod xcsp3_core
+{
+    enum InstanceType {
+        CPS,
+        COP,
+    }
 
-enum ConstraintType {
-    UNKNOWN,
-    EXTENSION,
-    INTENSION,
-    ALLDIFF,
-    ALLEQUAL,
-    SUM,
-    ORDERED,
-    COUNT,
-    NVALUES,
-    CARDINALITY,
-    MAXIMUM,
-    MINIMUM,
-    ELEMENT,
-    ELEMENTMATRIX,
-    NOOVERLAP,
-    STRETCH,
-    LEX,
-    CHANNEL,
-    REGULAR,
-    MDD,
-    CUMULATIVE,
-    INSTANTIATION,
-    CIRCUIT,
-    CLAUSE,
-    PRECEDENCE,
-    BINPACKING,
-    FLOW,
-    KNAPSACK,
-    MINARG,
-    MAXARG,
-}
+    enum ConstraintType {
+        UNKNOWN,
+        EXTENSION,
+        INTENSION,
+        ALLDIFF,
+        ALLEQUAL,
+        SUM,
+        ORDERED,
+        COUNT,
+        NVALUES,
+        CARDINALITY,
+        MAXIMUM,
+        MINIMUM,
+        ELEMENT,
+        ELEMENTMATRIX,
+        NOOVERLAP,
+        STRETCH,
+        LEX,
+        CHANNEL,
+        REGULAR,
+        MDD,
+        CUMULATIVE,
+        INSTANTIATION,
+        CIRCUIT,
+        CLAUSE,
+        PRECEDENCE,
+        BINPACKING,
+        FLOW,
+        KNAPSACK,
+        MINARG,
+        MAXARG,
+    }
 
-enum OrderType {
-    LE,
-    LT,
-    GE,
-    GT,
-    IN,
-    EQ,
-    NE,
-}
+    enum OrderType {
+        LE,
+        LT,
+        GE,
+        GT,
+        IN,
+        EQ,
+        NE,
+    }
 
-enum Tag {
-    UnknownTag,
-    ListTag,
-    FunctionalTag,
-    ValuesTag,
-    ValueTag,
-    ConditionTag,
-    IndexTag,
-    LengthsTag,
-}
+    enum Tag {
+        UnknownTag,
+        ListTag,
+        FunctionalTag,
+        ValuesTag,
+        ValueTag,
+        ConditionTag,
+        IndexTag,
+        LengthsTag,
+    }
 
-enum RankType {
-    ANY,
-    FIRST,
-    LAST,
-}
+    enum RankType {
+        ANY,
+        FIRST,
+        LAST,
+    }
 
-enum ObjectiveGoal {
-    MINIMIZE,
-    MAXIMIZE,
-}
+    enum ObjectiveGoal {
+        MINIMIZE,
+        MAXIMIZE,
+    }
 
-enum ExpressionObjective {
-    ExpressionZero,
-    SumZero,
-    ProductZero,
-    MinimumZero,
-    MaximumZero,
-    NvaluesZero,
-    LexZero,
+    enum ExpressionObjective {
+        ExpressionZero,
+        SumZero,
+        ProductZero,
+        MinimumZero,
+        MaximumZero,
+        NvaluesZero,
+        LexZero,
+    }
 }
