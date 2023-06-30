@@ -21,15 +21,13 @@ mod xcsp3domain;
  * <p/>
  */
 
-
 #[cfg(test)]
-mod test_xcsp3domain{
-    use crate::xcsp3domain::{*, XIntegerInterval};
+mod test_xcsp3domain {
     use super::*;
+    use crate::xcsp3domain::{XIntegerInterval, *};
 
     #[test]
-    fn test_xinteger_value()
-    {
+    fn test_xinteger_value() {
         let value = XIntegerValue::new(42);
 
         assert_eq!(value.minimum(), 42);
@@ -39,14 +37,11 @@ mod test_xcsp3domain{
         assert!(value.equals(&XIntegerValue::new(42)));
         assert!(!value.equals(&XIntegerValue::new(2)));
         assert!(!value.equals(&XIntegerValue::new(4)));
-
     }
 
-
     #[test]
-    fn test_xinteger_interval()
-    {
-        let interval = XIntegerInterval::new(50,40);
+    fn test_xinteger_interval() {
+        let interval = XIntegerInterval::new(50, 40);
         assert_eq!(interval.width(), 11);
         assert_eq!(interval.minimum(), 40);
         assert_eq!(interval.maximum(), 50);
@@ -54,13 +49,8 @@ mod test_xcsp3domain{
     }
 }
 
-
-
 #[cfg(test)]
-mod test_xcsp3variable{
+mod test_xcsp3variable {
     #[test]
-    fn test_xinteger_value()
-    {
-
-    }
+    fn test_xinteger_value() {}
 }

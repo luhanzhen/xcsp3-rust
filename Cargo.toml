@@ -1,5 +1,5 @@
 [package]
-name = "XCSP3-Rust"
+name = "xcsp3-rust"
 version = "0.1.0"
 edition = "2021"
 

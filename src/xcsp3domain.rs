@@ -27,8 +27,7 @@ pub trait XIntegerEntity {
     fn drop(&self) {}
 
     fn equals(&self, arg: &dyn XIntegerEntity) -> bool;
-        // return self.width() == arg.width();
-
+    // return self.width() == arg.width();
 }
 
 pub struct XIntegerValue {
@@ -71,7 +70,7 @@ impl XIntegerEntity for XIntegerValue {
     }
 
     fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
-         self.value == arg.minimum()
+        self.value == arg.minimum()
     }
 }
 
@@ -142,19 +141,14 @@ impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
     }
 
     pub fn equals(&self, arg: &XDomainInteger<T>) -> bool {
-
-        if self.nb_values() != arg.nb_values()
-        {
-            return false
+        if self.nb_values() != arg.nb_values() {
+            return false;
         }
-        if self.values.len() != arg.values.len()
-        {
-            return false
+        if self.values.len() != arg.values.len() {
+            return false;
         }
-        for (i,e) in arg.values.iter().enumerate()
-        {
-            if !self.values[i].equals(e as &T )
-            {
+        for (i, e) in arg.values.iter().enumerate() {
+            if !self.values[i].equals(e as &T) {
                 return false;
             }
         }
@@ -176,8 +170,7 @@ impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
         self.size == (self.maximum() - self.minimum() + 1) as usize
     }
 
-    pub fn drop(& mut self)
-    {
+    pub fn drop(&mut self) {
         // for i in self.values.into_iter()
         // {
         //     drop(i)
@@ -185,8 +178,7 @@ impl<'a, T: XIntegerEntity> XDomainInteger<'a, T> {
     }
 }
 
-impl<'a, T: XIntegerEntity> Drop for  XDomainInteger<'a, T>  {
-
+impl<'a, T: XIntegerEntity> Drop for XDomainInteger<'a, T> {
     fn drop(&mut self) {
         // std::mem::drop(self.values);
         // for (i,_) in self.values.iter().enumerate()
@@ -194,5 +186,4 @@ impl<'a, T: XIntegerEntity> Drop for  XDomainInteger<'a, T>  {
         //     drop(self.values[i].clone())
         // }
     }
-
 }
