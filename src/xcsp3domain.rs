@@ -2,7 +2,7 @@
 /*=============================================================================
 * parser for CSP instances represented in XCSP3 Format
 *
-* Copyright (c) 2015 xcsp.org (contact <at> xcsp.org)
+* Copyright (c) 2023 xcsp.org (contact @ xcsp.org)
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,8 @@
 * THE SOFTWARE.
 *=============================================================================
 */
+
+
 
 /**
  * <p>@project_name: XCSP3-Rust
