@@ -23,8 +23,6 @@
 *=============================================================================
 */
 
-
-
 /**
  * <p>@project_name: XCSP3-Rust
  * <p/>
@@ -37,12 +35,8 @@
  * <p>@this_file_name:XCSP3Variable
  * <p/>
  */
-
-
-pub mod xcsp3_core
-{
-
-    use crate::xcsp3domain;
+#[allow(dead_code)]
+pub mod xcsp3_core {
 
     use crate::xcsp3domain::xcsp3_core::*;
 
@@ -52,51 +46,99 @@ pub mod xcsp3_core
     }
 
     impl XInterval {
-        pub fn new(min: i32, max: i32) -> XInterval
-        {
+        pub fn new(min: i32, max: i32) -> XInterval {
             XInterval { min, max }
         }
 
-        pub fn to_string(&self) -> String
-        {
-            String::default()
+        pub fn to_string(&self) -> String {
+            format!("[{},{}]", self.min, self.max)
         }
     }
 
-
-    pub trait XEntity {
+    pub trait XEntityTrait {
         // fn new() -> Self;
         // fn from(id: String) -> Self;
         // fn drop(&mut self);
         fn fake(&mut self);
     }
 
-    pub trait XVariable: XEntity
-    {
-        fn from(id: String, dom: &XDomainInteger) -> Self;
-        fn from_with_index(id: String, dom: &XDomainInteger, indexes: Vec<i32>) -> Self;
-        fn drop(&mut self);
-        fn to_string(&self) -> String;
-    }
-
-    pub struct XInteger
-    {
-        classes: String,
-        domain: Option<XDomainInteger>,
-        values: i32,
+    pub struct XEntity {
         id: String,
     }
 
-    impl XInteger
-    {
-        pub fn new(lid: String, n: i32) -> XInteger
-        {
-            XInteger{
-                classes: "".to_string(),
-                id:lid,
-                values:n,
-                domain: None,
+    impl XEntity {
+        pub fn from(id: String) -> Self {
+            XEntity { id }
+        }
+    }
+
+    impl XEntityTrait for XEntity {
+        fn fake(&mut self) {}
+    }
+
+    pub struct XVariable {
+        entity: XEntity,
+        classes: String,
+        domain: XDomainInteger,
+    }
+
+    pub trait XVariableTrait: XEntityTrait {
+        // fn from(id: String, dom: XDomainInteger) -> Self;
+        // fn from_with_index(id: String, dom: XDomainInteger, indexes: &Vec<i32>) -> Self;
+        fn drop(&mut self);
+        fn to_string(&self) -> String;
+    }
+    impl XVariable {
+        pub fn from(id: String, dom: XDomainInteger) -> Self {
+            let e = XEntity::from(id);
+            XVariable {
+                entity: e,
+                classes: String::default(),
+                domain: dom,
+            }
+        }
+
+        pub fn from_with_index(mut id: String, dom: XDomainInteger, indexes: &Vec<i32>) -> Self {
+            for i in indexes.iter() {
+                id = format!("{}[{}]", id, i);
+            }
+            XVariable {
+                entity: XEntity::from(id),
+                classes: String::default(),
+                domain: dom,
             }
         }
     }
+
+    impl XEntityTrait for XVariable {
+        fn fake(&mut self) {}
+    }
+
+    impl XVariableTrait for XVariable {
+        fn drop(&mut self) {}
+
+        fn to_string(&self) -> String {
+            format!("{}", self.entity.id)
+        }
+    }
+
+    pub struct XInteger {
+        values: i32,
+        variable: XVariable,
+    }
+
+    impl XInteger {
+        pub fn new(lid: String, n: i32) -> XInteger {
+            XInteger {
+                values: n,
+                variable: XVariable::from(lid, XDomainInteger::new()),
+            }
+        }
+    }
+
+    pub struct XTree {
+        variable: XVariable,
+    }
+
+    impl XTree {}
 }

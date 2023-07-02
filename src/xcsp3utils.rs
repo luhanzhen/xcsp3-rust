@@ -1,4 +1,3 @@
-
 /*=============================================================================
 * parser for CSP instances represented in XCSP3 Format
 *
@@ -24,7 +23,6 @@
 *=============================================================================
 */
 
-
 /**
  * <p>@project_name: XCSP3-Rust
  * <p/>
@@ -37,44 +35,28 @@
  * <p>@this_file_name:xcsp3domain
  * <p/>
  */
+#[allow(dead_code)]
+pub mod xcsp3_core {
 
-pub mod xcsp3_core
-{
-    use std::ops::Deref;
-
-    pub fn split_with_elems(s: &String, delim: & char, elems: & mut Vec<String>)
-    {
-        let de =  format!("{}", delim);
-        let result: Vec<&str> =  s.split(de.as_str()).collect();
+    pub fn split_with_elems(s: &String, delim: &char, elems: &mut Vec<String>) {
+        let de = format!("{}", delim);
+        let result: Vec<&str> = s.split(de.as_str()).collect();
         for elem in result {
             elems.push(String::from(elem));
         }
-
     }
 
-    pub fn split(s: &String, delim: & char) -> Vec<String>
-    {
+    pub fn split(s: &String, delim: &char) -> Vec<String> {
         let mut elems: Vec<String> = vec![];
         split_with_elems(s, delim, &mut elems);
         elems
     }
 
-
-
-    pub fn replace_string_in_place(subject: &mut String, search: &String, replace:&String)
-    {
+    pub fn replace_string_in_place(subject: &mut String, search: &String, replace: &String) {
         let _ = subject.replace(search, replace);
     }
 
-
-
-    pub fn remove_char(s: &mut String, c: char)
-    {
+    pub fn remove_char(s: &mut String, c: char) {
         let _ = s.replace(c, "");
     }
-
-
-
-
-
 }

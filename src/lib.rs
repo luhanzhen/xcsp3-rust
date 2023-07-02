@@ -23,12 +23,12 @@
 *=============================================================================
 */
 
-
-
 pub mod xcsp3constants;
-pub mod xcsp3variable;
 pub mod xcsp3domain;
+pub mod xcsp3tree;
+pub mod xcsp3treenode;
 pub mod xcsp3utils;
+pub mod xcsp3variable;
 
 /**
  * <p>@project_name: XCSP3-Rust
@@ -46,10 +46,7 @@ pub mod xcsp3utils;
 #[cfg(test)]
 mod test_xcsp3domain {
 
-    use super::xcsp3domain::xcsp3_core;
-
     use super::xcsp3domain::xcsp3_core::*;
-
 
     #[test]
     fn test_xinteger_value() {

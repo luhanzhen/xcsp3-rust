@@ -1,4 +1,3 @@
-
 /*=============================================================================
 * parser for CSP instances represented in XCSP3 Format
 *
@@ -24,8 +23,6 @@
 *=============================================================================
 */
 
-
-
 /**
  * <p>@project_name: XCSP3-Rust
  * <p/>
@@ -38,8 +35,8 @@
  * <p>@this_file_name:xcsp3domain
  * <p/>
  */
-pub mod xcsp3_core
-{
+#[allow(dead_code)]
+pub mod xcsp3_core {
     use std::ops::Deref;
 
     pub trait XIntegerEntity {
@@ -56,6 +53,7 @@ pub mod xcsp3_core
         fn drop(&self) {}
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool;
+
         // return self.width() == arg.width();
     }
 
@@ -95,12 +93,16 @@ pub mod xcsp3_core
         }
 
         fn drop(&self) {
-            drop(self.value);
+            // drop(self.value);
         }
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
             self.value == arg.minimum()
         }
+
+        // fn clone(&self) -> Self {
+        //     XIntegerValue { value: self.value }
+        // }
     }
 
     pub struct XIntegerInterval {
@@ -136,20 +138,15 @@ pub mod xcsp3_core
         }
 
         fn to_string(&self) -> String {
-            format!(
-                "{}..{}",
-                self.minimum().to_string(),
-                self.maximum().to_string()
-            )
+            format!("{}..{}", self.minimum(), self.maximum())
         }
 
         fn drop(&self) {}
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
-            return self.min == arg.minimum() && self.max == arg.maximum();
+            self.min == arg.minimum() && self.max == arg.maximum()
         }
     }
-
 
     pub struct XDomainInteger {
         size: usize,
@@ -157,19 +154,29 @@ pub mod xcsp3_core
         pub values: Vec<Box<dyn XIntegerEntity>>,
     }
 
-//
-// impl Clone for XDomainInteger {
-//     fn clone(&self) -> Self {
-//
-//         XDomainInteger {
-//             size: self.size,
-//             top: self.top,
-//             values: Vec::from(&self.values),
-//
-//         }
-//
-//     }
-// }
+    // impl Clone for XDomainInteger {
+    //     fn clone(&self) -> Self {
+    //         let  mut v = Vec::new();
+    //         for e in self.values.iter()
+    //         {
+    //             // let ee = from(&self.values);
+    //             v.push(Box::new(e.deref()));
+    //         }
+    //         XDomainInteger {
+    //             size: self.size,
+    //             top: self.top,
+    //             values: v,
+    //
+    //         }
+    //
+    //     }
+    // }
+
+    impl Default for XDomainInteger {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
 
     impl XDomainInteger {
         pub fn new() -> XDomainInteger {
@@ -180,7 +187,6 @@ pub mod xcsp3_core
             }
         }
 
-
         fn add_entity(&mut self, entity: Box<dyn XIntegerEntity>) {
             self.size += entity.width();
             self.values.push(entity);
@@ -188,10 +194,10 @@ pub mod xcsp3_core
 
         pub fn equals(&self, arg: &XDomainInteger) -> bool {
             if self.nb_values() != arg.nb_values() {
-                return false;
+                false;
             }
             if self.values.len() != arg.values.len() {
-                return false;
+                false;
             }
             for (i, e) in arg.values.iter().enumerate() {
                 if !self.values[i].equals(e.deref()) {
@@ -234,23 +240,6 @@ pub mod xcsp3_core
 
         pub fn is_interval(&self) -> bool {
             self.size == (self.maximum() - self.minimum() + 1) as usize
-        }
-
-        pub fn drop(&mut self) {
-            // for i in self.values.into_iter()
-            // {
-            //     drop(i)
-            // }
-        }
-    }
-
-    impl Drop for XDomainInteger {
-        fn drop(&mut self) {
-            // std::mem::drop(self.values);
-            // for (i,_) in self.values.iter().enumerate()
-            // {
-            //     drop(self.values[i].clone())
-            // }
         }
     }
 }

@@ -23,7 +23,6 @@
 *=============================================================================
 */
 
-
 /**
  * <p>@project_name: XCSP3-Rust
  * <p/>
@@ -36,9 +35,8 @@
  * <p>@this_file_name:XCSP3Constants
  * <p/>
  */
-
-pub mod xcsp3_core
-{
+#[allow(dead_code)]
+pub mod xcsp3_core {
     enum InstanceType {
         CPS,
         COP,
