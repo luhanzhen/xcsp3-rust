@@ -35,12 +35,12 @@
  * <p>@this_file_name:xcsp3treenode
  * <p/>
  */
-#[allow(dead_code)]
+// #[allow(dead_code)]
 pub mod xcsp3_core {
     use std::collections::{HashMap, HashSet};
-    use std::ops::Deref;
+    use std::ops::{Deref, Sub};
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, PartialEq)]
     pub enum ExpressionType {
         OUNDEF,
         ONEG,
@@ -108,10 +108,95 @@ pub mod xcsp3_core {
         OFAKEOP, // Used only to match primitives
     }
 
+    pub fn get_order(enum_type: &ExpressionType) -> i32 {
+        match enum_type {
+            ExpressionType::OUNDEF => 1,
+            ExpressionType::ONEG => 2,
+            ExpressionType::OABS => 3,
+            ExpressionType::OSQR => 4,
+            ExpressionType::OADD => 5,
+            ExpressionType::OSUB => 6,
+            ExpressionType::OMUL => 7,
+            ExpressionType::ODIV => 8,
+            ExpressionType::OMOD => 9,
+            ExpressionType::OPOW => 10,
+            ExpressionType::ODIST => 11,
+            ExpressionType::OMIN => 12,
+            ExpressionType::OMAX => 13,
+            ExpressionType::OLT => 14,
+            ExpressionType::OLE => 15,
+            ExpressionType::OGE => 16,
+            ExpressionType::OGT => 17,
+            ExpressionType::ONE => 18,
+            ExpressionType::OEQ => 19,
+            ExpressionType::OSET => 20,
+            ExpressionType::OIN => 21,
+            ExpressionType::ONOTIN => 22,
+            ExpressionType::ONOT => 23,
+            ExpressionType::OAND => 24,
+            ExpressionType::OOR => 25,
+            ExpressionType::OXOR => 26,
+            ExpressionType::OIFF => 27,
+            ExpressionType::OIMP => 28,
+            ExpressionType::OIF => 29,
+            ExpressionType::OCARD => 30,
+            ExpressionType::OUNION => 31,
+            ExpressionType::OINTER => 32,
+            ExpressionType::ODIFF => 33,
+            ExpressionType::OSDIFF => 34,
+            ExpressionType::OHULL => 35,
+            ExpressionType::ODJOINT => 36,
+            ExpressionType::OSUBSET => 37,
+            ExpressionType::OSUBSEQ => 38,
+            ExpressionType::OSUPSEQ => 39,
+            ExpressionType::OSUPSET => 40,
+            ExpressionType::OCONVEX => 41,
+            ExpressionType::OFDIV => 42,
+            ExpressionType::OFMOD => 43,
+            ExpressionType::OSQRT => 44,
+            ExpressionType::ONROOT => 45,
+            ExpressionType::OEXP => 46,
+            ExpressionType::OLN => 47,
+            ExpressionType::OLOG => 48,
+            ExpressionType::OSIN => 49,
+            ExpressionType::OCOS => 50,
+            ExpressionType::OTAN => 51,
+            ExpressionType::OASIN => 52,
+            ExpressionType::OACOS => 53,
+            ExpressionType::OATAN => 54,
+            ExpressionType::OSINH => 55,
+            ExpressionType::OCOSH => 56,
+            ExpressionType::OTANH => 57,
+            ExpressionType::OVAR => 58,
+            ExpressionType::OPAR => 59,
+            ExpressionType::OLONG => 60,
+            ExpressionType::ORATIONAL => 61,
+            ExpressionType::ODECIMAL => 62,
+            ExpressionType::OSYMBOL => 63,
+            ExpressionType::OFAKEOP => 64,
+        }
+    }
+
+    impl Sub for ExpressionType {
+        type Output = i32;
+        fn sub(self, rhs: ExpressionType) -> Self::Output {
+            get_order(&self) - get_order(&rhs)
+        }
+    }
+
     pub trait NodeTraits {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32;
         fn to_string(&self) -> String;
-
+        fn get_node(&self) -> &Node;
+        fn get_cons_or_var_or_ope(&self) -> String {
+            "Operator".to_string()
+        }
+        fn get_value(&self) -> i32 {
+            -1
+        }
+        fn get_variable(&self) -> String {
+            String::default()
+        }
     }
 
     pub struct Node<'a> {
@@ -149,9 +234,19 @@ pub mod xcsp3_core {
         fn evaluate(&self, _: &HashMap<&String, i32>) -> i32 {
             self.val
         }
-
         fn to_string(&self) -> String {
             format!("{}", self.val)
+        }
+        fn get_node(&self) -> &Node {
+            &self.node
+        }
+
+        fn get_cons_or_var_or_ope(&self) -> String {
+            "Constant".to_string()
+        }
+
+        fn get_value(&self) -> i32 {
+            self.val
         }
     }
 
@@ -176,6 +271,9 @@ pub mod xcsp3_core {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
             tuple[&self.var]
         }
+        fn get_variable(&self) -> String {
+            self.var.clone()
+        }
 
         fn to_string(&self) -> String {
             let mut str = format!("{}(", self.var);
@@ -184,6 +282,12 @@ pub mod xcsp3_core {
             }
             str = format!("{})", str);
             str
+        }
+        fn get_node(&self) -> &Node {
+            &self.node
+        }
+        fn get_cons_or_var_or_ope(&self) -> String {
+            "Variable".to_string()
         }
     }
 
@@ -218,6 +322,9 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.op.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.node
         }
     }
 
@@ -256,6 +363,9 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeAbs<'a> {
@@ -279,9 +389,12 @@ pub mod xcsp3_core {
                 -v
             }
         }
-
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -305,6 +418,9 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -333,6 +449,9 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeSub<'a> {
@@ -356,6 +475,9 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -381,6 +503,9 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeMod<'a> {
@@ -405,6 +530,9 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodePow<'a> {
@@ -428,6 +556,10 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -458,6 +590,10 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeLE<'a> {
@@ -486,6 +622,10 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -516,6 +656,10 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeGE<'a> {
@@ -544,6 +688,10 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -574,6 +722,10 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeNE<'a> {
@@ -602,6 +754,10 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -632,6 +788,10 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeAdd<'a> {
@@ -658,6 +818,10 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
+
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
     }
 
     pub struct NodeMult<'a> {
@@ -680,7 +844,9 @@ pub mod xcsp3_core {
             }
             nb
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -700,7 +866,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeMin<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let mut nb = i32::MAX;
+            let mut nb = self.ope.node.parameters[0].evaluate(tuple);
             for e in self.ope.node.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if nb > n {
@@ -709,7 +875,9 @@ pub mod xcsp3_core {
             }
             nb
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -729,7 +897,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeMax<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let mut nb = i32::MIN;
+            let mut nb = self.ope.node.parameters[0].evaluate(tuple);
             for e in self.ope.node.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if nb < n {
@@ -738,7 +906,9 @@ pub mod xcsp3_core {
             }
             nb
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -767,7 +937,9 @@ pub mod xcsp3_core {
             }
             1
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -795,7 +967,9 @@ pub mod xcsp3_core {
             }
             1
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -823,7 +997,9 @@ pub mod xcsp3_core {
             }
             0
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -853,7 +1029,9 @@ pub mod xcsp3_core {
                 0
             }
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -880,7 +1058,9 @@ pub mod xcsp3_core {
                 self.ope.node.parameters[2].evaluate(tuple)
             }
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -916,7 +1096,9 @@ pub mod xcsp3_core {
                 }
             }
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -938,9 +1120,11 @@ pub mod xcsp3_core {
         fn evaluate(&self, _: &HashMap<&String, i32>) -> i32 {
             panic!("can't evaluate set")
         }
-
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -967,7 +1151,9 @@ pub mod xcsp3_core {
                 0
             }
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -996,7 +1182,9 @@ pub mod xcsp3_core {
                 0
             }
         }
-
+        fn get_node(&self) -> &Node {
+            &self.ope.node
+        }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
@@ -1079,6 +1267,45 @@ pub mod xcsp3_core {
         }
     }
 
+    pub fn logical_inversion(exp_type: &ExpressionType) -> ExpressionType {
+        match exp_type {
+            ExpressionType::OLT => ExpressionType::OGE,
+            _ => match exp_type {
+                ExpressionType::OLE => ExpressionType::OGT,
+                _ => match exp_type {
+                    ExpressionType::OGT => ExpressionType::OLE,
+                    _ => match exp_type {
+                        ExpressionType::ONE => ExpressionType::OEQ,
+                        _ => match exp_type {
+                            ExpressionType::OEQ => ExpressionType::ONE,
+                            _ => match exp_type {
+                                ExpressionType::OIN => ExpressionType::ONOTIN,
+                                _ => match exp_type {
+                                    ExpressionType::ONOTIN => ExpressionType::OIN,
+                                    _ => match exp_type {
+                                        ExpressionType::OSUBSET => ExpressionType::OSUPSET,
+                                        _ => match exp_type {
+                                            ExpressionType::OSUPSET => ExpressionType::OSUBSET,
+                                            _ => match exp_type {
+                                                ExpressionType::OSUPSEQ => ExpressionType::OSUBSET,
+                                                _ => match exp_type {
+                                                    ExpressionType::OSUPSET => {
+                                                        ExpressionType::OSUPSEQ
+                                                    }
+                                                    _ => ExpressionType::OUNDEF,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    }
+
     pub fn operator_to_string(exp_type: &ExpressionType) -> String {
         match exp_type {
             ExpressionType::ONEG => "neg".to_string(),
@@ -1121,13 +1348,61 @@ pub mod xcsp3_core {
         }
     }
 
-    pub fn create_node_operator(op: &String) -> Option<Box<dyn NodeTraits>>
-    {
-        match op.as_str() {
+    pub fn create_node_operator(op: &str) -> Option<Box<dyn NodeTraits>> {
+        match op {
             "neg" => Some(Box::new(NodeNeg::new())),
+            "abs" => Some(Box::new(NodeAbs::new())),
 
+            "sqr" => Some(Box::new(NodeSquare::new())),
+            "pow" => Some(Box::new(NodePow::new())),
+
+            "add" => Some(Box::new(NodeAdd::new())),
+            "mul" => Some(Box::new(NodeMult::new())),
+            "div" => Some(Box::new(NodeDiv::new())),
+            "mod" => Some(Box::new(NodeMod::new())),
+            "sub" => Some(Box::new(NodeSub::new())),
+
+            "min" => Some(Box::new(NodeMin::new())),
+            "max" => Some(Box::new(NodeMax::new())),
+
+            "ne" => Some(Box::new(NodeNE::new())),
+            "eq" => Some(Box::new(NodeEQ::new())),
+
+            "le" => Some(Box::new(NodeLE::new())),
+            "lt" => Some(Box::new(NodeLT::new())),
+            "ge" => Some(Box::new(NodeGE::new())),
+            "gt" => Some(Box::new(NodeGT::new())),
+
+            "not" => Some(Box::new(NodeNot::new())),
+            "and" => Some(Box::new(NodeAnd::new())),
+            "or" => Some(Box::new(NodeOr::new())),
+            "xor" => Some(Box::new(NodeXor::new())),
+            "imp" => Some(Box::new(NodeImp::new())),
+            "iff" => Some(Box::new(NodeIff::new())),
+            "if" => Some(Box::new(NodeIf::new())),
+            "in" => Some(Box::new(NodeIn::new())),
+            "notin" => Some(Box::new(NodeNotIn::new())),
+            "set" => Some(Box::new(NodeSet::new())),
             _ => None,
         }
     }
 
+    pub fn equal_nodes(a: &dyn NodeTraits, b: &dyn NodeTraits) -> i32 {
+        if a.get_node().node_type == b.get_node().node_type {
+            a.get_node().node_type - b.get_node().node_type
+        } else {
+            if a.get_cons_or_var_or_ope().eq("Constants")
+                && b.get_cons_or_var_or_ope().eq("Constants")
+            {
+                a.get_value() - b.get_value()
+            } else {
+                if a.get_node().parameters.len() < b.get_node().parameters.len() {
+                    -1
+                } else if a.get_node().parameters.len() > b.get_node().parameters.len() {
+                    1
+                } else {
+                }
+            }
+        }
+    }
 }
