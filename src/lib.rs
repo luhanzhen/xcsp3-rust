@@ -84,18 +84,18 @@ mod test_xcsp3domain {
         domain.add_interval(40, 50);
         assert_eq!(domain.minimum(), 30);
         assert_eq!(domain.maximum(), 50);
-        assert_ne!(domain.is_interval(), true);
+        assert!(!domain.is_interval());
         assert_eq!(domain.nb_values(), 12);
 
         let mut domain1: XDomainInteger = XDomainInteger::new();
         domain1.add_value(30);
         domain1.add_interval(40, 50);
-        assert_eq!(domain.equals(&domain1), true);
+        assert!(domain.equals(&domain1));
 
         let mut domain2: XDomainInteger = XDomainInteger::new();
         domain2.add_value(30);
         domain2.add_interval(45, 55);
-        assert_eq!(domain.equals(&domain2), false);
+        assert!(!domain.equals(&domain2));
     }
 
     #[test]

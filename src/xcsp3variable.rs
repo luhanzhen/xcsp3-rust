@@ -40,6 +40,7 @@ pub mod xcsp3_core {
 
     use crate::xcsp3domain::xcsp3_core::*;
 
+    #[derive(Default)]
     pub struct XInterval {
         min: i32,
         max: i32,
@@ -50,9 +51,9 @@ pub mod xcsp3_core {
             XInterval { min, max }
         }
 
-        pub fn to_string(&self) -> String {
-            format!("[{},{}]", self.min, self.max)
-        }
+        // pub fn to_string(&self) -> String {
+        //     format!("[{},{}]", self.min, self.max)
+        // }
     }
 
     pub trait XEntityTrait {
@@ -98,7 +99,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn from_with_index(mut id: String, dom: XDomainInteger, indexes: &Vec<i32>) -> Self {
+        pub fn from_with_index(mut id: String, dom: XDomainInteger, indexes: &[i32]) -> Self {
             for i in indexes.iter() {
                 id = format!("{}[{}]", id, i);
             }
@@ -118,7 +119,7 @@ pub mod xcsp3_core {
         fn drop(&mut self) {}
 
         fn to_string(&self) -> String {
-            format!("{}", self.entity.id)
+            self.entity.id.to_string()
         }
     }
 

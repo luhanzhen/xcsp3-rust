@@ -38,41 +38,41 @@
 #[allow(dead_code)]
 pub mod xcsp3_core {
     enum InstanceType {
-        CPS,
-        COP,
+        Csp,
+        Cop,
     }
 
     enum ConstraintType {
-        UNKNOWN,
-        EXTENSION,
-        INTENSION,
-        ALLDIFF,
-        ALLEQUAL,
-        SUM,
-        ORDERED,
-        COUNT,
-        NVALUES,
-        CARDINALITY,
-        MAXIMUM,
-        MINIMUM,
-        ELEMENT,
-        ELEMENTMATRIX,
-        NOOVERLAP,
-        STRETCH,
-        LEX,
-        CHANNEL,
-        REGULAR,
-        MDD,
-        CUMULATIVE,
-        INSTANTIATION,
-        CIRCUIT,
-        CLAUSE,
-        PRECEDENCE,
-        BINPACKING,
-        FLOW,
-        KNAPSACK,
-        MINARG,
-        MAXARG,
+        Unknown,
+        Extension,
+        Intension,
+        Alldiff,
+        Allequal,
+        Sum,
+        Ordered,
+        Count,
+        Nvalues,
+        Cardinality,
+        Maximum,
+        Minimum,
+        Element,
+        Elementmatrix,
+        Nooverlap,
+        Stretch,
+        Lex,
+        Channel,
+        Regular,
+        Mdd,
+        Cumulative,
+        Instantiation,
+        Circuit,
+        Clause,
+        Precedence,
+        Binpacking,
+        Flow,
+        Knapsack,
+        Minarg,
+        Maxarg,
     }
 
     enum OrderType {
@@ -86,34 +86,34 @@ pub mod xcsp3_core {
     }
 
     enum Tag {
-        UnknownTag,
-        ListTag,
-        FunctionalTag,
-        ValuesTag,
-        ValueTag,
-        ConditionTag,
-        IndexTag,
-        LengthsTag,
+        Unknown,
+        List,
+        Functional,
+        Values,
+        Value,
+        Condition,
+        Index,
+        Lengths,
     }
 
     enum RankType {
-        ANY,
-        FIRST,
-        LAST,
+        Any,
+        First,
+        Last,
     }
 
     enum ObjectiveGoal {
-        MINIMIZE,
-        MAXIMIZE,
+        Minimize,
+        Maximize,
     }
 
     enum ExpressionObjective {
-        ExpressionZero,
-        SumZero,
-        ProductZero,
-        MinimumZero,
-        MaximumZero,
-        NvaluesZero,
-        LexZero,
+        Expression,
+        Sum,
+        Product,
+        Minimum,
+        Maximum,
+        Nvalues,
+        Lex,
     }
 }

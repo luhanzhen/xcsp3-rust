@@ -38,6 +38,10 @@
 #[allow(dead_code)]
 pub mod xcsp3_core {
     use std::ops::Deref;
+    pub enum XIntegerType {
+        IntegerValue,
+        IntegerInterval,
+    }
 
     pub trait XIntegerEntity {
         fn width(&self) -> usize;
@@ -54,16 +58,21 @@ pub mod xcsp3_core {
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool;
 
+        fn get_type(&self) -> &XIntegerType;
         // return self.width() == arg.width();
     }
 
     pub struct XIntegerValue {
         value: i32,
+        integer_type: XIntegerType,
     }
 
     impl XIntegerValue {
         pub fn new(v: i32) -> XIntegerValue {
-            XIntegerValue { value: v }
+            XIntegerValue {
+                value: v,
+                integer_type: XIntegerType::IntegerValue,
+            }
         }
 
         // fn equals(&self, arg: &XIntegerValue) -> bool {
@@ -100,6 +109,10 @@ pub mod xcsp3_core {
             self.value == arg.minimum()
         }
 
+        fn get_type(&self) -> &XIntegerType {
+            &self.integer_type
+        }
+
         // fn clone(&self) -> Self {
         //     XIntegerValue { value: self.value }
         // }
@@ -108,11 +121,16 @@ pub mod xcsp3_core {
     pub struct XIntegerInterval {
         max: i32,
         min: i32,
+        integer_type: XIntegerType,
     }
 
     impl XIntegerInterval {
         pub fn new(min: i32, max: i32) -> XIntegerInterval {
-            XIntegerInterval { max, min }
+            XIntegerInterval {
+                max,
+                min,
+                integer_type: XIntegerType::IntegerValue,
+            }
         }
 
         // fn equals(&self, arg: &XIntegerInterval) -> bool {
@@ -145,6 +163,10 @@ pub mod xcsp3_core {
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
             self.min == arg.minimum() && self.max == arg.maximum()
+        }
+
+        fn get_type(&self) -> &XIntegerType {
+            &self.integer_type
         }
     }
 
@@ -194,17 +216,17 @@ pub mod xcsp3_core {
 
         pub fn equals(&self, arg: &XDomainInteger) -> bool {
             if self.nb_values() != arg.nb_values() {
-                false;
+                return false;
             }
             if self.values.len() != arg.values.len() {
-                false;
+                return false;
             }
             for (i, e) in arg.values.iter().enumerate() {
                 if !self.values[i].equals(e.deref()) {
                     return false;
                 }
             }
-            return true;
+            true
         }
 
         pub fn add_value(&mut self, value: i32) {
@@ -230,6 +252,7 @@ pub mod xcsp3_core {
         pub fn nb_values(&self) -> usize {
             self.size
         }
+
         pub fn minimum(&self) -> i32 {
             self.values[0].minimum()
         }

@@ -38,7 +38,7 @@
 #[allow(dead_code)]
 pub mod xcsp3_core {
 
-    pub fn split_with_elems(s: &String, delim: &char, elems: &mut Vec<String>) {
+    pub fn split_with_elems(s: &str, delim: &char, elems: &mut Vec<String>) {
         let de = format!("{}", delim);
         let result: Vec<&str> = s.split(de.as_str()).collect();
         for elem in result {
@@ -46,17 +46,17 @@ pub mod xcsp3_core {
         }
     }
 
-    pub fn split(s: &String, delim: &char) -> Vec<String> {
+    pub fn split(s: &str, delim: &char) -> Vec<String> {
         let mut elems: Vec<String> = vec![];
         split_with_elems(s, delim, &mut elems);
         elems
     }
 
-    pub fn replace_string_in_place(subject: &mut String, search: &String, replace: &String) {
+    pub fn replace_string_in_place(subject: &mut str, search: &str, replace: &str) {
         let _ = subject.replace(search, replace);
     }
 
-    pub fn remove_char(s: &mut String, c: char) {
+    pub fn remove_char(s: &mut str, c: char) {
         let _ = s.replace(c, "");
     }
 }

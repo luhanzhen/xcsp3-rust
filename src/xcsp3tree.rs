@@ -16,7 +16,7 @@ pub mod xcsp3_core {
     use crate::xcsp3treenode::xcsp3_core::*;
 
     struct Tree<'a> {
-        root: Option<Box<&'a dyn NodeTraits>>,
+        root: Option<&'a dyn NodeTraits>,
         expr: String,
         list_of_variables: Vec<String>,
     }
@@ -32,7 +32,7 @@ pub mod xcsp3_core {
 
         pub fn from_node(node: &dyn NodeTraits) -> Tree {
             Tree {
-                root: Some(Box::new(node)),
+                root: Some(node),
                 expr: String::default(),
                 list_of_variables: vec![],
             }

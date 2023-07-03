@@ -184,12 +184,17 @@ pub mod xcsp3_core {
         }
     }
 
+    pub enum NodeType {
+        Constant,
+        Variable,
+        Operator,
+    }
     pub trait NodeTraits {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32;
         fn to_string(&self) -> String;
         fn get_node(&self) -> &Node;
-        fn get_cons_or_var_or_ope(&self) -> String {
-            "Operator".to_string()
+        fn get_cons_or_var_or_ope(&self) -> NodeType {
+            NodeType::Operator
         }
         fn get_value(&self) -> i32 {
             -1
@@ -200,14 +205,14 @@ pub mod xcsp3_core {
     }
 
     pub struct Node<'a> {
-        node_type: ExpressionType,
+        exp_type: ExpressionType,
         parameters: Vec<&'a dyn NodeTraits>,
     }
 
     impl<'a> Node<'a> {
         pub fn new(node_type: ExpressionType) -> Node<'a> {
             Node {
-                node_type,
+                exp_type: node_type,
                 parameters: vec![],
             }
         }
@@ -241,8 +246,8 @@ pub mod xcsp3_core {
             &self.node
         }
 
-        fn get_cons_or_var_or_ope(&self) -> String {
-            "Constant".to_string()
+        fn get_cons_or_var_or_ope(&self) -> NodeType {
+            NodeType::Constant
         }
 
         fn get_value(&self) -> i32 {
@@ -271,10 +276,6 @@ pub mod xcsp3_core {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
             tuple[&self.var]
         }
-        fn get_variable(&self) -> String {
-            self.var.clone()
-        }
-
         fn to_string(&self) -> String {
             let mut str = format!("{}(", self.var);
             for e in self.node.parameters.iter() {
@@ -283,11 +284,15 @@ pub mod xcsp3_core {
             str = format!("{})", str);
             str
         }
+
         fn get_node(&self) -> &Node {
             &self.node
         }
-        fn get_cons_or_var_or_ope(&self) -> String {
-            "Variable".to_string()
+        fn get_cons_or_var_or_ope(&self) -> NodeType {
+            NodeType::Variable
+        }
+        fn get_variable(&self) -> String {
+            self.var.clone()
         }
     }
 
@@ -307,7 +312,8 @@ pub mod xcsp3_core {
         pub fn add_parameter(&mut self, p: &'a dyn NodeTraits) {
             self.node.parameters.push(p);
         }
-        pub fn add_parameters(&mut self, p: &mut Vec<Box<&'a dyn NodeTraits>>) {
+
+        pub fn add_parameters(&mut self, p: &mut [Box<&'a dyn NodeTraits>]) {
             for e in p.iter() {
                 let ee = *e.deref();
                 self.node.parameters.push(ee);
@@ -844,11 +850,11 @@ pub mod xcsp3_core {
             }
             nb
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -875,11 +881,11 @@ pub mod xcsp3_core {
             }
             nb
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -906,11 +912,11 @@ pub mod xcsp3_core {
             }
             nb
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -937,11 +943,11 @@ pub mod xcsp3_core {
             }
             1
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -967,11 +973,11 @@ pub mod xcsp3_core {
             }
             1
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -997,11 +1003,11 @@ pub mod xcsp3_core {
             }
             0
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -1029,11 +1035,11 @@ pub mod xcsp3_core {
                 0
             }
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -1058,11 +1064,11 @@ pub mod xcsp3_core {
                 self.ope.node.parameters[2].evaluate(tuple)
             }
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -1088,19 +1094,17 @@ pub mod xcsp3_core {
                 } else {
                     0
                 }
+            } else if v1 == 0 {
+                1
             } else {
-                if v1 == 0 {
-                    1
-                } else {
-                    0
-                }
+                0
             }
-        }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
         }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -1151,11 +1155,11 @@ pub mod xcsp3_core {
                 0
             }
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
@@ -1182,60 +1186,93 @@ pub mod xcsp3_core {
                 0
             }
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
-        }
         fn to_string(&self) -> String {
             self.ope.to_string()
+        }
+        fn get_node(&self) -> &Node {
+            &self.ope.node
         }
     }
 
     pub fn is_symmetric_operator(exp_type: &ExpressionType) -> bool {
-        match exp_type {
-            ExpressionType::OADD => true,
-            ExpressionType::OMUL => true,
-            ExpressionType::OMIN => true,
-            ExpressionType::OMAX => true,
-            ExpressionType::ODIST => true,
-            ExpressionType::ONE => true,
-            ExpressionType::OEQ => true,
-            ExpressionType::OSET => true,
-            ExpressionType::OAND => true,
-            ExpressionType::OOR => true,
-            ExpressionType::OXOR => true,
-            ExpressionType::OIFF => true,
-            ExpressionType::OUNION => true,
-            ExpressionType::OINTER => true,
-            ExpressionType::ODJOINT => true,
-            _ => false,
-        }
+        // match exp_type {
+        //     ExpressionType::OADD => true,
+        //     ExpressionType::OMUL => true,
+        //     ExpressionType::OMIN => true,
+        //     ExpressionType::OMAX => true,
+        //     ExpressionType::ODIST => true,
+        //     ExpressionType::ONE => true,
+        //     ExpressionType::OEQ => true,
+        //     ExpressionType::OSET => true,
+        //     ExpressionType::OAND => true,
+        //     ExpressionType::OOR => true,
+        //     ExpressionType::OXOR => true,
+        //     ExpressionType::OIFF => true,
+        //     ExpressionType::OUNION => true,
+        //     ExpressionType::OINTER => true,
+        //     ExpressionType::ODJOINT => true,
+        //     _ => false,
+        // }
+        matches!(
+            exp_type,
+            ExpressionType::OADD
+                | ExpressionType::OMUL
+                | ExpressionType::OMIN
+                | ExpressionType::OMAX
+                | ExpressionType::ODIST
+                | ExpressionType::ONE
+                | ExpressionType::OEQ
+                | ExpressionType::OSET
+                | ExpressionType::OAND
+                | ExpressionType::OOR
+                | ExpressionType::OXOR
+                | ExpressionType::OIFF
+                | ExpressionType::OUNION
+                | ExpressionType::OINTER
+                | ExpressionType::ODJOINT
+        )
     }
 
     pub fn is_non_symmetric_relational_operator(exp_type: &ExpressionType) -> bool {
-        match exp_type {
-            ExpressionType::OLT => true,
-            ExpressionType::OLE => true,
-            ExpressionType::OGE => true,
-            ExpressionType::OGT => true,
-            _ => false,
-        }
+        // match exp_type {
+        //     ExpressionType::OLT => true,
+        //     ExpressionType::OLE => true,
+        //     ExpressionType::OGE => true,
+        //     ExpressionType::OGT => true,
+        //     _ => false,
+        // }
+        matches!(
+            exp_type,
+            ExpressionType::OLT | ExpressionType::OLE | ExpressionType::OGE | ExpressionType::OGT
+        )
     }
 
     pub fn is_predicate_operator(exp_type: &ExpressionType) -> bool {
         if is_symmetric_operator(exp_type) {
             true
         } else {
-            match exp_type {
-                ExpressionType::ONOT => true,
-                ExpressionType::OIMP => true,
-                ExpressionType::OAND => true,
-                ExpressionType::OOR => true,
-                ExpressionType::OXOR => true,
-                ExpressionType::OIFF => true,
-                ExpressionType::OIN => true,
-                ExpressionType::ONOTIN => true,
-                _ => false,
-            }
+            // match exp_type {
+            //     ExpressionType::ONOT => true,
+            //     ExpressionType::OIMP => true,
+            //     ExpressionType::OAND => true,
+            //     ExpressionType::OOR => true,
+            //     ExpressionType::OXOR => true,
+            //     ExpressionType::OIFF => true,
+            //     ExpressionType::OIN => true,
+            //     ExpressionType::ONOTIN => true,
+            //     _ => false,
+            // }
+            matches!(
+                exp_type,
+                ExpressionType::ONOT
+                    | ExpressionType::OIMP
+                    | ExpressionType::OAND
+                    | ExpressionType::OOR
+                    | ExpressionType::OXOR
+                    | ExpressionType::OIFF
+                    | ExpressionType::OIN
+                    | ExpressionType::ONOTIN
+            )
         }
     }
 
@@ -1243,11 +1280,12 @@ pub mod xcsp3_core {
         if is_non_symmetric_relational_operator(exp_type) {
             true
         } else {
-            match exp_type {
-                ExpressionType::ONE => true,
-                ExpressionType::OEQ => true,
-                _ => false,
-            }
+            // match exp_type {
+            //     ExpressionType::ONE => true,
+            //     ExpressionType::OEQ => true,
+            //     _ => false,
+            // }
+            matches!(exp_type, ExpressionType::ONE | ExpressionType::OEQ)
         }
     }
 
@@ -1322,7 +1360,6 @@ pub mod xcsp3_core {
 
             ExpressionType::OMIN => "min".to_string(),
             ExpressionType::OMAX => "max".to_string(),
-
             ExpressionType::ODIST => "dist".to_string(),
 
             ExpressionType::ONE => "ne".to_string(),
@@ -1350,59 +1387,204 @@ pub mod xcsp3_core {
 
     pub fn create_node_operator(op: &str) -> Option<Box<dyn NodeTraits>> {
         match op {
-            "neg" => Some(Box::new(NodeNeg::new())),
-            "abs" => Some(Box::new(NodeAbs::new())),
+            "neg" => Some(Box::<NodeNeg<'_>>::default()),
+            "abs" => Some(Box::<NodeAbs<'_>>::default()),
 
-            "sqr" => Some(Box::new(NodeSquare::new())),
-            "pow" => Some(Box::new(NodePow::new())),
+            "sqr" => Some(Box::<NodeSquare<'_>>::default()),
+            "pow" => Some(Box::<NodePow<'_>>::default()),
 
-            "add" => Some(Box::new(NodeAdd::new())),
-            "mul" => Some(Box::new(NodeMult::new())),
-            "div" => Some(Box::new(NodeDiv::new())),
-            "mod" => Some(Box::new(NodeMod::new())),
-            "sub" => Some(Box::new(NodeSub::new())),
+            "add" => Some(Box::<NodeAdd<'_>>::default()),
+            "mul" => Some(Box::<NodeMult<'_>>::default()),
+            "div" => Some(Box::<NodeDiv<'_>>::default()),
+            "mod" => Some(Box::<NodeMod<'_>>::default()),
+            "sub" => Some(Box::<NodeSub<'_>>::default()),
 
-            "min" => Some(Box::new(NodeMin::new())),
-            "max" => Some(Box::new(NodeMax::new())),
+            "min" => Some(Box::<NodeMin<'_>>::default()),
+            "max" => Some(Box::<NodeMax<'_>>::default()),
+            "dist" => Some(Box::<NodeDist<'_>>::default()),
 
-            "ne" => Some(Box::new(NodeNE::new())),
-            "eq" => Some(Box::new(NodeEQ::new())),
+            "ne" => Some(Box::<NodeNE<'_>>::default()),
+            "eq" => Some(Box::<NodeEQ<'_>>::default()),
 
-            "le" => Some(Box::new(NodeLE::new())),
-            "lt" => Some(Box::new(NodeLT::new())),
-            "ge" => Some(Box::new(NodeGE::new())),
-            "gt" => Some(Box::new(NodeGT::new())),
+            "le" => Some(Box::<NodeLE<'_>>::default()),
+            "lt" => Some(Box::<NodeLT<'_>>::default()),
+            "ge" => Some(Box::<NodeGE<'_>>::default()),
+            "gt" => Some(Box::<NodeGT<'_>>::default()),
 
-            "not" => Some(Box::new(NodeNot::new())),
-            "and" => Some(Box::new(NodeAnd::new())),
-            "or" => Some(Box::new(NodeOr::new())),
-            "xor" => Some(Box::new(NodeXor::new())),
-            "imp" => Some(Box::new(NodeImp::new())),
-            "iff" => Some(Box::new(NodeIff::new())),
-            "if" => Some(Box::new(NodeIf::new())),
-            "in" => Some(Box::new(NodeIn::new())),
-            "notin" => Some(Box::new(NodeNotIn::new())),
-            "set" => Some(Box::new(NodeSet::new())),
+            "not" => Some(Box::<NodeNot<'_>>::default()),
+            "and" => Some(Box::<NodeAnd<'_>>::default()),
+            "or" => Some(Box::<NodeOr<'_>>::default()),
+            "xor" => Some(Box::<NodeXor<'_>>::default()),
+            "imp" => Some(Box::<NodeImp<'_>>::default()),
+            "iff" => Some(Box::<NodeIff<'_>>::default()),
+            "if" => Some(Box::<NodeIf<'_>>::default()),
+            "in" => Some(Box::<NodeIn<'_>>::default()),
+            "notin" => Some(Box::<NodeNotIn<'_>>::default()),
+            "set" => Some(Box::<NodeSet<'_>>::default()),
             _ => None,
+        }
+    }
+    impl<'a> Default for NodeDist<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeNotIn<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeSet<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeImp<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeIff<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeIf<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeIn<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodeNot<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeAnd<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeOr<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeXor<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodeLE<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeLT<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeGE<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeGT<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodePow<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeSquare<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeAbs<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodeNeg<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodeAdd<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeMult<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeDiv<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeMod<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeSub<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
+    impl<'a> Default for NodeMin<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeMax<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeNE<'a> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+    impl<'a> Default for NodeEQ<'a> {
+        fn default() -> Self {
+            Self::new()
         }
     }
 
     pub fn equal_nodes(a: &dyn NodeTraits, b: &dyn NodeTraits) -> i32 {
-        if a.get_node().node_type == b.get_node().node_type {
-            a.get_node().node_type - b.get_node().node_type
-        } else {
-            if a.get_cons_or_var_or_ope().eq("Constants")
-                && b.get_cons_or_var_or_ope().eq("Constants")
-            {
-                a.get_value() - b.get_value()
-            } else {
-                if a.get_node().parameters.len() < b.get_node().parameters.len() {
-                    -1
-                } else if a.get_node().parameters.len() > b.get_node().parameters.len() {
-                    1
-                } else {
-                }
-            }
-        }
+        // if a.get_node().node_type == b.get_node().node_type {
+        //     a.get_node().node_type - b.get_node().node_type
+        // } else if a.get_cons_or_var_or_ope().eq("Constants")
+        //     && b.get_cons_or_var_or_ope().eq("Constants")
+        // {
+        //     a.get_value() - b.get_value()
+        // } else if a.get_node().parameters.len() < b.get_node().parameters.len() {
+        //     -1
+        // } else if a.get_node().parameters.len() > b.get_node().parameters.len() {
+        //     1
+        // } else {
+        //     0
+        // }
+        0
     }
 }
