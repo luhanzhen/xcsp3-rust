@@ -56,40 +56,19 @@ pub mod xcsp3_core {
         // }
     }
 
-    pub trait XEntityTrait {
-        // fn new() -> Self;
-        // fn from(id: String) -> Self;
-        // fn drop(&mut self);
+    pub trait XVariableTrait {
+        fn to_string(&self) -> String;
         fn fake(&mut self);
     }
 
-    pub struct XEntity {
+    pub struct XInteger {
+        classes: String,
+        domain: Option<XDomainInteger>,
+        value: i32,
         id: String,
     }
 
-    impl XEntity {
-        pub fn from(id: String) -> Self {
-            XEntity { id }
-        }
-    }
-
-    impl XEntityTrait for XEntity {
-        fn fake(&mut self) {}
-    }
-
-    pub struct XVariable {
-        entity: XEntity,
-        classes: String,
-        domain: XDomainInteger,
-    }
-
-    pub trait XVariableTrait: XEntityTrait {
-        // fn from(id: String, dom: XDomainInteger) -> Self;
-        // fn from_with_index(id: String, dom: XDomainInteger, indexes: &Vec<i32>) -> Self;
-        fn drop(&mut self);
-        fn to_string(&self) -> String;
-    }
-    impl XVariable {
+    impl XInteger {
         pub fn from(id: String, dom: XDomainInteger) -> Self {
             let e = XEntity::from(id);
             XVariable {
@@ -110,36 +89,4 @@ pub mod xcsp3_core {
             }
         }
     }
-
-    impl XEntityTrait for XVariable {
-        fn fake(&mut self) {}
-    }
-
-    impl XVariableTrait for XVariable {
-        fn drop(&mut self) {}
-
-        fn to_string(&self) -> String {
-            self.entity.id.to_string()
-        }
-    }
-
-    pub struct XInteger {
-        values: i32,
-        variable: XVariable,
-    }
-
-    impl XInteger {
-        pub fn new(lid: String, n: i32) -> XInteger {
-            XInteger {
-                values: n,
-                variable: XVariable::from(lid, XDomainInteger::new()),
-            }
-        }
-    }
-
-    pub struct XTree {
-        variable: XVariable,
-    }
-
-    impl XTree {}
 }

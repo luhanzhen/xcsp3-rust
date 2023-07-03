@@ -37,8 +37,9 @@
  */
 // #[allow(dead_code)]
 pub mod xcsp3_core {
+    use std::cmp::Ordering;
     use std::collections::{HashMap, HashSet};
-    use std::ops::{Deref, Sub};
+    use std::ops::Deref;
 
     #[derive(Copy, Clone, PartialEq)]
     pub enum ExpressionType {
@@ -177,22 +178,23 @@ pub mod xcsp3_core {
         }
     }
 
-    impl Sub for ExpressionType {
-        type Output = i32;
-        fn sub(self, rhs: ExpressionType) -> Self::Output {
-            get_order(&self) - get_order(&rhs)
-        }
-    }
+    // impl Sub for ExpressionType {
+    //     type Output = i32;
+    //     fn sub(self, rhs: ExpressionType) -> Self::Output {
+    //         get_order(&self) - get_order(&rhs)
+    //     }
+    // }
 
     pub enum NodeType {
         Constant,
         Variable,
         Operator,
     }
+
     pub trait NodeTraits {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32;
         fn to_string(&self) -> String;
-        fn get_node(&self) -> &Node;
+        // fn get_node(&self) -> &Node;
         fn get_cons_or_var_or_ope(&self) -> NodeType {
             NodeType::Operator
         }
@@ -202,24 +204,14 @@ pub mod xcsp3_core {
         fn get_variable(&self) -> String {
             String::default()
         }
-    }
+        fn get_parameters(&self) -> &Vec<&dyn NodeTraits>;
 
-    pub struct Node<'a> {
-        exp_type: ExpressionType,
-        parameters: Vec<&'a dyn NodeTraits>,
-    }
-
-    impl<'a> Node<'a> {
-        pub fn new(node_type: ExpressionType) -> Node<'a> {
-            Node {
-                exp_type: node_type,
-                parameters: vec![],
-            }
-        }
+        fn get_express_type(&self) -> &ExpressionType;
     }
 
     pub struct NodeConstant<'a> {
-        node: Node<'a>,
+        parameters: Vec<&'a dyn NodeTraits>,
+        express_type: ExpressionType,
         val: i32,
     }
 
@@ -227,7 +219,8 @@ pub mod xcsp3_core {
         pub fn new(v: i32) -> NodeConstant<'a> {
             NodeConstant {
                 val: v,
-                node: Node::new(ExpressionType::ODECIMAL),
+                parameters: vec![],
+                express_type: ExpressionType::ODECIMAL,
             }
         }
         pub fn canonize(&self) -> &Self {
@@ -242,9 +235,6 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             format!("{}", self.val)
         }
-        fn get_node(&self) -> &Node {
-            &self.node
-        }
 
         fn get_cons_or_var_or_ope(&self) -> NodeType {
             NodeType::Constant
@@ -253,10 +243,18 @@ pub mod xcsp3_core {
         fn get_value(&self) -> i32 {
             self.val
         }
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.parameters
+        }
+
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.express_type
+        }
     }
 
     pub struct NodeVariable<'a> {
-        node: Node<'a>,
+        parameters: Vec<&'a dyn NodeTraits>,
+        express_type: ExpressionType,
         var: String,
     }
 
@@ -264,7 +262,8 @@ pub mod xcsp3_core {
         pub fn new(v: String) -> NodeVariable<'a> {
             NodeVariable {
                 var: v,
-                node: Node::new(ExpressionType::OVAR),
+                parameters: vec![],
+                express_type: ExpressionType::OVAR,
             }
         }
         pub fn canonize(&self) -> &Self {
@@ -278,26 +277,30 @@ pub mod xcsp3_core {
         }
         fn to_string(&self) -> String {
             let mut str = format!("{}(", self.var);
-            for e in self.node.parameters.iter() {
+            for e in self.parameters.iter() {
                 str = format!("{},{}", str, e.to_string());
             }
             str = format!("{})", str);
             str
         }
 
-        fn get_node(&self) -> &Node {
-            &self.node
-        }
         fn get_cons_or_var_or_ope(&self) -> NodeType {
             NodeType::Variable
         }
         fn get_variable(&self) -> String {
             self.var.clone()
         }
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.express_type
+        }
     }
 
     pub struct NodeOperator<'a> {
-        node: Node<'a>,
+        parameters: Vec<&'a dyn NodeTraits>,
+        express_type: ExpressionType,
         op: String,
     }
 
@@ -305,52 +308,28 @@ pub mod xcsp3_core {
         pub fn new(v: String, _operator: ExpressionType) -> NodeOperator<'a> {
             NodeOperator {
                 op: v,
-                node: Node::new(_operator),
+                express_type: _operator,
+                parameters: vec![],
             }
         }
 
         pub fn add_parameter(&mut self, p: &'a dyn NodeTraits) {
-            self.node.parameters.push(p);
+            self.parameters.push(p);
         }
 
         pub fn add_parameters(&mut self, p: &mut [Box<&'a dyn NodeTraits>]) {
             for e in p.iter() {
                 let ee = *e.deref();
-                self.node.parameters.push(ee);
+                self.parameters.push(ee);
             }
         }
-    }
-
-    impl<'a> NodeTraits for NodeOperator<'a> {
-        fn evaluate(&self, _: &HashMap<&String, i32>) -> i32 {
-            0
-        }
-
-        fn to_string(&self) -> String {
+        pub fn to_string(&self) -> String {
             self.op.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.node
-        }
     }
 
-    // pub struct NodeUnary<'a>
-    // {
-    //     ope: NodeOperator<'a>
-    // }
-    //
-    // pub struct NodeBinary<'a>
-    // {
-    //     ope: NodeOperator<'a>
-    // }
-    //
-    // pub struct NodeNAry<'a>
-    // {
-    //     ope: NodeOperator<'a>
-    // }
-
     pub struct NodeNeg<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeNeg<'a> {
@@ -363,19 +342,22 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeNeg<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            -self.ope.node.parameters[0].evaluate(tuple)
+            -self.ope.parameters[0].evaluate(tuple)
         }
 
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeAbs<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeAbs<'a> {
@@ -388,7 +370,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeAbs<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v = self.ope.node.parameters[0].evaluate(tuple);
+            let v = self.ope.parameters[0].evaluate(tuple);
             if v > 0 {
                 v
             } else {
@@ -398,14 +380,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeSquare<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeSquare<'a> {
@@ -418,20 +402,23 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeSquare<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v = self.ope.node.parameters[0].evaluate(tuple);
+            let v = self.ope.parameters[0].evaluate(tuple);
             v * v
         }
 
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeNot<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeNot<'a> {
@@ -444,7 +431,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeNot<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v = self.ope.node.parameters[0].evaluate(tuple);
+            let v = self.ope.parameters[0].evaluate(tuple);
             if v > 0 {
                 1
             } else {
@@ -455,13 +442,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeSub<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeSub<'a> {
@@ -474,21 +464,24 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeSub<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
             v1 - v2
         }
 
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeDiv<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeDiv<'a> {
@@ -501,21 +494,24 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeDiv<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
             v1 / v2
         }
 
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeMod<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeMod<'a> {
@@ -528,21 +524,24 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeMod<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
             v1 % v2
         }
 
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodePow<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodePow<'a> {
@@ -555,8 +554,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodePow<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
             v1.pow(v2 as u32)
         }
 
@@ -564,13 +563,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeDist<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeDist<'a> {
@@ -583,8 +585,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeDist<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
             let v = v1 - v2;
             if v > 0 {
                 v
@@ -597,13 +599,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeLE<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeLE<'a> {
@@ -616,10 +621,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeLE<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
-
-            if v1 <= v2 {
+            if self.ope.parameters[0].evaluate(tuple) <= self.ope.parameters[1].evaluate(tuple) {
                 1
             } else {
                 0
@@ -629,14 +631,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeLT<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeLT<'a> {
@@ -649,8 +653,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeLT<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
 
             if v1 < v2 {
                 1
@@ -663,13 +667,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeGE<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeGE<'a> {
@@ -682,8 +689,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeGE<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
 
             if v1 >= v2 {
                 1
@@ -696,13 +703,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeGT<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeGT<'a> {
@@ -715,8 +725,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeGT<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
 
             if v1 > v2 {
                 1
@@ -729,13 +739,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeNE<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeNE<'a> {
@@ -748,8 +761,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeNE<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
 
             if v1 != v2 {
                 1
@@ -762,13 +775,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeImp<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeImp<'a> {
@@ -781,8 +797,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeImp<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v1 = self.ope.node.parameters[0].evaluate(tuple);
-            let v2 = self.ope.node.parameters[1].evaluate(tuple);
+            let v1 = self.ope.parameters[0].evaluate(tuple);
+            let v2 = self.ope.parameters[1].evaluate(tuple);
 
             if v1 == 0 || v2 != 0 {
                 1
@@ -795,13 +811,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeAdd<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeAdd<'a> {
@@ -815,7 +834,7 @@ pub mod xcsp3_core {
     impl<'a> NodeTraits for NodeAdd<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
             let mut nb = 0;
-            for e in self.ope.node.parameters.iter() {
+            for e in self.ope.parameters.iter() {
                 nb += e.evaluate(tuple);
             }
             nb
@@ -825,13 +844,16 @@ pub mod xcsp3_core {
             self.ope.to_string()
         }
 
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeMult<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeMult<'a> {
@@ -845,7 +867,7 @@ pub mod xcsp3_core {
     impl<'a> NodeTraits for NodeMult<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
             let mut nb = 1;
-            for e in self.ope.node.parameters.iter() {
+            for e in self.ope.parameters.iter() {
                 nb *= e.evaluate(tuple);
             }
             nb
@@ -853,13 +875,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeMin<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeMin<'a> {
@@ -872,8 +897,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeMin<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let mut nb = self.ope.node.parameters[0].evaluate(tuple);
-            for e in self.ope.node.parameters.iter() {
+            let mut nb = self.ope.parameters[0].evaluate(tuple);
+            for e in self.ope.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if nb > n {
                     nb = n
@@ -884,13 +909,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeMax<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeMax<'a> {
@@ -903,8 +931,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeMax<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let mut nb = self.ope.node.parameters[0].evaluate(tuple);
-            for e in self.ope.node.parameters.iter() {
+            let mut nb = self.ope.parameters[0].evaluate(tuple);
+            for e in self.ope.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if nb < n {
                     nb = n
@@ -915,13 +943,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeEQ<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeEQ<'a> {
@@ -934,8 +965,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeEQ<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let nb = self.ope.node.parameters[0].evaluate(tuple);
-            for e in self.ope.node.parameters.iter() {
+            let nb = self.ope.parameters[0].evaluate(tuple);
+            for e in self.ope.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if nb != n {
                     return 0;
@@ -946,13 +977,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeAnd<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeAnd<'a> {
@@ -965,7 +999,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeAnd<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            for e in self.ope.node.parameters.iter() {
+            for e in self.ope.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if n == 0 {
                     return 0;
@@ -976,13 +1010,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeOr<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeOr<'a> {
@@ -995,7 +1032,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeOr<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            for e in self.ope.node.parameters.iter() {
+            for e in self.ope.parameters.iter() {
                 let n = e.evaluate(tuple);
                 if n == 1 {
                     return 1;
@@ -1006,13 +1043,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeXor<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeXor<'a> {
@@ -1026,7 +1066,7 @@ pub mod xcsp3_core {
     impl<'a> NodeTraits for NodeXor<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
             let mut nb = 0;
-            for e in self.ope.node.parameters.iter() {
+            for e in self.ope.parameters.iter() {
                 nb += e.evaluate(tuple);
             }
             if nb % 2 == 1 {
@@ -1038,13 +1078,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeIf<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeIf<'a> {
@@ -1057,23 +1100,26 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeIf<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v0 = self.ope.node.parameters[0].evaluate(tuple);
+            let v0 = self.ope.parameters[0].evaluate(tuple);
             if v0 != 0 {
-                self.ope.node.parameters[1].evaluate(tuple)
+                self.ope.parameters[1].evaluate(tuple)
             } else {
-                self.ope.node.parameters[2].evaluate(tuple)
+                self.ope.parameters[2].evaluate(tuple)
             }
         }
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeIff<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeIff<'a> {
@@ -1086,8 +1132,8 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeIff<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v0 = self.ope.node.parameters[0].evaluate(tuple);
-            let v1 = self.ope.node.parameters[1].evaluate(tuple);
+            let v0 = self.ope.parameters[0].evaluate(tuple);
+            let v1 = self.ope.parameters[1].evaluate(tuple);
             if v0 != 0 {
                 if v1 != 0 {
                     1
@@ -1103,13 +1149,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeSet<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
     }
 
     impl<'a> NodeSet<'a> {
@@ -1127,13 +1176,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeIn<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
         set: HashSet<i32>,
     }
 
@@ -1148,7 +1200,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeIn<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v0 = self.ope.node.parameters[0].evaluate(tuple);
+            let v0 = self.ope.parameters[0].evaluate(tuple);
             if self.set.contains(&v0) {
                 1
             } else {
@@ -1158,13 +1210,16 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
     pub struct NodeNotIn<'a> {
-        ope: NodeOperator<'a>,
+        pub ope: NodeOperator<'a>,
         set: HashSet<i32>,
     }
 
@@ -1179,7 +1234,7 @@ pub mod xcsp3_core {
 
     impl<'a> NodeTraits for NodeNotIn<'a> {
         fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
-            let v0 = self.ope.node.parameters[0].evaluate(tuple);
+            let v0 = self.ope.parameters[0].evaluate(tuple);
             if !self.set.contains(&v0) {
                 1
             } else {
@@ -1189,8 +1244,11 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             self.ope.to_string()
         }
-        fn get_node(&self) -> &Node {
-            &self.ope.node
+        fn get_parameters(&self) -> &Vec<&'a dyn NodeTraits> {
+            &self.ope.parameters
+        }
+        fn get_express_type(&self) -> &ExpressionType {
+            &self.ope.express_type
         }
     }
 
@@ -1424,36 +1482,43 @@ pub mod xcsp3_core {
             _ => None,
         }
     }
+
     impl<'a> Default for NodeDist<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeNotIn<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeSet<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeImp<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeIff<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeIf<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeIn<'a> {
         fn default() -> Self {
             Self::new()
@@ -1465,16 +1530,19 @@ pub mod xcsp3_core {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeAnd<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeOr<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeXor<'a> {
         fn default() -> Self {
             Self::new()
@@ -1486,16 +1554,19 @@ pub mod xcsp3_core {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeLT<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeGE<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeGT<'a> {
         fn default() -> Self {
             Self::new()
@@ -1507,11 +1578,13 @@ pub mod xcsp3_core {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeSquare<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeAbs<'a> {
         fn default() -> Self {
             Self::new()
@@ -1529,21 +1602,25 @@ pub mod xcsp3_core {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeMult<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeDiv<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeMod<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeSub<'a> {
         fn default() -> Self {
             Self::new()
@@ -1555,16 +1632,19 @@ pub mod xcsp3_core {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeMax<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeNE<'a> {
         fn default() -> Self {
             Self::new()
         }
     }
+
     impl<'a> Default for NodeEQ<'a> {
         fn default() -> Self {
             Self::new()
@@ -1572,19 +1652,42 @@ pub mod xcsp3_core {
     }
 
     pub fn equal_nodes(a: &dyn NodeTraits, b: &dyn NodeTraits) -> i32 {
-        // if a.get_node().node_type == b.get_node().node_type {
-        //     a.get_node().node_type - b.get_node().node_type
-        // } else if a.get_cons_or_var_or_ope().eq("Constants")
-        //     && b.get_cons_or_var_or_ope().eq("Constants")
-        // {
-        //     a.get_value() - b.get_value()
-        // } else if a.get_node().parameters.len() < b.get_node().parameters.len() {
-        //     -1
-        // } else if a.get_node().parameters.len() > b.get_node().parameters.len() {
-        //     1
-        // } else {
-        //     0
-        // }
-        0
+        return match a.get_cons_or_var_or_ope() {
+            NodeType::Constant => match b.get_cons_or_var_or_ope() {
+                NodeType::Constant => a.get_value() - b.get_value(),
+                _ => get_order(a.get_express_type()) - get_order(b.get_express_type()),
+            },
+            NodeType::Variable => match a.get_cons_or_var_or_ope() {
+                NodeType::Variable => match a.get_variable().cmp(&b.get_variable()) {
+                    Ordering::Less => -1,
+                    Ordering::Equal => 0,
+                    Ordering::Greater => 1,
+                },
+                _ => get_order(a.get_express_type()) - get_order(b.get_express_type()),
+            },
+            NodeType::Operator => match a.get_cons_or_var_or_ope() {
+                NodeType::Operator => {
+                    let ap = a.get_parameters();
+                    let bp = b.get_parameters();
+                    if ap.len() < bp.len() {
+                        -1
+                    } else if ap.len() < bp.len() {
+                        1
+                    } else {
+                        for (i, _) in ap.iter().enumerate() {
+                            let cmp = equal_nodes(ap[i], bp[i]);
+                            if cmp != 0 {
+                                return cmp;
+                            }
+                        }
+                        0
+                    }
+                }
+                _ => get_order(a.get_express_type()) - get_order(b.get_express_type()),
+            },
+        };
+    }
+    pub fn compare_nodes(a: &dyn NodeTraits, b: &dyn NodeTraits) -> bool {
+        equal_nodes(a, b) < 0
     }
 }

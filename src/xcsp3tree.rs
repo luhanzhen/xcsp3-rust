@@ -10,10 +10,10 @@
  * <p>@this_file_name:xcsp3tree
  * <p/>
  */
-
 #[allow(dead_code)]
 pub mod xcsp3_core {
     use crate::xcsp3treenode::xcsp3_core::*;
+    use std::collections::HashMap;
 
     struct Tree<'a> {
         root: Option<&'a dyn NodeTraits>,
@@ -24,7 +24,7 @@ pub mod xcsp3_core {
     impl<'a> Tree<'a> {
         pub fn from_string(e: String) -> Tree<'a> {
             Tree {
-                root: None,
+                root: from_string_to_tree(&e),
                 expr: e,
                 list_of_variables: vec![],
             }
@@ -37,9 +37,28 @@ pub mod xcsp3_core {
                 list_of_variables: vec![],
             }
         }
-
+        fn evaluate(&self, tuple: &HashMap<&String, i32>) -> i32 {
+            self.root.unwrap().evaluate(tuple)
+        }
         pub fn arity(&self) -> usize {
             self.list_of_variables.len()
         }
+
+        pub fn to_string(&self) -> String {
+            self.root.unwrap().to_string()
+        }
+
+        pub fn canonize(&self) -> Option<&'a dyn NodeTraits> {
+            self.root
+        }
+    }
+
+    fn min<'a>(v1: &'a usize, v2: &'a usize, v3: &'a usize) -> &'a usize {
+        std::cmp::min(std::cmp::min(v1, v2), v3)
+    }
+
+    fn from_string_to_tree<'a>(_string: &String) -> Option<&'a dyn NodeTraits> {
+        // string.find()
+        None
     }
 }
