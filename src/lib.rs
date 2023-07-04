@@ -41,7 +41,7 @@ pub mod xcsp3variable;
  * <p/>
  * <p>@this_file_name:lib.rs
  * <p/>
- */
+ **/
 
 #[cfg(test)]
 mod test_xcsp3domain {
