@@ -43,7 +43,7 @@ pub mod xcsp3_core {
         IntegerInterval,
     }
 
-    pub trait XIntegerEntity {
+    pub trait XIntegerEntity  {
         fn width(&self) -> usize;
 
         fn minimum(&self) -> i32;
@@ -79,6 +79,15 @@ pub mod xcsp3_core {
         //     return self.value == arg.value;
         // }
     }
+
+    // impl Clone for XIntegerValue {
+    //     fn clone(&self) -> Self {
+    //         XIntegerValue {
+    //             value: self.value,
+    //             integer_type: XIntegerType::IntegerValue,
+    //         }
+    //     }
+    // }
 
     impl XIntegerEntity for XIntegerValue {
         fn width(&self) -> usize {
@@ -138,6 +147,16 @@ pub mod xcsp3_core {
         // }
     }
 
+    // impl Clone for XIntegerInterval {
+    //     fn clone(&self) -> Self {
+    //         XIntegerInterval {
+    //             max:self.max,
+    //             min:self.min,
+    //             integer_type: XIntegerType::IntegerValue,
+    //         }
+    //     }
+    // }
+
     impl XIntegerEntity for XIntegerInterval {
         fn width(&self) -> usize {
             (self.max - self.min + 1) as usize
@@ -170,35 +189,37 @@ pub mod xcsp3_core {
         }
     }
 
+    // #[derive(Clone, Debug)]
     pub struct XDomainInteger {
         size: usize,
         top: i32,
-        pub values: Vec<Box<dyn XIntegerEntity>>,
+        values: Vec<Box<dyn XIntegerEntity>>,
     }
 
-    // impl Clone for XDomainInteger {
-    //     fn clone(&self) -> Self {
-    //         let  mut v = Vec::new();
-    //         for e in self.values.iter()
-    //         {
-    //             // let ee = from(&self.values);
-    //             v.push(Box::new(e.deref()));
-    //         }
-    //         XDomainInteger {
-    //             size: self.size,
-    //             top: self.top,
-    //             values: v,
-    //
-    //         }
-    //
-    //     }
-    // }
+    impl Clone for XDomainInteger {
+        fn clone(&self) -> Self {
+            let  mut v = Vec::new();
+            for e in self.values.iter()
+            {
+                let ee = Box::clone(&e);
+                v.push(ee);
+            }
+            XDomainInteger {
+                size: self.size,
+                top: self.top,
+                values: v,
+
+            }
+
+        }
+    }
 
     impl Default for XDomainInteger {
         fn default() -> Self {
             Self::new()
         }
     }
+
 
     impl XDomainInteger {
         pub fn new() -> XDomainInteger {
@@ -208,6 +229,8 @@ pub mod xcsp3_core {
                 values: vec![],
             }
         }
+
+
 
         fn add_entity(&mut self, entity: Box<dyn XIntegerEntity>) {
             self.size += entity.width();
