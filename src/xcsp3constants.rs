@@ -25,15 +25,15 @@
 
 /**
  * <p>@project_name: XCSP3-Rust
- * <p/>
+ * </p>
  * <p>@author: luhanzhen
- * <p/>
+ * </p>
  * <p>@date: 2023/6/30
- * <p/>
+ * </p>
  * <p>@time: 13:44
- * <p/>
+ * </p>
  * <p>@this_file_name:XCSP3Constants
- * <p/>
+ * </p>
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {

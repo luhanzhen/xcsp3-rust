@@ -25,15 +25,15 @@
 
 /**
  * <p>@project_name: XCSP3-Rust
- * <p/>
+ * </p>
  * <p>@author: luhanzhen
- * <p/>
+ * </p>
  * <p>@date: 2023/6/30
- * <p/>
+ * </p>
  * <p>@time: 13:47
- * <p/>
+ * </p>
  * <p>@this_file_name:XCSP3Variable
- * <p/>
+ * </p>
  **/
 #[allow(dead_code)]
 pub mod xcsp3_core {
@@ -63,6 +63,7 @@ pub mod xcsp3_core {
 
     pub trait XVariableTrait: XEntityTrait {
         fn to_string(&self) -> String;
+        fn get_domain(&self) -> &Option<&XDomainInteger>;
     }
 
     pub enum EntityType {
@@ -71,17 +72,40 @@ pub mod xcsp3_core {
         XEInterval,
         XParameterVariable,
         XVariableArray,
+        XVariable,
     }
 
-    pub struct XInteger {
+    pub struct XVariable<'a> {
         classes: String,
-        domain: Option<XDomainInteger>,
-        value: i32,
+        domain: Option<&'a XDomainInteger>,
         id: String,
         entity_type: EntityType,
     }
 
-    impl XEntityTrait for XInteger {
+    impl<'a> XVariable<'a> {
+        pub fn from(lid: String, dom: &'a XDomainInteger) -> Self {
+            XVariable {
+                id: lid,
+                classes: String::default(),
+                domain: Some(dom),
+                entity_type: EntityType::XVariable,
+            }
+        }
+
+        pub fn from_with_index(mut lid: String, dom: &'a XDomainInteger, indexes: &[i32]) -> Self {
+            for e in indexes.into_iter() {
+                lid = format!("{} [{}]", lid, e.to_string());
+            }
+            XVariable {
+                classes: String::default(),
+                domain: Some(dom),
+                id: lid,
+                entity_type: EntityType::XVariable,
+            }
+        }
+    }
+
+    impl<'a> XEntityTrait for XVariable<'a> {
         fn fake(&self) {}
 
         fn get_type(&self) -> &EntityType {
@@ -89,13 +113,42 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XInteger {
+    impl<'a> XVariableTrait for XVariable<'a> {
         fn to_string(&self) -> String {
-            format!("XInteger {}:{}", self.id, self.value.to_string())
+            format!("XVariable {}:{}", self.id, self.classes)
+        }
+
+        fn get_domain(&self) -> &Option<&XDomainInteger> {
+            &self.domain
         }
     }
 
-    impl XInteger {
+    pub struct XInteger<'a> {
+        classes: String,
+        domain: Option<&'a XDomainInteger>,
+        value: i32,
+        id: String,
+        entity_type: EntityType,
+    }
+
+    impl<'a> XEntityTrait for XInteger<'a> {
+        fn fake(&self) {}
+
+        fn get_type(&self) -> &EntityType {
+            &self.entity_type
+        }
+    }
+
+    impl<'a> XVariableTrait for XInteger<'a> {
+        fn to_string(&self) -> String {
+            format!("XInteger {}:{}", self.id, self.value.to_string())
+        }
+        fn get_domain(&self) -> &Option<&XDomainInteger> {
+            &self.domain
+        }
+    }
+
+    impl<'a> XInteger<'a> {
         pub fn from(lid: String, n: i32) -> Self {
             XInteger {
                 id: lid,
@@ -105,27 +158,16 @@ pub mod xcsp3_core {
                 entity_type: EntityType::XInteger,
             }
         }
-
-        // pub fn from_with_index(mut id: String, dom: XDomainInteger, indexes: &[i32]) -> Self {
-        //     for i in indexes.iter() {
-        //         id = format!("{}[{}]", id, i);
-        //     }
-        //     XVariable {
-        //         entity: XEntity::from(id),
-        //         classes: String::default(),
-        //         domain: dom,
-        //     }
-        // }
     }
 
-    pub struct XTree {
+    pub struct XTree<'a> {
         classes: String,
-        domain: Option<XDomainInteger>,
+        domain: Option<&'a XDomainInteger>,
         id: String,
         entity_type: EntityType,
     }
 
-    impl XTree {
+    impl<'a> XTree<'a> {
         pub fn from(lid: String) -> Self {
             XTree {
                 id: lid,
@@ -136,7 +178,7 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XEntityTrait for XTree {
+    impl<'a> XEntityTrait for XTree<'a> {
         fn fake(&self) {}
 
         fn get_type(&self) -> &EntityType {
@@ -144,22 +186,25 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XTree {
+    impl<'a> XVariableTrait for XTree<'a> {
         fn to_string(&self) -> String {
             format!("XTree {}", self.id)
         }
+        fn get_domain(&self) -> &Option<&XDomainInteger> {
+            &self.domain
+        }
     }
 
-    pub struct XEInterval {
+    pub struct XEInterval<'a> {
         classes: String,
-        domain: Option<XDomainInteger>,
+        domain: Option<&'a XDomainInteger>,
         id: String,
         entity_type: EntityType,
         max: i32,
         min: i32,
     }
 
-    impl XEInterval {
+    impl<'a> XEInterval<'a> {
         pub fn from(lid: String, mn: i32, mx: i32) -> Self {
             XEInterval {
                 id: lid,
@@ -172,7 +217,7 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XEntityTrait for XEInterval {
+    impl<'a> XEntityTrait for XEInterval<'a> {
         fn fake(&self) {}
 
         fn get_type(&self) -> &EntityType {
@@ -180,12 +225,15 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XEInterval {
+    impl<'a> XVariableTrait for XEInterval<'a> {
         fn to_string(&self) -> String {
             format!(
                 "XEInterval {} :[min: {}, max:{}]",
                 self.id, self.min, self.max
             )
+        }
+        fn get_domain(&self) -> &Option<&XDomainInteger> {
+            &self.domain
         }
     }
 
@@ -203,9 +251,9 @@ pub mod xcsp3_core {
         }
     }
 
-    pub struct XParameterVariable {
+    pub struct XParameterVariable<'a> {
         classes: String,
-        domain: Option<XDomainInteger>,
+        domain: Option<&'a XDomainInteger>,
         id: String,
         entity_type: EntityType,
         number: i32,
@@ -213,7 +261,7 @@ pub mod xcsp3_core {
 
     static XPARAMETER_VARIABLE_MAX: AtomicI32 = AtomicI32::new(i32::MIN);
 
-    impl XParameterVariable {
+    impl<'a> XParameterVariable<'a> {
         pub fn from(lid: String) -> Self {
             let n: i32;
             if lid.as_str().bytes().nth(1) == '.'.to_string().bytes().nth(0) {
@@ -233,7 +281,7 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XEntityTrait for XParameterVariable {
+    impl<'a> XEntityTrait for XParameterVariable<'a> {
         fn fake(&self) {}
 
         fn get_type(&self) -> &EntityType {
@@ -241,20 +289,24 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XParameterVariable {
+    impl<'a> XVariableTrait for XParameterVariable<'a> {
         fn to_string(&self) -> String {
             format!("XParameterVariable {}", self.id)
         }
+        fn get_domain(&self) -> &Option<&XDomainInteger> {
+            &self.domain
+        }
     }
 
-    struct XVariableArray<'a> {
+    struct XVariableArray {
         classes: String,
         entity_type: EntityType,
-        variables: Vec<&'a dyn XVariableTrait>,
+        variables: Vec<Box<dyn XVariableTrait>>,
         sizes: Vec<i32>,
         id: String,
     }
-    impl<'a> XVariableArray<'a> {
+
+    impl XVariableArray {
         pub fn from_sizes(lid: String, szs: &Vec<i32>) -> Self {
             XVariableArray {
                 id: lid,
@@ -264,18 +316,31 @@ pub mod xcsp3_core {
                 sizes: szs.clone(),
             }
         }
-        pub fn from_array(lid: String, variables: &Vec<&'a dyn XVariableTrait>) -> Self {
+
+        /// initialize a XVariableArray from a existing XVariableArray.
+        pub fn from_array(lid: String, var_array: &XVariableArray) -> Self {
+            let mut index: Vec<i32> = vec![];
+            index.resize(var_array.sizes.len(), 0);
+            let mut variable: Vec<Box<dyn XVariableTrait>> = vec![];
+            for i in 0..var_array.variables.len() {
+                let var = XVariable::from_with_index(
+                    lid.clone(),
+                    var_array.variables[i].get_domain().unwrap(),
+                    &index,
+                );
+                variable.push(Box::new(var));
+            }
             XVariableArray {
                 id: lid,
                 classes: String::default(),
                 entity_type: EntityType::XVariableArray,
-                variables: vec![],
-                sizes: szs.clone(),
+                variables: variable,
+                sizes: index,
             }
         }
     }
 
-    impl<'a> XEntityTrait for XVariableArray<'a> {
+    impl XEntityTrait for XVariableArray {
         fn fake(&self) {}
 
         fn get_type(&self) -> &EntityType {

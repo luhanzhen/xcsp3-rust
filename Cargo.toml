@@ -2,7 +2,27 @@
 name = "xcsp3-rust"
 version = "0.1.0"
 edition = "2021"
-
+rust-version = "1.70"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = [
+    "constraint",
+    "satisfiability",
+    "csp",
+    "xcsp3",
+    "combinatorial",
+    "parser",
+]
+description = "Rust bindings for the FLTK GUI library"
+readme = "README.md"
+categories = ["gui"]
+license = "MIT"
+repository = "https://github.com/luhanzhen/xcsp3-rust"
 
 [dependencies]
+
+
+
+
+[lib]
+name = "xcsp3_rust"
+path = "src/lib.rs"

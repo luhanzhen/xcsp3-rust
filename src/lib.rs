@@ -22,7 +22,7 @@
 * THE SOFTWARE.
 *=============================================================================
 */
-
+#![doc = include_str!("../README.md")]
 pub mod xcsp3constants;
 pub mod xcsp3domain;
 pub mod xcsp3tree;
@@ -32,15 +32,15 @@ pub mod xcsp3variable;
 
 /**
  * <p>@project_name: XCSP3-Rust
- * <p/>
+ * </p>
  * <p>@author: luhanzhen
- * <p/>
+ * </p>
  * <p>@date: 2023/6/30
- * <p/>
+ * </p>
  * <p>@time: 13:40
- * <p/>
+ * </p>
  * <p>@this_file_name:lib.rs
- * <p/>
+ * </p>
  **/
 
 #[cfg(test)]

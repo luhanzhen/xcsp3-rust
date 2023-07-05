@@ -1,14 +1,14 @@
 /**
  * <p>@project_name: XCSP3-Rust
- * <p/>
+ * </p>
  * <p>@author: luhanzhen
- * <p/>
+ * </p>
  * <p>@date: 2023/7/2
- * <p/>
+ * </p>
  * <p>@time: 16:47
- * <p/>
+ * </p>
  * <p>@this_file_name:xcsp3tree
- * <p/>
+ * </p>
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {
