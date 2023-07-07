@@ -22,25 +22,18 @@
 * THE SOFTWARE.
 *=============================================================================
 */
-#![doc = include_str!("../README.md")]
 
 /**
  * <p>@project_name: XCSP3-Rust
  * </p>
  * <p>@author: luhanzhen
  * </p>
- * <p>@date: 2023/6/30
+ * <p>@date: 2023/7/7
  * </p>
- * <p>@time: 13:40
+ * <p>@time: 18:35
  * </p>
- * <p>@this_file_name:lib.rs
+ * <p>@this_file_name:xcsp3constraint
  * </p>
  **/
-pub mod xcsp3constants;
-pub mod xcsp3constraint;
-pub mod xcsp3domain;
-pub mod xcsp3skeleton;
-pub mod xcsp3tree;
-pub mod xcsp3treenode;
-pub mod xcsp3utils;
-pub mod xcsp3variable;
+
+pub mod xcsp3_core {}

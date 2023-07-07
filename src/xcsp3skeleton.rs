@@ -37,7 +37,12 @@
  **/
 #[allow(dead_code)]
 pub mod xcsp3_core {
+
+    use quick_xml::de::from_str;
+    use quick_xml::DeError;
     use serde::Deserialize;
+    use std::fs;
+    use std::time::Instant;
 
     #[derive(Deserialize, Debug)]
     pub struct VariableDomain {
@@ -71,8 +76,10 @@ pub mod xcsp3_core {
         pub id: String,
         #[serde(rename = "@type", default)]
         pub type_: String,
-        #[serde(rename = "$value")]
+        #[serde(rename = "$value", default)]
         pub value: String,
+        #[serde(rename = "@as", default)]
+        pub r#as: String,
     }
 
     #[derive(Deserialize, Debug)]
@@ -123,8 +130,14 @@ pub mod xcsp3_core {
         Block(ConstraintBlock),
         #[serde(rename = "allDifferent")]
         AllDifferent {
-            #[serde(rename = "$value")]
+            #[serde(rename = "$value", default)]
             vars: String,
+            #[serde(rename = "list", default)]
+            list: Vec<String>,
+            #[serde(rename = "except", default)]
+            except: String,
+            #[serde(rename = "matrix", default)]
+            matrix: String,
         },
         #[serde(rename = "allEqual")]
         AllEqual {
@@ -344,6 +357,20 @@ pub mod xcsp3_core {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+        #[serde(rename = "lex")]
+        Lex {
+            #[serde(rename = "matrix", default)]
+            matrix: String,
+            #[serde(rename = "operator", default)]
+            operator: String,
+        },
+        #[serde(rename = "clause")]
+        Clause {
+            #[serde(rename = "$value", default)]
+            vars: String,
+            #[serde(rename = "list", default)]
+            list: Vec<String>,
+        },
     }
 
     #[derive(Deserialize, Debug)]
@@ -391,18 +418,96 @@ pub mod xcsp3_core {
         pub maximize: Vec<MaximizeMinimize>,
     }
 
+    pub enum InstanceType {
+        CSP,
+        COP,
+    }
+
     #[derive(Deserialize, Debug)]
     pub struct Instance {
         #[serde(rename = "@format")]
         pub format: String,
 
         #[serde(rename = "@type")]
-        pub r#type: String,
+        pub r#type: InstanceType,
 
         pub variables: Option<Variable>,
 
         pub constraints: Constraint,
 
         pub objectives: Option<Objective>,
+    }
+
+    impl Instance {
+        /// read the instance from the xml file
+        pub fn from_path(path: &str) -> Result<Instance, DeError> {
+            let now = Instant::now();
+            if !path.ends_with(".xml") {
+                return Err(DeError::UnexpectedEof);
+            }
+            let xml = fs::read_to_string(path).unwrap();
+            let r = from_str(&xml);
+            println!(
+                "read the instance named {} by {}ms",
+                path,
+                now.elapsed().as_millis()
+            );
+            r
+        }
+        pub fn get_instance_type(&self) -> &InstanceType {
+            &self.r#type
+        }
+
+        pub fn build_variables(&self) {
+            for var_type in self.variables.as_ref().unwrap().variables.iter() {
+                match var_type {
+                    VariableType::Var(var) => {}
+                    VariableType::Array(var) => {}
+                }
+            }
+        }
+
+        pub fn build_constraints(&self) {
+            for con_type in self.constraints.constraints.iter() {
+                match con_type {
+                    ConstraintType::Group(_) => {}
+                    ConstraintType::Block(_) => {}
+                    ConstraintType::AllDifferent {
+                        vars,
+                        list,
+                        except,
+                        matrix,
+                    } => {}
+                    ConstraintType::AllEqual { .. } => {}
+                    ConstraintType::Circuit { .. } => {}
+                    ConstraintType::Ordered { .. } => {}
+                    ConstraintType::Intension { .. } => {}
+                    ConstraintType::Extension { .. } => {}
+                    ConstraintType::Regular { .. } => {}
+                    ConstraintType::Mdd { .. } => {}
+                    ConstraintType::Sum { .. } => {}
+                    ConstraintType::Count { .. } => {}
+                    ConstraintType::NValues { .. } => {}
+                    ConstraintType::Cardinality { .. } => {}
+                    ConstraintType::Minimum { .. } => {}
+                    ConstraintType::Maximum { .. } => {}
+                    ConstraintType::Element { .. } => {}
+                    ConstraintType::Stretch { .. } => {}
+                    ConstraintType::NoOverlap { .. } => {}
+                    ConstraintType::Cumulative { .. } => {}
+                    ConstraintType::Instantiation { .. } => {}
+                    ConstraintType::Slide { .. } => {}
+                    ConstraintType::Channel { .. } => {}
+                    ConstraintType::AllDistant { .. } => {}
+                    ConstraintType::Precedence { .. } => {}
+                    ConstraintType::Balance { .. } => {}
+                    ConstraintType::Spread { .. } => {}
+                    ConstraintType::Deviation { .. } => {}
+                    ConstraintType::BinPacking { .. } => {}
+                    ConstraintType::Lex { .. } => {}
+                    ConstraintType::Clause { .. } => {}
+                }
+            }
+        }
     }
 }

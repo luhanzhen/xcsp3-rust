@@ -35,6 +35,7 @@
  * <p>@this_file_name:xcsp3domain
  * </p>
  */
+
 #[allow(dead_code)]
 pub mod xcsp3_core {
     use std::ops::Deref;
