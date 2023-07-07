@@ -1,0 +1,161 @@
+<instance format="XCSP3" type="CSP">
+  <variables>
+    <var id="v2"> 0..70 </var>
+    <array id="x" size="[80]"> 0 1 </array>
+    <array id="y" size="[5]"> 0..14 </array>
+  </variables>
+  <constraints>
+    <group>
+      <intension> or(not(and(eq(%0,%1),eq(%2,%3))),eq(%4,%5)) </intension>
+      <args> x[0] 1 x[1] 1 x[2] 1 </args>
+      <args> x[0] 1 x[3] 1 x[2] 1 </args>
+      <args> x[2] 1 x[3] 1 x[1] 1 </args>
+      <args> x[3] 1 x[2] 1 x[1] 1 </args>
+      <args> x[3] 1 x[0] 1 x[1] 1 </args>
+      <args> x[1] 1 x[0] 1 x[2] 1 </args>
+      <args> x[4] 1 x[5] 1 x[6] 1 </args>
+      <args> x[4] 1 x[7] 1 x[6] 1 </args>
+      <args> x[6] 1 x[7] 1 x[5] 1 </args>
+      <args> x[7] 1 x[6] 1 x[5] 1 </args>
+      <args> x[7] 1 x[4] 1 x[5] 1 </args>
+      <args> x[5] 1 x[4] 1 x[6] 1 </args>
+      <args> x[8] 1 x[9] 1 x[10] 1 </args>
+      <args> x[8] 1 x[11] 1 x[10] 1 </args>
+      <args> x[10] 1 x[11] 1 x[9] 1 </args>
+      <args> x[11] 1 x[10] 1 x[9] 1 </args>
+      <args> x[11] 1 x[8] 1 x[9] 1 </args>
+      <args> x[9] 1 x[8] 1 x[10] 1 </args>
+      <args> x[12] 1 x[13] 1 x[14] 1 </args>
+      <args> x[12] 1 x[15] 1 x[14] 1 </args>
+      <args> x[14] 1 x[15] 1 x[13] 1 </args>
+      <args> x[15] 1 x[14] 1 x[13] 1 </args>
+      <args> x[15] 1 x[12] 1 x[13] 1 </args>
+      <args> x[13] 1 x[12] 1 x[14] 1 </args>
+      <args> x[16] 1 x[17] 1 x[18] 1 </args>
+      <args> x[16] 1 x[19] 1 x[18] 1 </args>
+      <args> x[18] 1 x[19] 1 x[17] 1 </args>
+      <args> x[19] 1 x[18] 1 x[17] 1 </args>
+      <args> x[19] 1 x[16] 1 x[17] 1 </args>
+      <args> x[17] 1 x[16] 1 x[18] 1 </args>
+      <args> x[20] 1 x[21] 1 x[22] 1 </args>
+      <args> x[20] 1 x[23] 1 x[22] 1 </args>
+      <args> x[22] 1 x[23] 1 x[21] 1 </args>
+      <args> x[23] 1 x[22] 1 x[21] 1 </args>
+      <args> x[23] 1 x[20] 1 x[21] 1 </args>
+      <args> x[21] 1 x[20] 1 x[22] 1 </args>
+      <args> x[24] 1 x[25] 1 x[26] 1 </args>
+      <args> x[24] 1 x[27] 1 x[26] 1 </args>
+      <args> x[26] 1 x[27] 1 x[25] 1 </args>
+      <args> x[27] 1 x[26] 1 x[25] 1 </args>
+      <args> x[27] 1 x[24] 1 x[25] 1 </args>
+      <args> x[25] 1 x[24] 1 x[26] 1 </args>
+      <args> x[28] 1 x[29] 1 x[30] 1 </args>
+      <args> x[28] 1 x[31] 1 x[30] 1 </args>
+      <args> x[30] 1 x[31] 1 x[29] 1 </args>
+      <args> x[31] 1 x[30] 1 x[29] 1 </args>
+      <args> x[31] 1 x[28] 1 x[29] 1 </args>
+      <args> x[29] 1 x[28] 1 x[30] 1 </args>
+      <args> x[32] 1 x[33] 1 x[34] 1 </args>
+      <args> x[32] 1 x[35] 1 x[34] 1 </args>
+      <args> x[34] 1 x[35] 1 x[33] 1 </args>
+      <args> x[35] 1 x[34] 1 x[33] 1 </args>
+      <args> x[35] 1 x[32] 1 x[33] 1 </args>
+      <args> x[33] 1 x[32] 1 x[34] 1 </args>
+      <args> x[36] 1 x[37] 1 x[38] 1 </args>
+      <args> x[36] 1 x[39] 1 x[38] 1 </args>
+      <args> x[38] 1 x[39] 1 x[37] 1 </args>
+      <args> x[39] 1 x[38] 1 x[37] 1 </args>
+      <args> x[39] 1 x[36] 1 x[37] 1 </args>
+      <args> x[37] 1 x[36] 1 x[38] 1 </args>
+      <args> x[40] 1 x[41] 1 x[42] 1 </args>
+      <args> x[40] 1 x[43] 1 x[42] 1 </args>
+      <args> x[42] 1 x[43] 1 x[41] 1 </args>
+      <args> x[43] 1 x[42] 1 x[41] 1 </args>
+      <args> x[43] 1 x[40] 1 x[41] 1 </args>
+      <args> x[41] 1 x[40] 1 x[42] 1 </args>
+      <args> x[44] 1 x[45] 1 x[46] 1 </args>
+      <args> x[44] 1 x[47] 1 x[46] 1 </args>
+      <args> x[46] 1 x[47] 1 x[45] 1 </args>
+      <args> x[47] 1 x[46] 1 x[45] 1 </args>
+      <args> x[47] 1 x[44] 1 x[45] 1 </args>
+      <args> x[45] 1 x[44] 1 x[46] 1 </args>
+      <args> x[48] 1 x[49] 1 x[50] 1 </args>
+      <args> x[48] 1 x[51] 1 x[50] 1 </args>
+      <args> x[50] 1 x[51] 1 x[49] 1 </args>
+      <args> x[51] 1 x[50] 1 x[49] 1 </args>
+      <args> x[51] 1 x[48] 1 x[49] 1 </args>
+      <args> x[49] 1 x[48] 1 x[50] 1 </args>
+      <args> x[52] 1 x[53] 1 x[54] 1 </args>
+      <args> x[52] 1 x[55] 1 x[54] 1 </args>
+      <args> x[54] 1 x[55] 1 x[53] 1 </args>
+      <args> x[55] 1 x[54] 1 x[53] 1 </args>
+      <args> x[55] 1 x[52] 1 x[53] 1 </args>
+      <args> x[53] 1 x[52] 1 x[54] 1 </args>
+      <args> x[56] 1 x[57] 1 x[58] 1 </args>
+      <args> x[56] 1 x[59] 1 x[58] 1 </args>
+      <args> x[58] 1 x[59] 1 x[57] 1 </args>
+      <args> x[59] 1 x[58] 1 x[57] 1 </args>
+      <args> x[59] 1 x[56] 1 x[57] 1 </args>
+      <args> x[57] 1 x[56] 1 x[58] 1 </args>
+      <args> x[60] 1 x[61] 1 x[62] 1 </args>
+      <args> x[60] 1 x[63] 1 x[62] 1 </args>
+      <args> x[62] 1 x[63] 1 x[61] 1 </args>
+      <args> x[63] 1 x[62] 1 x[61] 1 </args>
+      <args> x[63] 1 x[60] 1 x[61] 1 </args>
+      <args> x[61] 1 x[60] 1 x[62] 1 </args>
+      <args> x[64] 1 x[65] 1 x[66] 1 </args>
+      <args> x[64] 1 x[67] 1 x[66] 1 </args>
+      <args> x[66] 1 x[67] 1 x[65] 1 </args>
+      <args> x[67] 1 x[66] 1 x[65] 1 </args>
+      <args> x[67] 1 x[64] 1 x[65] 1 </args>
+      <args> x[65] 1 x[64] 1 x[66] 1 </args>
+      <args> x[68] 1 x[69] 1 x[70] 1 </args>
+      <args> x[68] 1 x[71] 1 x[70] 1 </args>
+      <args> x[70] 1 x[71] 1 x[69] 1 </args>
+      <args> x[71] 1 x[70] 1 x[69] 1 </args>
+      <args> x[71] 1 x[68] 1 x[69] 1 </args>
+      <args> x[69] 1 x[68] 1 x[70] 1 </args>
+      <args> x[72] 1 x[73] 1 x[74] 1 </args>
+      <args> x[72] 1 x[75] 1 x[74] 1 </args>
+      <args> x[74] 1 x[75] 1 x[73] 1 </args>
+      <args> x[75] 1 x[74] 1 x[73] 1 </args>
+      <args> x[75] 1 x[72] 1 x[73] 1 </args>
+      <args> x[73] 1 x[72] 1 x[74] 1 </args>
+      <args> x[76] 1 x[77] 1 x[78] 1 </args>
+      <args> x[76] 1 x[79] 1 x[78] 1 </args>
+      <args> x[78] 1 x[79] 1 x[77] 1 </args>
+      <args> x[79] 1 x[78] 1 x[77] 1 </args>
+      <args> x[79] 1 x[76] 1 x[77] 1 </args>
+      <args> x[77] 1 x[76] 1 x[78] 1 </args>
+    </group>
+    <group>
+      <intension> ge(%0,%1) </intension>
+      <args> y[0] y[1] </args>
+      <args> y[1] y[2] </args>
+      <args> y[2] y[3] </args>
+      <args> y[3] y[4] </args>
+    </group>
+    <group>
+      <intension> eq(%0,add(mul(%1,%2),add(mul(%3,%4),add(mul(%5,%6),add(mul(%7,%8),add(mul(%9,%10),%11)))))) </intension>
+      <args> 6 y[4] x[64] y[3] x[48] y[2] x[32] y[1] x[16] y[0] x[0] 0 </args>
+      <args> 7 y[4] x[66] y[3] x[50] y[2] x[34] y[1] x[18] y[0] x[2] 0 </args>
+      <args> 7 y[4] x[65] y[3] x[49] y[2] x[33] y[1] x[17] y[0] x[1] 0 </args>
+      <args> 7 y[4] x[67] y[3] x[51] y[2] x[35] y[1] x[19] y[0] x[3] 0 </args>
+      <args> 8 y[4] x[68] y[3] x[52] y[2] x[36] y[1] x[20] y[0] x[4] 0 </args>
+      <args> 10 y[4] x[70] y[3] x[54] y[2] x[38] y[1] x[22] y[0] x[6] 0 </args>
+      <args> 8 y[4] x[69] y[3] x[53] y[2] x[37] y[1] x[21] y[0] x[5] 0 </args>
+      <args> 6 y[4] x[71] y[3] x[55] y[2] x[39] y[1] x[23] y[0] x[7] 0 </args>
+      <args> 12 y[4] x[72] y[3] x[56] y[2] x[40] y[1] x[24] y[0] x[8] 0 </args>
+      <args> 9 y[4] x[74] y[3] x[58] y[2] x[42] y[1] x[26] y[0] x[10] 0 </args>
+      <args> 1 y[4] x[73] y[3] x[57] y[2] x[41] y[1] x[25] y[0] x[9] 0 </args>
+      <args> 5 y[4] x[75] y[3] x[59] y[2] x[43] y[1] x[27] y[0] x[11] 0 </args>
+      <args> 14 y[4] x[76] y[3] x[60] y[2] x[44] y[1] x[28] y[0] x[12] 0 </args>
+      <args> 7 y[4] x[78] y[3] x[62] y[2] x[46] y[1] x[30] y[0] x[14] 0 </args>
+      <args> 13 y[4] x[77] y[3] x[61] y[2] x[45] y[1] x[29] y[0] x[13] 0 </args>
+      <args> 5 y[4] x[79] y[3] x[63] y[2] x[47] y[1] x[31] y[0] x[15] 0 </args>
+    </group>
+    <intension> eq(v2,add(add(add(add(y[0],y[1]),y[2]),y[3]),y[4])) </intension>
+  </constraints>
+
+
+</instance>

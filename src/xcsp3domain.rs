@@ -43,7 +43,7 @@ pub mod xcsp3_core {
         IntegerInterval,
     }
 
-    pub trait XIntegerEntity  {
+    pub trait XIntegerEntity {
         fn width(&self) -> usize;
 
         fn minimum(&self) -> i32;
@@ -198,19 +198,22 @@ pub mod xcsp3_core {
 
     impl Clone for XDomainInteger {
         fn clone(&self) -> Self {
-            let  mut v = Vec::new();
-            for e in self.values.iter()
-            {
-                let ee = Box::clone(&e);
+            let mut v = Vec::new();
+            for e in self.values.iter() {
+                let ee: Box<dyn XIntegerEntity> = match e.get_type() {
+                    XIntegerType::IntegerValue => Box::new(XIntegerValue::new(e.deref().minimum())),
+                    XIntegerType::IntegerInterval => Box::new(XIntegerInterval::new(
+                        e.deref().minimum(),
+                        e.deref().minimum(),
+                    )),
+                };
                 v.push(ee);
             }
             XDomainInteger {
                 size: self.size,
                 top: self.top,
                 values: v,
-
             }
-
         }
     }
 
@@ -220,7 +223,6 @@ pub mod xcsp3_core {
         }
     }
 
-
     impl XDomainInteger {
         pub fn new() -> XDomainInteger {
             XDomainInteger {
@@ -229,8 +231,6 @@ pub mod xcsp3_core {
                 values: vec![],
             }
         }
-
-
 
         fn add_entity(&mut self, entity: Box<dyn XIntegerEntity>) {
             self.size += entity.width();

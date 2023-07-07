@@ -28,7 +28,7 @@ The library is automatically built and statically linked to your binary.
 ## Example
 
 ```rust,no_run
-  let xcsp3:XCSP_RA = XCSP2_Core:read("xcsp3-rust.xml");
+ 
     
 ```
 
