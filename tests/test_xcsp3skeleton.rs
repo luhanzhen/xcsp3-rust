@@ -81,17 +81,18 @@ mod test_xcsp3skeleton {
     #[test]
     fn test_skeleton() {
         // let xml_file = ".\\instances\\radi_X2.xml";
-        // let xml_file = ".\\instances\\AllInterval-009.xml";
+        let xml_file = ".\\instances\\AllInterval-009.xml";
         // let xml_file = ".\\instances\\Dubois-015.xml";
         // let xml_file = ".\\instances\\my-example.xml";
         // let xml_file = ".\\instances\\Allergy.xml";
         // let xml_file = ".\\instances\\Bibd-sc-22-033-12-08-04.xml";
-        let xml_file = ".\\instances\\Crossword-lex-h0502.xml";
+        // let xml_file = ".\\instances\\Crossword-lex-h0502.xml";
         // let xml_file = ".\\instances\\Sat-flat200-00-clause.xml";
         // let xml_file = ".\\instances\\TravellingSalesman-100-50-16.xml";
         // let xml_file = "D:\\XCSP3\\Mario\\Mario-zinc-s1\\Mario-t-hard-2.xml";
 
         let model = Instance::from_path(xml_file).unwrap();
+        model.build_constraints();
         // let xml = fs::read_to_string(&xml_file).unwrap();
         // // println!("{}", xml);
         //
