@@ -47,6 +47,46 @@ pub mod xcsp3_core {
         }
     }
 
+    // pub fn parser_domain(domain: &String) -> XDomainInteger
+    // {
+    //     let mut ret:XDomainInteger = XDomainInteger::new();
+    //     let domains :Vec<&str>= domain.split_whitespace().collect();
+    //
+    //     for d in domains.iter()
+    //     {
+    //         if d.find("..").is_some()
+    //         {
+    //             let interval: Vec<&str> = d.split("..").collect();
+    //             if interval.len() == 2 {
+    //                 let left = i32::from_str(interval[0]);
+    //                 let right = i32::from_str(interval[1]);
+    //                 match left {
+    //                     Ok(l) => {
+    //                         match right {
+    //                             Ok(r) => {
+    //                                 ret.add_interval(l,r);
+    //                             }
+    //                             Err(_) => {}
+    //                         }
+    //                     }
+    //                     Err(_) => {}
+    //                 }
+    //             }
+    //
+    //
+    //         }else {
+    //              match  i32::from_str(d){
+    //                 Ok(v) => {
+    //                     ret.add_value(v)
+    //                 }
+    //                 Err(_) => { }
+    //             } ;
+    //         }
+    //     }
+    //
+    //     ret
+    // }
+
     pub fn split(s: &str, delim: &char) -> Vec<String> {
         let mut elems: Vec<String> = vec![];
         split_with_elems(s, delim, &mut elems);

@@ -37,6 +37,7 @@
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {
+    use std::str::FromStr;
 
     #[derive(Copy, Clone)]
     pub enum XIntegerType {
@@ -58,6 +59,12 @@ pub mod xcsp3_core {
             };
         }
 
+        pub fn to_string(&self) -> String {
+            match self {
+                XIntegerType::IntegerValue(iv) => iv.to_string(),
+                XIntegerType::IntegerInterval(ii) => ii.to_string(),
+            }
+        }
         pub fn maximum(&self) -> i32 {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
@@ -183,6 +190,36 @@ pub mod xcsp3_core {
                 values: vec![],
             }
         }
+        pub fn from_string(domain: &String) -> XDomainInteger {
+            let mut ret: XDomainInteger = XDomainInteger::new();
+            let domains: Vec<&str> = domain.split_whitespace().collect();
+
+            for d in domains.iter() {
+                if d.find("..").is_some() {
+                    let interval: Vec<&str> = d.split("..").collect();
+                    if interval.len() == 2 {
+                        let left = i32::from_str(interval[0]);
+                        let right = i32::from_str(interval[1]);
+                        match left {
+                            Ok(l) => match right {
+                                Ok(r) => {
+                                    ret.add_interval(l, r);
+                                }
+                                Err(_) => {}
+                            },
+                            Err(_) => {}
+                        }
+                    }
+                } else {
+                    match i32::from_str(d) {
+                        Ok(v) => ret.add_value(v),
+                        Err(_) => {}
+                    };
+                }
+            }
+
+            ret
+        }
 
         fn add_entity(&mut self, entity: XIntegerType) {
             match entity {
@@ -246,6 +283,14 @@ pub mod xcsp3_core {
 
         pub fn is_interval(&self) -> bool {
             self.size == (self.maximum() - self.minimum() + 1) as usize
+        }
+
+        pub fn to_string(&self) -> String {
+            let mut s = String::new();
+            for e in self.values.iter() {
+                s = format!("{} {}", s, e.to_string());
+            }
+            s
         }
     }
 }

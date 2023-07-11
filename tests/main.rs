@@ -21,7 +21,7 @@ use xcsp3_rust::xcsp3skeleton::xcsp3_core::Instance;
  **/
 
 fn main() {
-    let xml_file = ".\\instances\\my-example.xml";
+    let xml_file = ".//instances//my-example.xml";
     let model = Instance::from_path(xml_file).unwrap();
     model.build_variables();
     // model.build_constraints();

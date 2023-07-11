@@ -38,6 +38,8 @@
 #[allow(dead_code)]
 pub mod xcsp3_core {
 
+    use crate::xcsp3domain::xcsp3_core::XDomainInteger;
+    use crate::xcsp3variable::xcsp3_core::XVariableType;
     use quick_xml::de::from_str;
     use quick_xml::DeError;
     use serde::Deserialize;
@@ -57,15 +59,15 @@ pub mod xcsp3_core {
         #[serde(rename = "@id")]
         pub id: String,
         #[serde(rename = "@type", default)]
-        pub type_: Option<String>,
+        pub type_: String,
         #[serde(rename = "@startIndex", default)]
-        pub start_index: Option<String>,
+        pub start_index: String,
         #[serde(rename = "@note", default)]
-        pub note: Option<String>,
+        pub note: String,
         #[serde(rename = "@size", default)]
         pub size: String,
         #[serde(rename = "$value", default)]
-        pub value: Option<String>,
+        pub value: String,
         #[serde(rename = "domain", default)]
         pub domains: Vec<VariableDomain>,
     }
@@ -423,49 +425,70 @@ pub mod xcsp3_core {
         COP,
     }
 
+    /// the instance of XCSP3
     #[derive(Deserialize, Debug)]
     pub struct Instance {
         #[serde(rename = "@format")]
-        pub format: String,
+        format: String,
 
         #[serde(rename = "@type")]
-        pub r#type: InstanceType,
+        r#type: InstanceType,
 
-        pub variables: Option<Variable>,
+        variables: Option<Variable>,
 
-        pub constraints: Constraint,
+        constraints: Constraint,
 
-        pub objectives: Option<Objective>,
+        objectives: Option<Objective>,
     }
 
     impl Instance {
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<Instance, DeError> {
-            let now = Instant::now();
+            // let now = Instant::now();
             if !path.ends_with(".xml") {
                 return Err(DeError::UnexpectedEof);
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            println!(
-                "read the instance named {} by {}ms",
-                path,
-                now.elapsed().as_millis()
-            );
+            // println!(
+            //     "read the instance named {} by {}ms",
+            //     path,
+            //     now.elapsed().as_millis()
+            // );
             r
         }
+
+        /// get the format of the instance: "XCSP3"
+        pub fn get_format(&self) -> String {
+            self.format.clone()
+        }
+
+        /// get the type of the instance:  COP or CSP
         pub fn get_instance_type(&self) -> &InstanceType {
             &self.r#type
         }
 
         pub fn build_variables(&self) {
+            let mut variables: Vec<XVariableType> = vec![];
+
             for var_type in self.variables.as_ref().unwrap().variables.iter() {
                 match var_type {
-                    VariableType::Var(var) => {
-                        println!("var {:?}", var)
+                    VariableType::Var(var_string) => {
+                        let domain = XDomainInteger::from_string(&var_string.value);
+
+                        let var = XVariableType::new_int(var_string.id.clone(), domain);
+
+                        println!("var {:?}", var.to_string());
+
+                        variables.push(var);
                     }
-                    VariableType::Array(var_array) => {
-                        println!("var_array {:?}", var_array)
+                    VariableType::Array(var_array_str) => {
+                        // println!("var_array {:?}", var_array)
+                        if var_array_str.domains.is_empty() {
+                            let domain = XDomainInteger::from_string(&var_array_str.value);
+                            println!("var_array : {}", domain.to_string())
+                        } else {
+                        }
                     }
                 }
             }

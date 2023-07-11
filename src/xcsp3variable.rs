@@ -37,37 +37,64 @@
  **/
 #[allow(dead_code)]
 pub mod xcsp3_core {
-
     use crate::xcsp3domain::xcsp3_core::*;
 
     #[derive(Clone)]
     pub enum XVariableType {
-        XVariableArray(XVariableInt),
-        XVariableInt(XVariableArray),
+        XVariableArray(XVariableArray),
+        XVariableInt(XVariableInt),
+    }
+
+    impl XVariableType {
+        pub fn new_int(id: String, domain: XDomainInteger) -> XVariableType {
+            XVariableType::XVariableInt(XVariableInt::new(id, domain))
+        }
+
+        // pub fn new_array()->XVariableType {
+        //     XVariableType::XVariableArray(XVariableArray::new)
+        // }
+
+        pub fn to_string(&self) -> String {
+            match self {
+                XVariableType::XVariableArray(_) => String::default(),
+                XVariableType::XVariableInt(i) => i.to_string(),
+            }
+        }
     }
 
     #[derive(Clone)]
     pub struct XVariableInt {
         classes: String,
-        domain: Vec<XDomainInteger>,
+        domain: XDomainInteger,
         id: String,
+    }
+
+    impl XVariableInt {
+        pub fn new(id: String, domain: XDomainInteger) -> XVariableInt {
+            XVariableInt {
+                id,
+                domain,
+                classes: String::default(),
+            }
+        }
+        pub fn to_string(&self) -> String {
+            format!("{}[{}]: {}", self.id, self.classes, self.domain.to_string())
+        }
     }
 
     #[derive(Clone)]
     pub struct XVariableArray {
         classes: String,
         variables: Vec<XVariableType>,
-        sizes: Vec<i32>,
         id: String,
     }
 
     impl XVariableArray {
-        pub fn from_sizes(lid: String, szs: &Vec<i32>) -> Self {
+        pub fn from_sizes(id: String, domain: XDomainInteger) -> Self {
             XVariableArray {
-                id: lid,
+                id,
                 classes: String::default(),
                 variables: vec![],
-                sizes: szs.clone(),
             }
         }
     }
