@@ -461,8 +461,12 @@ pub mod xcsp3_core {
         pub fn build_variables(&self) {
             for var_type in self.variables.as_ref().unwrap().variables.iter() {
                 match var_type {
-                    VariableType::Var(var) => {}
-                    VariableType::Array(var_array) => {}
+                    VariableType::Var(var) => {
+                        println!("var {:?}", var)
+                    }
+                    VariableType::Array(var_array) => {
+                        println!("var_array {:?}", var_array)
+                    }
                 }
             }
         }

@@ -35,13 +35,42 @@
  * <p>@this_file_name:xcsp3domain
  * </p>
  */
-
 #[allow(dead_code)]
 pub mod xcsp3_core {
-    use std::ops::Deref;
+
+    #[derive(Copy, Clone)]
     pub enum XIntegerType {
-        IntegerValue,
-        IntegerInterval,
+        IntegerValue(XIntegerValue),
+        IntegerInterval(XIntegerInterval),
+    }
+
+    impl XIntegerType {
+        pub fn equals(&self, arg: &XIntegerType) -> bool {
+            return match self {
+                XIntegerType::IntegerValue(iv) => match arg {
+                    XIntegerType::IntegerValue(iiv) => iv.equals(iiv),
+                    XIntegerType::IntegerInterval(_) => false,
+                },
+                XIntegerType::IntegerInterval(ii) => match arg {
+                    XIntegerType::IntegerValue(_) => false,
+                    XIntegerType::IntegerInterval(iii) => ii.equals(iii),
+                },
+            };
+        }
+
+        pub fn maximum(&self) -> i32 {
+            match self {
+                XIntegerType::IntegerValue(iv) => iv.maximum(),
+                XIntegerType::IntegerInterval(ii) => ii.maximum(),
+            }
+        }
+
+        pub fn minimum(&self) -> i32 {
+            match self {
+                XIntegerType::IntegerValue(iv) => iv.minimum(),
+                XIntegerType::IntegerInterval(ii) => ii.minimum(),
+            }
+        }
     }
 
     pub trait XIntegerEntity {
@@ -55,40 +84,19 @@ pub mod xcsp3_core {
 
         fn to_string(&self) -> String;
 
-        fn drop(&self) {}
-
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool;
-
-        fn get_type(&self) -> &XIntegerType;
-        // return self.width() == arg.width();
     }
 
+    #[derive(Copy, Clone)]
     pub struct XIntegerValue {
         value: i32,
-        integer_type: XIntegerType,
     }
 
-    impl XIntegerValue {
-        pub fn new(v: i32) -> XIntegerValue {
-            XIntegerValue {
-                value: v,
-                integer_type: XIntegerType::IntegerValue,
-            }
+    impl From<i32> for XIntegerValue {
+        fn from(value: i32) -> Self {
+            XIntegerValue { value }
         }
-
-        // fn equals(&self, arg: &XIntegerValue) -> bool {
-        //     return self.value == arg.value;
-        // }
     }
-
-    // impl Clone for XIntegerValue {
-    //     fn clone(&self) -> Self {
-    //         XIntegerValue {
-    //             value: self.value,
-    //             integer_type: XIntegerType::IntegerValue,
-    //         }
-    //     }
-    // }
 
     impl XIntegerEntity for XIntegerValue {
         fn width(&self) -> usize {
@@ -111,52 +119,22 @@ pub mod xcsp3_core {
             self.value.to_string()
         }
 
-        fn drop(&self) {
-            // drop(self.value);
-        }
-
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
             self.value == arg.minimum()
         }
-
-        fn get_type(&self) -> &XIntegerType {
-            &self.integer_type
-        }
-
-        // fn clone(&self) -> Self {
-        //     XIntegerValue { value: self.value }
-        // }
     }
 
+    #[derive(Copy, Clone)]
     pub struct XIntegerInterval {
         max: i32,
         min: i32,
-        integer_type: XIntegerType,
     }
 
     impl XIntegerInterval {
         pub fn new(min: i32, max: i32) -> XIntegerInterval {
-            XIntegerInterval {
-                max,
-                min,
-                integer_type: XIntegerType::IntegerValue,
-            }
+            XIntegerInterval { max, min }
         }
-
-        // fn equals(&self, arg: &XIntegerInterval) -> bool {
-        //     return self.min == arg.min && self.max == arg.max;
-        // }
     }
-
-    // impl Clone for XIntegerInterval {
-    //     fn clone(&self) -> Self {
-    //         XIntegerInterval {
-    //             max:self.max,
-    //             min:self.min,
-    //             integer_type: XIntegerType::IntegerValue,
-    //         }
-    //     }
-    // }
 
     impl XIntegerEntity for XIntegerInterval {
         fn width(&self) -> usize {
@@ -172,50 +150,23 @@ pub mod xcsp3_core {
         }
 
         fn print(&self) {
-            print!("{}..{}", self.min, self.max);
+            print!("{}", self.to_string());
         }
 
         fn to_string(&self) -> String {
             format!("{}..{}", self.minimum(), self.maximum())
         }
 
-        fn drop(&self) {}
-
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
             self.min == arg.minimum() && self.max == arg.maximum()
         }
-
-        fn get_type(&self) -> &XIntegerType {
-            &self.integer_type
-        }
     }
 
-    // #[derive(Clone, Debug)]
+    #[derive(Clone)]
     pub struct XDomainInteger {
         size: usize,
         top: i32,
-        values: Vec<Box<dyn XIntegerEntity>>,
-    }
-
-    impl Clone for XDomainInteger {
-        fn clone(&self) -> Self {
-            let mut v = Vec::new();
-            for e in self.values.iter() {
-                let ee: Box<dyn XIntegerEntity> = match e.get_type() {
-                    XIntegerType::IntegerValue => Box::new(XIntegerValue::new(e.deref().minimum())),
-                    XIntegerType::IntegerInterval => Box::new(XIntegerInterval::new(
-                        e.deref().minimum(),
-                        e.deref().minimum(),
-                    )),
-                };
-                v.push(ee);
-            }
-            XDomainInteger {
-                size: self.size,
-                top: self.top,
-                values: v,
-            }
-        }
+        values: Vec<XIntegerType>,
     }
 
     impl Default for XDomainInteger {
@@ -233,8 +184,16 @@ pub mod xcsp3_core {
             }
         }
 
-        fn add_entity(&mut self, entity: Box<dyn XIntegerEntity>) {
-            self.size += entity.width();
+        fn add_entity(&mut self, entity: XIntegerType) {
+            match entity {
+                XIntegerType::IntegerValue(iv) => {
+                    self.size += iv.width();
+                }
+                XIntegerType::IntegerInterval(ii) => {
+                    self.size += ii.width();
+                }
+            }
+
             self.values.push(entity);
         }
 
@@ -246,7 +205,7 @@ pub mod xcsp3_core {
                 return false;
             }
             for (i, e) in arg.values.iter().enumerate() {
-                if !self.values[i].equals(e.deref()) {
+                if !self.values[i].equals(e) {
                     return false;
                 }
             }
@@ -255,7 +214,7 @@ pub mod xcsp3_core {
 
         pub fn add_value(&mut self, value: i32) {
             if value > self.top {
-                let b = Box::new(XIntegerValue::new(value));
+                let b = XIntegerType::IntegerValue(XIntegerValue::from(value));
                 self.add_entity(b);
                 self.top = value;
             } else {
@@ -265,7 +224,7 @@ pub mod xcsp3_core {
 
         pub fn add_interval(&mut self, min: i32, max: i32) {
             if min > self.top && min <= max {
-                let b = Box::new(XIntegerInterval::new(min, max));
+                let b = XIntegerType::IntegerInterval(XIntegerInterval::new(min, max));
                 self.add_entity(b);
                 self.top = max;
             } else {
