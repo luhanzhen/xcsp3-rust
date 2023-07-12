@@ -37,7 +37,6 @@
  **/
 #[allow(dead_code)]
 pub mod xcsp3_core {
-
     use crate::xcsp3domain::xcsp3_core::XDomainInteger;
     use crate::xcsp3variable::xcsp3_core::XVariableType;
     use quick_xml::de::from_str;
@@ -419,6 +418,7 @@ pub mod xcsp3_core {
         #[serde(rename = "maximize", default)]
         pub maximize: Vec<MaximizeMinimize>,
     }
+
     #[derive(Deserialize, Debug)]
     pub enum InstanceType {
         CSP,
@@ -444,17 +444,17 @@ pub mod xcsp3_core {
     impl Instance {
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<Instance, DeError> {
-            // let now = Instant::now();
+            let now = Instant::now();
             if !path.ends_with(".xml") {
                 return Err(DeError::UnexpectedEof);
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            // println!(
-            //     "read the instance named {} by {}ms",
-            //     path,
-            //     now.elapsed().as_millis()
-            // );
+            println!(
+                "read the instance named {} by {}ms",
+                path,
+                now.elapsed().as_millis()
+            );
             r
         }
 
@@ -468,26 +468,42 @@ pub mod xcsp3_core {
             &self.r#type
         }
 
+        /// build the variables
         pub fn build_variables(&self) {
             let mut variables: Vec<XVariableType> = vec![];
 
             for var_type in self.variables.as_ref().unwrap().variables.iter() {
                 match var_type {
                     VariableType::Var(var_string) => {
-                        let domain = XDomainInteger::from_string(&var_string.value);
+                        let ret = XDomainInteger::from_string(&var_string.value);
+                        if let Ok(domain) = ret {
+                            let var = XVariableType::new_int(var_string.id.clone(), domain);
 
-                        let var = XVariableType::new_int(var_string.id.clone(), domain);
+                            println!("var {:?}", var.to_string());
 
-                        println!("var {:?}", var.to_string());
-
-                        variables.push(var);
+                            variables.push(var);
+                        } else if let Err(e) = ret {
+                            eprintln!("[{:?}] {}", &var_string, e.to_string());
+                        }
                     }
                     VariableType::Array(var_array_str) => {
                         // println!("var_array {:?}", var_array)
                         if var_array_str.domains.is_empty() {
-                            let domain = XDomainInteger::from_string(&var_array_str.value);
-                            println!("var_array : {}", domain.to_string())
+                            let ret = XDomainInteger::from_string(&var_array_str.value);
+                            if let Ok(domain) = ret {
+                                println!("var_array : {}", domain.to_string())
+                            } else if let Err(e) = ret {
+                                eprintln!("[{:?}] {}", var_array_str, e.to_string());
+                            }
                         } else {
+                            for dom in var_array_str.domains.iter() {
+                                let ret = XDomainInteger::from_string(&dom.value);
+                                if let Ok(domain) = ret {
+                                    println!("var_array domain: {}", domain.to_string())
+                                } else if let Err(e) = ret {
+                                    eprintln!("[{:?}] {}", &var_array_str, e.to_string());
+                                }
+                            }
                         }
                     }
                 }
@@ -501,9 +517,9 @@ pub mod xcsp3_core {
                     ConstraintType::Block(_) => {}
                     ConstraintType::AllDifferent {
                         vars,
-                        list,
-                        except,
-                        matrix,
+                        list: _,
+                        except: _,
+                        matrix: _,
                     } => {
                         println!("{}", vars)
                     }

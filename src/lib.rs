@@ -39,6 +39,7 @@
 pub mod xcsp3constants;
 pub mod xcsp3constraint;
 pub mod xcsp3domain;
+pub mod xcsp3error;
 pub mod xcsp3skeleton;
 pub mod xcsp3tree;
 pub mod xcsp3treenode;

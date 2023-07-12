@@ -90,7 +90,7 @@ pub mod xcsp3_core {
     }
 
     impl XVariableArray {
-        pub fn from_sizes(id: String, domain: XDomainInteger) -> Self {
+        pub fn from_sizes(id: String, _domain: XDomainInteger) -> Self {
             XVariableArray {
                 id,
                 classes: String::default(),

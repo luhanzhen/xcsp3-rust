@@ -1,8 +1,8 @@
-use std::fs;
-use std::time::Instant;
+// use std::fs;
+// use std::time::Instant;
 
-use quick_xml::de::from_str;
-use walkdir::WalkDir;
+// use quick_xml::de::from_str;
+// use walkdir::WalkDir;
 use xcsp3_rust::xcsp3skeleton::xcsp3_core::Instance;
 
 /**

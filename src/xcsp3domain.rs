@@ -37,10 +37,12 @@
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {
+    use crate::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
     #[derive(Copy, Clone)]
     pub enum XIntegerType {
+        Empty,
         IntegerValue(XIntegerValue),
         IntegerInterval(XIntegerInterval),
     }
@@ -51,11 +53,14 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => match arg {
                     XIntegerType::IntegerValue(iiv) => iv.equals(iiv),
                     XIntegerType::IntegerInterval(_) => false,
+                    _ => false,
                 },
                 XIntegerType::IntegerInterval(ii) => match arg {
                     XIntegerType::IntegerValue(_) => false,
                     XIntegerType::IntegerInterval(iii) => ii.equals(iii),
+                    _ => false,
                 },
+                _ => false,
             };
         }
 
@@ -63,12 +68,15 @@ pub mod xcsp3_core {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.to_string(),
                 XIntegerType::IntegerInterval(ii) => ii.to_string(),
+                _ => "empty".to_string(),
             }
         }
         pub fn maximum(&self) -> i32 {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
                 XIntegerType::IntegerInterval(ii) => ii.maximum(),
+                _ => 2_147_483_647i32,
+                //i32::MAX, my ide named clion tell me i32::MAX is private constant, but rustc can compile it...
             }
         }
 
@@ -76,6 +84,7 @@ pub mod xcsp3_core {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.minimum(),
                 XIntegerType::IntegerInterval(ii) => ii.minimum(),
+                _ => -2_147_483_648i32, //i32::MIN,
             }
         }
     }
@@ -190,7 +199,7 @@ pub mod xcsp3_core {
                 values: vec![],
             }
         }
-        pub fn from_string(domain: &String) -> XDomainInteger {
+        pub fn from_string(domain: &String) -> Result<XDomainInteger, Xcsp3Error> {
             let mut ret: XDomainInteger = XDomainInteger::new();
             let domains: Vec<&str> = domain.split_whitespace().collect();
 
@@ -205,20 +214,26 @@ pub mod xcsp3_core {
                                 Ok(r) => {
                                     ret.add_interval(l, r);
                                 }
-                                Err(_) => {}
+                                Err(_) => {
+                                    return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visithttp://xcsp.org/specifications/variables/arrays/"));
+                                }
                             },
-                            Err(_) => {}
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visit http://xcsp.org/specifications/variables/arrays/"));
+                            }
                         }
                     }
                 } else {
                     match i32::from_str(d) {
                         Ok(v) => ret.add_value(v),
-                        Err(_) => {}
+                        Err(_) => {
+                            return Err(Xcsp3Error::get_domain_integer_error("parse the domain error, please visit http://xcsp.org/specifications/variables/integer/"));
+                        }
                     };
                 }
             }
 
-            ret
+            Ok(ret)
         }
 
         fn add_entity(&mut self, entity: XIntegerType) {
@@ -229,6 +244,7 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerInterval(ii) => {
                     self.size += ii.width();
                 }
+                _ => {}
             }
 
             self.values.push(entity);

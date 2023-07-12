@@ -102,31 +102,31 @@ mod test_xcsp3skeleton {
         //     Err(err) => panic!("{}", err),
         // };
         // println!("{:?}\n", model);
-        for v in model.variables.unwrap().variables.iter() {
-            println!("{:?}\n", v);
-        }
-        for e in model.constraints.constraints.iter() {
-            println!("{:?}\n", e);
-            // match e
-            // {
-            //     ConstraintType::Group(_) => {}
-            //     ConstraintType::Block(_) => {}
-            //     ConstraintType::AllDifferent { .. } => {}
-            //     ConstraintType::AllEqual { .. } => {}
-            //     ConstraintType::Ordered { .. } => {}
-            //     ConstraintType::Intension { .. } => {}
-            //     ConstraintType::Extension { .. } => {}
-            //     ConstraintType::Regular { .. } => {}
-            //     ConstraintType::Mdd { .. } => {}
-            //     ConstraintType::Sum { .. } => {}
-            //     ConstraintType::Count { .. } => {}
-            //     ConstraintType::NValues { .. } => {}
-            //     ConstraintType::Cardinality { .. } => {}
-            //     ConstraintType::Minimum { .. } => {}
-            //     ConstraintType::Maximum { .. } => {}
-            //     ConstraintType::Element { .. } => {}
-            // }
-        }
+        // for v in model.variables.unwrap().variables.iter() {
+        //     println!("{:?}\n", v);
+        // }
+        // for e in model.constraints.constraints.iter() {
+        //     println!("{:?}\n", e);
+        // match e
+        // {
+        //     ConstraintType::Group(_) => {}
+        //     ConstraintType::Block(_) => {}
+        //     ConstraintType::AllDifferent { .. } => {}
+        //     ConstraintType::AllEqual { .. } => {}
+        //     ConstraintType::Ordered { .. } => {}
+        //     ConstraintType::Intension { .. } => {}
+        //     ConstraintType::Extension { .. } => {}
+        //     ConstraintType::Regular { .. } => {}
+        //     ConstraintType::Mdd { .. } => {}
+        //     ConstraintType::Sum { .. } => {}
+        //     ConstraintType::Count { .. } => {}
+        //     ConstraintType::NValues { .. } => {}
+        //     ConstraintType::Cardinality { .. } => {}
+        //     ConstraintType::Minimum { .. } => {}
+        //     ConstraintType::Maximum { .. } => {}
+        //     ConstraintType::Element { .. } => {}
+        // }
+        // }
         // assert_eq!(42, 42);
     }
 }
