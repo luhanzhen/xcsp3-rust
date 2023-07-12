@@ -35,12 +35,62 @@
  * <p>@this_file_name:XCSP3Variable
  * </p>
  **/
-#[allow(dead_code)]
+// #[allow(dead_code)]
 pub mod xcsp3_core {
     use crate::xcsp3domain::xcsp3_core::*;
+    use crate::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::collections::HashMap;
+    use std::str::FromStr;
+
+    pub struct XVariableSet {
+        variables: Vec<XVariableType>,
+        id_to_index: HashMap<String, usize>, //store the id and the index of the variable
+    }
+
+    impl XVariableSet {
+        pub fn to_string(&self) -> String {
+            let mut ret = String::from("XVariableSet: \n");
+            for e in self.variables.iter() {
+                ret = format!("{} \t{}\n", ret, e.to_string());
+            }
+            ret
+        }
+        pub fn new() -> XVariableSet {
+            XVariableSet {
+                variables: vec![],
+                id_to_index: HashMap::default(),
+            }
+        }
+
+        pub fn add_variable(&mut self, var: XVariableType) {
+            if let XVariableType::XVariableInt(_) = &var {
+                self.id_to_index.insert(var.get_id(), self.variables.len());
+                self.variables.push(var);
+            }
+        }
+
+        pub fn add_variable_array(&mut self, var: XVariableType) {
+            if let XVariableType::XVariableArray(_) = &var {
+                self.id_to_index.insert(var.get_id(), self.variables.len());
+                self.variables.push(var);
+            }
+        }
+
+        pub fn find_variable_int(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
+            match self.id_to_index.get(id) {
+                None => {
+                    Err(Xcsp3Error::get_variable_not_found_error("not find the variable, please visit http://xcsp.org/specifications/variables/integer/"))
+                }
+                Some(v) => {
+                    Ok(&self.variables[*v])
+                }
+            }
+        }
+    }
 
     #[derive(Clone)]
     pub enum XVariableType {
+        None,
         XVariableArray(XVariableArray),
         XVariableInt(XVariableInt),
     }
@@ -50,52 +100,141 @@ pub mod xcsp3_core {
             XVariableType::XVariableInt(XVariableInt::new(id, domain))
         }
 
-        // pub fn new_array()->XVariableType {
-        //     XVariableType::XVariableArray(XVariableArray::new)
-        // }
+        pub fn new_array(id: &str, sizes: &str, domain: XDomainInteger) -> XVariableType {
+            if let Some(e) = XVariableArray::from_sizes_one_domain(id, sizes, domain) {
+                XVariableType::XVariableArray(e)
+            } else {
+                XVariableType::None
+            }
+        }
 
+        pub fn get_id(&self) -> String {
+            match self {
+                XVariableType::XVariableArray(v) => v.id.clone(),
+                XVariableType::XVariableInt(v) => v.id.clone(),
+                _ => String::default(),
+            }
+        }
         pub fn to_string(&self) -> String {
             match self {
-                XVariableType::XVariableArray(_) => String::default(),
+                XVariableType::XVariableArray(a) => a.to_string(),
                 XVariableType::XVariableInt(i) => i.to_string(),
+                _ => String::default(),
             }
         }
     }
 
     #[derive(Clone)]
     pub struct XVariableInt {
-        classes: String,
         domain: XDomainInteger,
         id: String,
     }
 
     impl XVariableInt {
         pub fn new(id: String, domain: XDomainInteger) -> XVariableInt {
-            XVariableInt {
-                id,
-                domain,
-                classes: String::default(),
-            }
+            XVariableInt { id, domain }
         }
+
         pub fn to_string(&self) -> String {
-            format!("{}[{}]: {}", self.id, self.classes, self.domain.to_string())
+            format!("XVariableInt[{}]: {}", self.id, self.domain.to_string())
+        }
+
+        pub fn clone_domain(&self) -> XDomainInteger {
+            self.domain.clone()
         }
     }
 
     #[derive(Clone)]
     pub struct XVariableArray {
-        classes: String,
         variables: Vec<XVariableType>,
         id: String,
+        id_to_index: HashMap<String, usize>, //store the id and the index of the variable
+    }
+
+    /// transform the string size to vector sizes
+    /// eg:  [2][3][4] -> ([2,3,4], 24)
+    fn sizes_to_vec(sizes: &str) -> Result<(Vec<usize>, usize), Xcsp3Error> {
+        let mut ret: Vec<usize> = vec![];
+        let mut sz: usize = 1;
+        // sizes.find()
+        let sizes = sizes.replace("[", " ");
+        let sizes = sizes.replace("]", " ");
+
+        let nums: Vec<&str> = sizes.split_whitespace().collect();
+        for n in nums.iter() {
+            match usize::from_str(n) {
+                Ok(v) => {
+                    ret.push(v);
+                    sz *= v;
+                }
+                Err(_) => {
+                    return Err(Xcsp3Error::get_variable_size_invalid_error("parse the size of variable error, please visit http://xcsp.org/specifications/variables/integer/"));
+                }
+            };
+        }
+
+        Ok((ret, sz))
     }
 
     impl XVariableArray {
-        pub fn from_sizes(id: String, _domain: XDomainInteger) -> Self {
-            XVariableArray {
-                id,
-                classes: String::default(),
-                variables: vec![],
+        pub fn find_variable(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
+            match self.id_to_index.get(id) {
+                None => {
+                    Err(Xcsp3Error::get_variable_not_found_error("not find the variable, please visit http://xcsp.org/specifications/variables/integer/"))
+                }
+                Some(v) => {
+                    Ok(&self.variables[*v])
+                }
             }
+        }
+
+        pub fn from_sizes_one_domain(
+            id: &str,
+            sizes: &str,
+            domain: XDomainInteger,
+        ) -> Option<Self> {
+            if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
+                let mut vars: Vec<XVariableType> = vec![];
+                let mut index_usize: HashMap<String, usize> = HashMap::new();
+                let mut dim: Vec<usize> = vec![];
+                let mut remain = size;
+                for e in size_vec.iter() {
+                    remain /= e;
+                    dim.push(remain);
+                }
+                // println!("dim : {:?}", dim);
+                for i in 0..size {
+                    let mut iid = String::from(id);
+                    let mut remain = i;
+
+                    for d in dim.iter() {
+                        iid.push_str(format!("[{}]", remain / d).as_str());
+                        remain %= d;
+                    }
+                    index_usize.insert(iid.clone(), i);
+                    vars.push(XVariableType::XVariableInt(XVariableInt::new(
+                        iid,
+                        domain.clone(),
+                    )));
+                    // print!("  iid : {:?}", iid);
+                }
+                Some(XVariableArray {
+                    id: id.to_string(),
+                    variables: vars,
+                    id_to_index: index_usize,
+                })
+            } else {
+                None
+            }
+        }
+
+        pub fn to_string(&self) -> String {
+            let mut ret = format!("XVariableArray[{}]: [", self.id);
+            for e in self.variables.iter() {
+                ret.push_str(format!(" \t{}", e.to_string()).as_str());
+            }
+            ret = format!("{}]", ret);
+            ret
         }
     }
 }

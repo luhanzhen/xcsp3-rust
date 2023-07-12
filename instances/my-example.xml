@@ -1,17 +1,19 @@
 <instance format="XCSP3" type="CSP">
     <variables>
-        <array id="x" size="[45]">0 2</array>
-        <array id="x" note="x[i] is the ith value of the series" size="[9]">0..8</array>
+        <array id="x" size="[5][3][8]">0 2</array>
+        <array id="zz" size="[2][3][4]">0 2</array>
+        <array id="y" note="x[i] is the ith value of the series" size="[9]">0..8</array>
         <var id="v2">0..70</var>
         <var id="foo">0 1 2 3 4 5 6</var>
-
-        <array id="x" size="[3][5]">
-            <domain for="x[0][]">1..10</domain>
-            <domain for="x[1][]">1..20</domain>
-            <domain for="x[2][]">1..15</domain>
+        <var id="v1"> 2 5 8 9 12 15 22 25 30 50 </var>
+        <var id="v44" as="v1" />
+        <array id="f" size="[3][5]">
+            <domain for="f[0][]">1..10</domain>
+            <domain for="f[1][]">1..20</domain>
+            <domain for="f[2][]">1..15</domain>
         </array>
-        <array id="y" size="[10]">
-            <domain for="y[4]">0 1</domain>
+        <array id="a" size="[10]">
+            <domain for="a[4]">0 1</domain>
             <domain for="others">2 4 6</domain>
         </array>
         <array id="z" size="[5][5][5]">

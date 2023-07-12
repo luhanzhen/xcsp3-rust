@@ -215,7 +215,7 @@ pub mod xcsp3_core {
                                     ret.add_interval(l, r);
                                 }
                                 Err(_) => {
-                                    return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visithttp://xcsp.org/specifications/variables/arrays/"));
+                                    return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visit http://xcsp.org/specifications/variables/arrays/"));
                                 }
                             },
                             Err(_) => {
