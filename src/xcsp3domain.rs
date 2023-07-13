@@ -214,11 +214,15 @@ pub mod xcsp3_core {
                                     ret.add_interval(l, r);
                                 }
                                 Err(_) => {
-                                    return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visit http://xcsp.org/specifications/variables/arrays/"));
+                                    return Err(Xcsp3Error::get_domain_interval_error(
+                                        "parse the domain error",
+                                    ));
                                 }
                             },
                             Err(_) => {
-                                return Err(Xcsp3Error::get_domain_interval_error("parse the domain error, please visit http://xcsp.org/specifications/variables/arrays/"));
+                                return Err(Xcsp3Error::get_domain_interval_error(
+                                    "parse the domain error",
+                                ));
                             }
                         }
                     }
@@ -226,7 +230,9 @@ pub mod xcsp3_core {
                     match i32::from_str(d) {
                         Ok(v) => ret.add_value(v),
                         Err(_) => {
-                            return Err(Xcsp3Error::get_domain_integer_error("parse the domain error, please visit http://xcsp.org/specifications/variables/integer/"));
+                            return Err(Xcsp3Error::get_domain_integer_error(
+                                "parse the domain error",
+                            ));
                         }
                     };
                 }

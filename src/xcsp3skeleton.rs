@@ -37,6 +37,7 @@
  **/
 #[allow(dead_code)]
 pub mod xcsp3_core {
+    use crate::xcsp3constraint::xcsp3_core::XConstraintSet;
     use crate::xcsp3domain::xcsp3_core::XDomainInteger;
     use crate::xcsp3variable::xcsp3_core::{XVariableSet, XVariableType};
     use quick_xml::de::from_str;
@@ -529,7 +530,8 @@ pub mod xcsp3_core {
             variables
         }
 
-        pub fn build_constraints(&self) {
+        pub fn build_constraints(&self) -> XConstraintSet {
+            let mut constraint: XConstraintSet = XConstraintSet::new();
             for con_type in self.constraints.constraints.iter() {
                 match con_type {
                     ConstraintType::Group(_) => {}
@@ -551,8 +553,15 @@ pub mod xcsp3_core {
                         supports,
                         conflicts,
                     } => {
-                        println!("supports{}", supports);
-                        println!("conflicts{}", conflicts);
+                        if supports.is_empty() {
+                            constraint.build_extension(vars, conflicts, false)
+                        } else if conflicts.is_empty() {
+                            constraint.build_extension(vars, supports, true)
+                        } else {
+                            eprintln!(
+                                "can't build extension, conflicts or supports must be non empty."
+                            )
+                        }
                     }
                     ConstraintType::Regular { .. } => {}
                     ConstraintType::Mdd { .. } => {}
@@ -579,6 +588,7 @@ pub mod xcsp3_core {
                     ConstraintType::Clause { .. } => {}
                 }
             }
+            constraint
         }
     }
 }

@@ -82,12 +82,10 @@ pub mod xcsp3_core {
 
         pub fn find_variable_int(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
             match self.id_to_index.get(id) {
-                None => {
-                    Err(Xcsp3Error::get_variable_not_found_error("not find the variable, please visit http://xcsp.org/specifications/variables/integer/"))
-                }
-                Some(v) => {
-                    Ok(&self.variables[*v])
-                }
+                None => Err(Xcsp3Error::get_variable_not_found_error(
+                    "not find the variable",
+                )),
+                Some(v) => Ok(&self.variables[*v]),
             }
         }
     }
@@ -143,7 +141,7 @@ pub mod xcsp3_core {
 
     impl XVariableTrait for XVariableTree {
         fn to_string(&self) -> String {
-
+            String::default()
         }
     }
 
@@ -219,12 +217,16 @@ pub mod xcsp3_core {
         pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
             return if let Ok((size_vec, size)) = sizes_to_vec(id) {
                 if size > self.size {
-                    Err(Xcsp3Error::get_variable_size_invalid_error("parse the size of variable error, please visit http://xcsp.org/specifications/variables/arrays/"))
+                    Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "parse the size of variable error",
+                    ))
                 } else {
                     Ok((id.to_string(), &self.domain))
                 }
             } else {
-                Err(Xcsp3Error::get_variable_size_invalid_error("parse the size of variable error, please visit http://xcsp.org/specifications/variables/arrays/"))
+                Err(Xcsp3Error::get_variable_size_invalid_error(
+                    "parse the size of variable error",
+                ))
             };
         }
 
@@ -269,7 +271,9 @@ pub mod xcsp3_core {
                     sz *= v;
                 }
                 Err(_) => {
-                    return Err(Xcsp3Error::get_variable_size_invalid_error("parse the size of variable error, please visit http://xcsp.org/specifications/variables/integer/"));
+                    return Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "parse the size of variable error",
+                    ));
                 }
             };
         }

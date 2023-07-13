@@ -1,5 +1,4 @@
 use xcsp3_rust::xcsp3skeleton::xcsp3_core::Instance;
-use xcsp3_rust::xcsp3variable::xcsp3_core::{XVariableTrait, XVariableType};
 
 /**
 * <p>@project_name: xcsp3-rust
@@ -21,20 +20,11 @@ fn main() {
     let model = Instance::from_path(xml_file).unwrap();
     let variable = model.build_variables();
     for v in variable.iter() {
-        match v {
-            XVariableType::None => {}
-            XVariableType::XVariableArray(a) => {
-                println!("{}", a.to_string())
-            }
-            XVariableType::XVariableInt(i) => {
-                println!("{}", i.to_string())
-            }
-            XVariableType::XVariableTree(t) => {
-                println!("{}", t.to_string())
-            }
-        }
+        println!("{}", v.to_string())
     }
-    model.build_constraints();
+    for c in model.build_constraints().iter() {
+        println!("{}", c.to_string())
+    }
 }
 
 // use quick_xml::de::from_str;

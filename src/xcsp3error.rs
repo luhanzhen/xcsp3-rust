@@ -24,6 +24,9 @@ pub mod xcsp3_core {
     }
 
     impl Xcsp3Error {
+        pub fn get_constraint_extension_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_extension_error(s))
+        }
         pub fn get_domain_integer_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseDomainError(ParseDomainError::get_integer_error(s))
         }
@@ -70,14 +73,16 @@ pub mod xcsp3_core {
         }
 
         fn get_integer_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
             ParseDomainError {
-                msg: s.to_string(),
+                msg: (s.to_owned() + WEBSITE).to_string(),
                 r#type: DomainError::UnknownInteger,
             }
         }
         fn get_interval_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
             ParseDomainError {
-                msg: s.to_string(),
+                msg: (s.to_owned() + WEBSITE).to_string(),
                 r#type: DomainError::UnknownInterval,
             }
         }
@@ -95,14 +100,16 @@ pub mod xcsp3_core {
         }
 
         fn get_not_found_error(s: &str) -> ParseVariableError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
             ParseVariableError {
-                msg: s.to_string(),
+                msg: (s.to_owned() + WEBSITE).to_string(),
                 r#type: VariableError::NotFoundAsVariable,
             }
         }
         fn get_size_invalid_error(s: &str) -> ParseVariableError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables";
             ParseVariableError {
-                msg: s.to_string(),
+                msg: (s.to_owned() + WEBSITE).to_string(),
                 r#type: VariableError::SizeInvalid,
             }
         }
@@ -124,8 +131,18 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             format!("{:?}:{}", self.r#type, self.msg)
         }
+        fn get_extension_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/generic/extension/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE).to_string(),
+                r#type: ConstraintError::ExtensionError,
+            }
+        }
     }
 
     #[derive(Debug, Clone, PartialEq, Eq)]
-    pub enum ConstraintError {}
+    pub enum ConstraintError {
+        ExtensionError,
+    }
 }
