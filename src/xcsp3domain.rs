@@ -37,6 +37,7 @@
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {
+
     use crate::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
@@ -52,11 +53,9 @@ pub mod xcsp3_core {
             return match self {
                 XIntegerType::IntegerValue(iv) => match arg {
                     XIntegerType::IntegerValue(iiv) => iv.equals(iiv),
-                    XIntegerType::IntegerInterval(_) => false,
                     _ => false,
                 },
                 XIntegerType::IntegerInterval(ii) => match arg {
-                    XIntegerType::IntegerValue(_) => false,
                     XIntegerType::IntegerInterval(iii) => ii.equals(iii),
                     _ => false,
                 },
@@ -303,10 +302,70 @@ pub mod xcsp3_core {
 
         pub fn to_string(&self) -> String {
             let mut s = String::new();
-            for e in self.values.iter() {
+            // for e in self.values.iter() {
+            //     s = format!("{} {}", s, e.to_string());
+            // }
+            for e in self.iter() {
                 s = format!("{} {}", s, e.to_string());
             }
             s
+        }
+
+        pub fn iter(&self) -> XDomainIter {
+            XDomainIter {
+                values: &self.values,
+                current: 0,
+                current1: i32::MAX,
+            }
+        }
+    }
+
+    pub struct XDomainIter<'a> {
+        values: &'a Vec<XIntegerType>,
+        current: usize,
+        current1: i32,
+    }
+
+    impl Iterator for XDomainIter<'_> {
+        type Item = i32;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let mut ret: Option<Self::Item> = None;
+            if self.current >= self.values.len() {
+                return ret;
+            }
+            for cc in self.current..self.values.len() {
+                match &self.values[cc] {
+                    XIntegerType::Empty => {
+                        self.current += 1;
+                        continue;
+                    }
+                    XIntegerType::IntegerValue(v) => {
+                        self.current += 1;
+                        ret = Some(v.value);
+                        break;
+                    }
+                    XIntegerType::IntegerInterval(i) => {
+                        if self.current1 == i32::MAX {
+                            self.current1 = i.minimum();
+                            ret = Some(self.current1);
+                            self.current1 += 1;
+                            break;
+                        } else {
+                            if self.current1 > i.maximum() {
+                                self.current1 = i32::MAX;
+                                self.current += 1;
+                                continue;
+                            } else {
+                                ret = Some(self.current1);
+                                self.current1 += 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            ret
         }
     }
 }

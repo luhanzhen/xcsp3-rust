@@ -37,83 +37,83 @@
  */
 #[allow(dead_code)]
 pub mod xcsp3_core {
-    enum InstanceType {
-        Csp,
-        Cop,
-    }
-
-    enum ConstraintType {
-        Unknown,
-        Extension,
-        Intension,
-        Alldiff,
-        Allequal,
-        Sum,
-        Ordered,
-        Count,
-        Nvalues,
-        Cardinality,
-        Maximum,
-        Minimum,
-        Element,
-        Elementmatrix,
-        Nooverlap,
-        Stretch,
-        Lex,
-        Channel,
-        Regular,
-        Mdd,
-        Cumulative,
-        Instantiation,
-        Circuit,
-        Clause,
-        Precedence,
-        Binpacking,
-        Flow,
-        Knapsack,
-        Minarg,
-        Maxarg,
-    }
-
-    enum OrderType {
-        LE,
-        LT,
-        GE,
-        GT,
-        IN,
-        EQ,
-        NE,
-    }
-
-    enum Tag {
-        Unknown,
-        List,
-        Functional,
-        Values,
-        Value,
-        Condition,
-        Index,
-        Lengths,
-    }
-
-    enum RankType {
-        Any,
-        First,
-        Last,
-    }
-
-    enum ObjectiveGoal {
-        Minimize,
-        Maximize,
-    }
-
-    enum ExpressionObjective {
-        Expression,
-        Sum,
-        Product,
-        Minimum,
-        Maximum,
-        Nvalues,
-        Lex,
-    }
+    // enum InstanceType {
+    //     Csp,
+    //     Cop,
+    // }
+    //
+    // enum ConstraintType {
+    //     Unknown,
+    //     Extension,
+    //     Intension,
+    //     Alldiff,
+    //     Allequal,
+    //     Sum,
+    //     Ordered,
+    //     Count,
+    //     Nvalues,
+    //     Cardinality,
+    //     Maximum,
+    //     Minimum,
+    //     Element,
+    //     Elementmatrix,
+    //     Nooverlap,
+    //     Stretch,
+    //     Lex,
+    //     Channel,
+    //     Regular,
+    //     Mdd,
+    //     Cumulative,
+    //     Instantiation,
+    //     Circuit,
+    //     Clause,
+    //     Precedence,
+    //     Binpacking,
+    //     Flow,
+    //     Knapsack,
+    //     Minarg,
+    //     Maxarg,
+    // }
+    //
+    // enum OrderType {
+    //     LE,
+    //     LT,
+    //     GE,
+    //     GT,
+    //     IN,
+    //     EQ,
+    //     NE,
+    // }
+    //
+    // enum Tag {
+    //     Unknown,
+    //     List,
+    //     Functional,
+    //     Values,
+    //     Value,
+    //     Condition,
+    //     Index,
+    //     Lengths,
+    // }
+    //
+    // enum RankType {
+    //     Any,
+    //     First,
+    //     Last,
+    // }
+    //
+    // enum ObjectiveGoal {
+    //     Minimize,
+    //     Maximize,
+    // }
+    //
+    // enum ExpressionObjective {
+    //     Expression,
+    //     Sum,
+    //     Product,
+    //     Minimum,
+    //     Maximum,
+    //     Nvalues,
+    //     Lex,
+    // }
 }

@@ -171,6 +171,8 @@ pub mod xcsp3_core {
             vars: String,
             #[serde(rename = "supports", default)]
             supports: String,
+            #[serde(rename = "conflicts", default)]
+            conflicts: String,
         },
         #[serde(rename = "regular")]
         Regular {
@@ -448,9 +450,9 @@ pub mod xcsp3_core {
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
             println!(
-                "read the instance named {} by {}ms",
+                "read the instance named {} by {} microseconds",
                 path,
-                now.elapsed().as_millis()
+                now.elapsed().as_micros()
             );
             r
         }
@@ -476,9 +478,7 @@ pub mod xcsp3_core {
                         if var_string.r#as.is_empty() {
                             let ret = XDomainInteger::from_string(&var_string.value);
                             if let Ok(domain) = ret {
-                                let var = XVariableType::new_int(var_string.id.clone(), domain);
-                                // println!("var {:?}", var.to_string());
-                                variables.add_variable(var);
+                                variables.build_variable_int(&var_string.id, domain);
                             } else if let Err(e) = ret {
                                 eprintln!("[{:?}] {}", &var_string, e.to_string());
                             }
@@ -486,12 +486,8 @@ pub mod xcsp3_core {
                             match variables.find_variable_int(&var_string.r#as) {
                                 Ok(v) => {
                                     if let XVariableType::XVariableInt(vv) = v {
-                                        let var = XVariableType::new_int(
-                                            var_string.id.clone(),
-                                            vv.clone_domain(),
-                                        );
-                                        // println!("var {:?}", var.to_string());
-                                        variables.add_variable(var);
+                                        variables
+                                            .build_variable_int(&var_string.id, vv.clone_domain());
                                     }
                                 }
                                 Err(e) => {
@@ -503,18 +499,18 @@ pub mod xcsp3_core {
                     VariableType::Array(var_array_str) => {
                         // println!("var_array {:?}", var_array)
                         if var_array_str.domains.is_empty() {
-                            let ret = XDomainInteger::from_string(&var_array_str.value);
-                            if let Ok(domain) = ret {
-                                // println!("var_array : {}", domain.to_string());
-                                let array = XVariableType::new_array(
-                                    &var_array_str.id,
-                                    &var_array_str.size,
-                                    domain,
-                                );
-                                variables.add_variable_array(array);
-                            } else if let Err(e) = ret {
-                                eprintln!("[{:?}] {}", var_array_str, e.to_string());
-                            }
+                            match XDomainInteger::from_string(&var_array_str.value) {
+                                Ok(domain) => {
+                                    variables.build_variable_array(
+                                        &var_array_str.id,
+                                        &var_array_str.size,
+                                        domain,
+                                    );
+                                }
+                                Err(e) => {
+                                    eprintln!("[{:?}] {}", var_array_str, e.to_string());
+                                }
+                            };
                         } else {
                             for dom in var_array_str.domains.iter() {
                                 let ret = XDomainInteger::from_string(&dom.value);
@@ -529,6 +525,7 @@ pub mod xcsp3_core {
                 }
             }
             // println!("{}", variables.to_string());
+
             variables
         }
 
@@ -549,7 +546,14 @@ pub mod xcsp3_core {
                     ConstraintType::Circuit { .. } => {}
                     ConstraintType::Ordered { .. } => {}
                     ConstraintType::Intension { .. } => {}
-                    ConstraintType::Extension { .. } => {}
+                    ConstraintType::Extension {
+                        vars,
+                        supports,
+                        conflicts,
+                    } => {
+                        println!("supports{}", supports);
+                        println!("conflicts{}", conflicts);
+                    }
                     ConstraintType::Regular { .. } => {}
                     ConstraintType::Mdd { .. } => {}
                     ConstraintType::Sum { .. } => {}

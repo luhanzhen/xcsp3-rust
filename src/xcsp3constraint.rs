@@ -36,4 +36,26 @@
  * </p>
  **/
 
-pub mod xcsp3_core {}
+pub mod xcsp3_core {
+
+    use std::slice::Iter;
+
+    pub struct XConstraintSet {
+        constraints: Vec<XConstraintType>,
+    }
+
+    impl XConstraintSet {
+        pub fn iter(&self) -> Iter<'_, XConstraintType> {
+            self.constraints.iter()
+        }
+    }
+
+    #[derive(Clone)]
+    pub enum XConstraintType {
+        None,
+        XExtension(XExtension),
+    }
+
+    #[derive(Clone)]
+    pub struct XExtension {}
+}
