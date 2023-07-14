@@ -40,6 +40,8 @@ pub mod xcsp3_core {
     use crate::xcsp3domain::xcsp3_core::*;
     use crate::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::collections::HashMap;
+
+    use crate::xcsp3skeleton::xcsp3_core::VariableDomain;
     use std::slice::Iter;
     use std::str::FromStr;
 
@@ -67,17 +69,74 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn build_variable_int(&mut self, id: &str, domain: XDomainInteger) {
-            let var = XVariableType::new_int(id, domain);
-            self.id_to_index.insert(var.get_id(), self.variables.len());
-            self.variables.push(var);
+        pub fn build_variable_int(&mut self, id: &str, domain_string: &String) {
+            match XDomainInteger::from_string(domain_string) {
+                Ok(domain) => {
+                    let var = XVariableType::new_int(id, domain);
+                    self.id_to_index.insert(var.get_id(), self.variables.len());
+                    self.variables.push(var);
+                }
+                Err(e) => {
+                    eprintln!("{}", e.to_string());
+                    self.variables.push(XVariableType::XVariableNone);
+                }
+            }
         }
 
-        pub fn build_variable_array(&mut self, id: &str, sizes: &str, domain: XDomainInteger) {
-            let array = XVariableType::new_array(id, sizes, domain);
-            self.id_to_index
-                .insert(array.get_id(), self.variables.len());
-            self.variables.push(array);
+        pub fn build_variable_int_as(&mut self, id: &str, as_str: &str) {
+            match self.find_variable_int(as_str) {
+                Ok(v) => {
+                    if let XVariableType::XVariableInt(vv) = v {
+                        let var = XVariableType::new_int(id, vv.domain.clone());
+                        self.id_to_index.insert(var.get_id(), self.variables.len());
+                        self.variables.push(var);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("{}", e.to_string());
+                    self.variables.push(XVariableType::XVariableNone);
+                }
+            }
+        }
+
+        pub fn build_variable_array(&mut self, id: &str, sizes: &str, domain_string: &String) {
+            match XDomainInteger::from_string(domain_string) {
+                Ok(domain) => {
+                    let array = XVariableType::new_array(id, sizes, domain);
+                    match array {
+                        XVariableType::XVariableArray(_) => {
+                            self.id_to_index
+                                .insert(array.get_id(), self.variables.len());
+                            self.variables.push(array);
+                        }
+                        _ => {
+                            self.variables.push(XVariableType::XVariableNone);
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("{}", e.to_string());
+                    self.variables.push(XVariableType::XVariableNone);
+                }
+            };
+        }
+
+        pub fn build_variable_tree(
+            &mut self,
+            id: &str,
+            sizes: &str,
+            domain_vec: &Vec<VariableDomain>,
+        ) {
+            let tree = XVariableType::new_tree(id, sizes, domain_vec);
+            match tree {
+                XVariableType::XVariableTree(_) => {
+                    self.id_to_index.insert(tree.get_id(), self.variables.len());
+                    self.variables.push(tree);
+                }
+                _ => {
+                    self.variables.push(XVariableType::XVariableNone);
+                }
+            }
         }
 
         pub fn find_variable_int(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
@@ -92,7 +151,7 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub enum XVariableType {
-        None,
+        XVariableNone,
         XVariableArray(XVariableArray),
         XVariableInt(XVariableInt),
         XVariableTree(XVariableTree),
@@ -104,10 +163,18 @@ pub mod xcsp3_core {
         }
 
         pub fn new_array(id: &str, sizes: &str, domain: XDomainInteger) -> XVariableType {
-            if let Some(e) = XVariableArray::from_sizes_one_domain(id, sizes, domain) {
+            if let Some(e) = XVariableArray::new(id, sizes, domain) {
                 XVariableType::XVariableArray(e)
             } else {
-                XVariableType::None
+                XVariableType::XVariableNone
+            }
+        }
+
+        pub fn new_tree(id: &str, sizes: &str, domain_vec: &Vec<VariableDomain>) -> XVariableType {
+            if let Some(t) = XVariableTree::new(id, sizes, domain_vec) {
+                XVariableType::XVariableTree(t)
+            } else {
+                XVariableType::XVariableNone
             }
         }
 
@@ -124,7 +191,9 @@ pub mod xcsp3_core {
                 XVariableType::XVariableArray(a) => a.to_string(),
                 XVariableType::XVariableInt(i) => i.to_string(),
                 XVariableType::XVariableTree(t) => t.to_string(),
-                _ => String::default(),
+                _ => {
+                    String::from("XVariableNone: there must be an error when parse this variable.")
+                }
             }
         }
     }
@@ -135,13 +204,105 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub struct XVariableTree {
-        domain: XDomainInteger,
+        nodes: Vec<XVariableTreeNode>,
         id: String,
+        sizes: Vec<usize>,
+        size: usize,
+    }
+
+    impl XVariableTree {
+        pub fn new(id: &str, sizes: &str, domain_vec: &Vec<VariableDomain>) -> Option<Self> {
+            if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
+                let mut nodes: Vec<XVariableTreeNode> = Vec::new();
+                for (dom_index, dom) in domain_vec.iter().enumerate() {
+                    let ret = XDomainInteger::from_string(&dom.value);
+                    if let Ok(domain) = ret {
+                        if dom.r#for.eq("others") {
+                            nodes.push(XVariableTreeNode::new_other(domain));
+                        } else {
+                            println!("var_array domain: {:?}", dom);
+                            let mut for_str = dom.r#for.clone();
+                            let replace = format!("[{}]", size_vec[dom_index]);
+                            for_str = for_str.replace("[]", &replace);
+                            match sizes_to_double_vec(for_str) {
+                                Ok((lower, upper)) => {
+                                    nodes.push(XVariableTreeNode::new(upper, lower, domain));
+                                }
+                                Err(e) => {
+                                    eprintln!("{}", e.to_string());
+                                    return None;
+                                }
+                            }
+                        }
+                    } else if let Err(_) = ret {
+                        return None;
+                    }
+                }
+                Some(XVariableTree {
+                    id: id.to_string(),
+                    sizes: size_vec,
+                    size,
+                    nodes,
+                })
+            } else {
+                None
+            }
+        }
+    }
+
+    #[derive(Clone)]
+    struct XVariableTreeNode {
+        upper: Vec<usize>,
+        lower: Vec<usize>,
+        domain: XDomainInteger,
+        is_other: bool,
+    }
+
+    impl XVariableTreeNode {
+        pub fn to_string(&self, id: &String) -> String {
+            let mut ret = format!("for = {}", id);
+            for i in 0..self.upper.len() {
+                ret.push_str("[");
+                ret.push_str(&self.lower[i].to_string());
+                ret.push_str("..");
+                ret.push_str(&self.upper[i].to_string());
+                ret.push_str("]");
+            }
+            ret.push_str("  domain = ");
+            ret.push_str(&self.domain.to_string());
+            ret
+        }
+
+        pub fn new(
+            upper: Vec<usize>,
+            lower: Vec<usize>,
+            domain: XDomainInteger,
+        ) -> XVariableTreeNode {
+            XVariableTreeNode {
+                upper,
+                lower,
+                domain,
+                is_other: false,
+            }
+        }
+
+        pub fn new_other(domain: XDomainInteger) -> XVariableTreeNode {
+            XVariableTreeNode {
+                upper: Vec::default(),
+                lower: Vec::default(),
+                domain,
+                is_other: true,
+            }
+        }
     }
 
     impl XVariableTrait for XVariableTree {
         fn to_string(&self) -> String {
-            String::default()
+            let mut ret = String::from("XVariableTree: ");
+            for e in self.nodes.iter() {
+                ret += &e.to_string(&self.id);
+            }
+            ret
         }
     }
 
@@ -184,11 +345,6 @@ pub mod xcsp3_core {
             let mut ret: String = String::from("XVariableArray: id = ");
             ret.push_str(self.id.as_str());
             ret.push_str("  size = ");
-            // {}]: [, self.id);
-            // for e in self.variables.iter() {
-            //     ret.push_str(format!(" \t{}", e.to_string()).as_str());
-            // }
-
             for e in self.sizes.iter() {
                 ret.push_str("[");
                 ret.push_str(e.to_string().as_str());
@@ -215,7 +371,7 @@ pub mod xcsp3_core {
 
     impl XVariableArray {
         pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
-            return if let Ok((size_vec, size)) = sizes_to_vec(id) {
+            return if let Ok((_size_vec, size)) = sizes_to_vec(id) {
                 if size > self.size {
                     Err(Xcsp3Error::get_variable_size_invalid_error(
                         "parse the size of variable error",
@@ -230,11 +386,7 @@ pub mod xcsp3_core {
             };
         }
 
-        pub fn from_sizes_one_domain(
-            id: &str,
-            sizes: &str,
-            domain: XDomainInteger,
-        ) -> Option<Self> {
+        pub fn new(id: &str, sizes: &str, domain: XDomainInteger) -> Option<Self> {
             if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
                 Some(XVariableArray {
                     id: id.to_string(),
@@ -247,12 +399,55 @@ pub mod xcsp3_core {
             }
         }
     }
-    // #[derive(Clone)]
-    // pub struct XVariableArray {
-    //     variables: Vec<XVariableType>,
-    //     id: String,
-    //     id_to_index: HashMap<String, usize>, //store the id and the index of the variable
-    // }
+
+    /// transform the string size to vector sizes
+    /// eg:  [2][3..4][4..8] -> ([2,3,4],[2][4][8])
+    fn sizes_to_double_vec(sizes: String) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
+        let mut lower: Vec<usize> = vec![];
+        let mut upper: Vec<usize> = vec![];
+
+        let mut sizes = sizes.replace("[", " ");
+        sizes = sizes.replace("]", " ");
+        let nums: Vec<&str> = sizes.split_whitespace().collect();
+        for n in nums.iter() {
+            if n.find("..").is_some() {
+                let interval: Vec<&str> = n.split("..").collect();
+                if interval.len() == 2 {
+                    let low = usize::from_str(interval[0]);
+                    let up = usize::from_str(interval[1]);
+                    match low {
+                        Ok(u) => match up {
+                            Ok(l) => {
+                                lower.push(l);
+                                upper.push(u);
+                            }
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_domain_for_error(
+                                    "parse the domain for error",
+                                ));
+                            }
+                        },
+                        Err(_) => {
+                            return Err(Xcsp3Error::get_domain_for_error(
+                                "parse the domain for error",
+                            ));
+                        }
+                    }
+                }
+            } else {
+                match usize::from_str(n) {
+                    Ok(v) => {
+                        lower.push(v);
+                        upper.push(v);
+                    }
+                    Err(_) => {
+                        return Err(Xcsp3Error::get_domain_for_error("parse the domain error"));
+                    }
+                };
+            }
+        }
+        Ok((lower, upper))
+    }
 
     /// transform the string size to vector sizes
     /// eg:  [2][3][4] -> ([2,3,4], 24)
@@ -260,9 +455,8 @@ pub mod xcsp3_core {
         let mut ret: Vec<usize> = vec![];
         let mut sz: usize = 1;
         // sizes.find()
-        let sizes = sizes.replace("[", " ");
-        let sizes = sizes.replace("]", " ");
-
+        let mut sizes = sizes.replace("[", " ");
+        sizes = sizes.replace("]", " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             match usize::from_str(n) {

@@ -35,6 +35,10 @@ pub mod xcsp3_core {
             Xcsp3Error::ParseDomainError(ParseDomainError::get_interval_error(s))
         }
 
+        pub fn get_domain_for_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseDomainError(ParseDomainError::get_domain_for_error(s))
+        }
+
         pub fn get_variable_not_found_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseVariableError(ParseVariableError::get_not_found_error(s))
         }
@@ -59,6 +63,7 @@ pub mod xcsp3_core {
     pub enum DomainError {
         UnknownInteger,
         UnknownInterval,
+        UnknownFor,
     }
 
     #[derive(Debug, Clone, PartialEq, Eq)]
@@ -84,6 +89,13 @@ pub mod xcsp3_core {
             ParseDomainError {
                 msg: (s.to_owned() + WEBSITE).to_string(),
                 r#type: DomainError::UnknownInterval,
+            }
+        }
+        fn get_domain_for_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
+            ParseDomainError {
+                msg: (s.to_owned() + WEBSITE).to_string(),
+                r#type: DomainError::UnknownFor,
             }
         }
     }
