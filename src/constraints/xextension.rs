@@ -56,10 +56,14 @@ pub mod xcsp3_core {
                 self.scope, self.tuples, self.is_support
             )
         }
+
+        fn get_scope(&self) -> &Vec<String> {
+            &self.scope
+        }
     }
 
     impl XExtension {
-        pub fn new(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
+        pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
             if let Ok(tuples) = tuple_to_vector(tuple) {
                 let scope = list_to_scope_ids(list);
                 Some(XExtension {

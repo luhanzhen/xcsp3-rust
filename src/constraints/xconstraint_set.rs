@@ -38,8 +38,11 @@
 
 pub mod xcsp3_core {
 
+    use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
+    use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
+    use crate::utils::xcsp3utils::xcsp3_core::list_to_matrix_ids;
     use std::slice::Iter;
 
     pub struct XConstraintSet {
@@ -57,11 +60,47 @@ pub mod xcsp3_core {
         }
 
         pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
-            match XExtension::new(list, tuple, is_support) {
-                None => {}
+            match XExtension::from_str(list, tuple, is_support) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
                 Some(c) => {
                     self.constraints.push(XConstraintType::XExtension(c));
                 }
+            }
+        }
+
+        pub fn build_all_different(&mut self, list: &str) {
+            match XAllDifferent::from_str(list) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XAllDifferent(c));
+                }
+            }
+        }
+
+        pub fn build_all_different_except(&mut self, list: &str, except: &str) {
+            match XAllDifferentExcept::from_str(list, except) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints
+                        .push(XConstraintType::XAllDifferentExcept(c));
+                }
+            }
+        }
+        pub fn build_all_different_matrix(&mut self, list: &str) {
+            let mat = list_to_matrix_ids(list);
+            for line in mat.iter() {
+                self.constraints
+                    .push(XConstraintType::XAllDifferent(XAllDifferent::new(
+                        line.clone(),
+                    )))
+            }
+            for i in 0..mat[0].len() {
+                let mut column: Vec<String> = vec![];
+                for j in 0..mat.len() {
+                    column.push(mat[j][i].clone());
+                }
+                self.constraints
+                    .push(XConstraintType::XAllDifferent(XAllDifferent::new(column)))
             }
         }
     }

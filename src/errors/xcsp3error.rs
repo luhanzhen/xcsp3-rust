@@ -52,6 +52,10 @@ pub mod xcsp3_core {
         pub fn get_constraint_extension_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_extension_error(s))
         }
+
+        pub fn get_constraint_list_of_values_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_list_of_values_error(s))
+        }
         pub fn get_domain_integer_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseDomainError(ParseDomainError::get_integer_error(s))
         }
@@ -169,6 +173,15 @@ pub mod xcsp3_core {
             format!("{:?}:{}", self.r#type, self.msg)
         }
         fn get_extension_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/generic/extension/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ExtensionError,
+            }
+        }
+
+        fn get_list_of_values_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/generic/extension/";
             ParseConstraintError {

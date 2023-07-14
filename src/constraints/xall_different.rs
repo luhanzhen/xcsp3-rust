@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 18:54
+* <p>@date:  2023/7/14 22:50
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -39,8 +39,31 @@
  **/
 
 pub mod xcsp3_core {
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
-        fn get_scope(&self) -> &Vec<String>;
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::utils::xcsp3utils::xcsp3_core::list_to_scope_ids;
+
+    #[derive(Clone)]
+    pub struct XAllDifferent {
+        scope: Vec<String>,
+    }
+
+    impl XConstraintTrait for XAllDifferent {
+        fn to_string(&self) -> String {
+            format!("XAllDifferent: scope = {:?}", self.scope)
+        }
+
+        fn get_scope(&self) -> &Vec<String> {
+            &self.scope
+        }
+    }
+
+    impl XAllDifferent {
+        pub fn from_str(list: &str) -> Option<XAllDifferent> {
+            let scope = list_to_scope_ids(list);
+            Some(XAllDifferent { scope })
+        }
+        pub fn new(scope: Vec<String>) -> XAllDifferent {
+            XAllDifferent { scope }
+        }
     }
 }

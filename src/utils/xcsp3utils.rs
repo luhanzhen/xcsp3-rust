@@ -35,10 +35,14 @@
  * <p>@this_file_name:xcsp3domain
  * </p>
  */
+
 pub mod xcsp3_core {
+
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
+    /// return the list of scopes,
+    /// eg str"x[1], x[3], x[5]" - > vec[x[1], x[3], x[5]]
     pub fn list_to_scope_ids(list: &str) -> Vec<String> {
         let mut ret: Vec<String> = Vec::new();
         let lists: Vec<&str> = list.split_whitespace().collect();
@@ -48,6 +52,67 @@ pub mod xcsp3_core {
         ret
     }
 
+    /// return the matrix,
+    /// eg str"(x1,x2,x3,x4,x5)(y1,y2,y3,y4,y5)(z1,z2,z3,z4,z5)" - > vec[[x1,x2,x3,x4,x5][y1,y2,y3,y4,y5][z1,z2,z3,z4,z5]]
+    pub fn list_to_matrix_ids(list: &str) -> Vec<Vec<String>> {
+        let mut ret: Vec<Vec<String>> = Vec::new();
+        let mut list = list.to_string();
+        list = list.replace(')', "@");
+        list = list.replace('\n', "");
+        list = list.replace("(", " ");
+        let lists: Vec<&str> = list.split("@").collect();
+        for e in lists.iter() {
+            if !e.is_empty() {
+                let ss = e.replace(',', " ");
+                ret.push(list_to_scope_ids(&ss));
+            }
+        }
+        ret
+    }
+
+    /// return the list of values,
+    /// eg str"1 3 5 76" -> vec[1,3,5,76],
+    pub fn list_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
+        let mut ret: Vec<i32> = Vec::new();
+        let lists: Vec<&str> = list.split_whitespace().collect();
+        for e in lists.iter() {
+            match i32::from_str(e) {
+                Ok(n) => ret.push(n),
+                Err(_) => {
+                    return Err(Xcsp3Error::get_constraint_list_of_values_error(
+                        "parse the list of values error. ",
+                    ));
+                }
+            }
+        }
+        Ok(ret)
+    }
+
+    /// return the list of values,
+    /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],
+    pub fn list_with_bracket_comma_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
+        let mut ret: Vec<i32> = Vec::new();
+        let mut list = list.to_string();
+        list = list.replace('(', " ");
+        list = list.replace(')', " ");
+        list = list.replace(',', " ");
+        let lists: Vec<&str> = list.split_whitespace().collect();
+
+        for e in lists.iter() {
+            match i32::from_str(e) {
+                Ok(n) => ret.push(n),
+                Err(_) => {
+                    return Err(Xcsp3Error::get_constraint_list_of_values_error(
+                        "parse the list of values error. ",
+                    ));
+                }
+            }
+        }
+        Ok(ret)
+    }
+
+    ///return the tuples by given string,
+    /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
     pub fn tuple_to_vector(tuple: &str) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
         let mut ret: Vec<Vec<i32>> = Vec::new();
         let tuple = tuple.replace('(', " ");

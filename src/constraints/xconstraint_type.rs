@@ -39,20 +39,28 @@
  **/
 
 pub mod xcsp3_core {
+    use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
+    use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xextension::xcsp3_core::XExtension;
 
     #[derive(Clone)]
     pub enum XConstraintType {
-        None,
+        XConstraintNone,
         XExtension(XExtension),
+        XAllDifferent(XAllDifferent),
+        XAllDifferentExcept(XAllDifferentExcept),
     }
 
     impl XConstraintType {
         pub fn to_string(&self) -> String {
             match self {
-                XConstraintType::None => String::default(),
+                XConstraintType::XConstraintNone => String::from(
+                    "XConstraintNone: there must be an error when parse this constraint.",
+                ),
                 XConstraintType::XExtension(c) => c.to_string(),
+                XConstraintType::XAllDifferent(c) => c.to_string(),
+                XConstraintType::XAllDifferentExcept(c) => c.to_string(),
             }
         }
     }

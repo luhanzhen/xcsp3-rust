@@ -142,12 +142,28 @@ pub mod xcsp3_xml {
                     ConstraintType::Group(_) => {}
                     ConstraintType::Block(_) => {}
                     ConstraintType::AllDifferent {
-                        vars: _,
-                        list: _,
-                        except: _,
-                        matrix: _,
+                        vars,
+                        list,
+                        except,
+                        matrix,
                     } => {
-                        // println!("{}", vars)
+                        if !vars.is_empty() {
+                            constraint.build_all_different(vars)
+                        } else {
+                            if matrix.is_empty() {
+                                if !except.is_empty() {
+                                    for e in list.iter() {
+                                        constraint.build_all_different_except(e, except);
+                                    }
+                                } else {
+                                    for e in list.iter() {
+                                        constraint.build_all_different(e);
+                                    }
+                                }
+                            } else {
+                                constraint.build_all_different_matrix(matrix);
+                            }
+                        }
                     }
                     ConstraintType::AllEqual { .. } => {}
                     ConstraintType::Circuit { .. } => {}

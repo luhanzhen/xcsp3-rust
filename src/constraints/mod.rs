@@ -23,6 +23,8 @@
 *=============================================================================
 */
 
+mod xall_different;
+mod xall_different_except;
 /**
 * <p>@project_name: xcsp3-rust
 * </p>

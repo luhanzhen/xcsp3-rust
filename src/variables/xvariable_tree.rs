@@ -108,7 +108,7 @@ pub mod xcsp3_core {
     }
 
     impl XVariableTreeNode {
-        pub fn to_string(&self, id: &String) -> String {
+        pub fn to_string(&self, id: &str) -> String {
             let mut ret = format!("[for = {}", id);
             if self.is_other {
                 ret.push_str("[others]..");

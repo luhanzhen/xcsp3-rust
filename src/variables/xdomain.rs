@@ -283,7 +283,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn from_symbolic(domain: &String) -> XDomainInteger {
+        pub fn from_symbolic(domain: &str) -> XDomainInteger {
             let entity = XIntegerType::XIntegerSymbolic(XIntegerSymbolic::new(domain));
             XDomainInteger {
                 size: 0,

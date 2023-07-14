@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 18:54
+* <p>@date:  2023/7/14 22:50
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -39,8 +39,36 @@
  **/
 
 pub mod xcsp3_core {
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
-        fn get_scope(&self) -> &Vec<String>;
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::utils::xcsp3utils::xcsp3_core::{
+        list_to_scope_ids, list_with_bracket_comma_to_values,
+    };
+
+    #[derive(Clone)]
+    pub struct XAllDifferentExcept {
+        scope: Vec<String>,
+        except: Vec<i32>,
+    }
+
+    impl XConstraintTrait for XAllDifferentExcept {
+        fn to_string(&self) -> String {
+            format!(
+                "XAllDifferentExcept: scope = {:?}, except = {:?}",
+                self.scope, self.except
+            )
+        }
+        fn get_scope(&self) -> &Vec<String> {
+            &self.scope
+        }
+    }
+
+    impl XAllDifferentExcept {
+        pub fn from_str(list: &str, except_str: &str) -> Option<XAllDifferentExcept> {
+            let scope = list_to_scope_ids(list);
+            match list_with_bracket_comma_to_values(except_str) {
+                Ok(except) => Some(XAllDifferentExcept { scope, except }),
+                Err(_) => None,
+            }
+        }
     }
 }

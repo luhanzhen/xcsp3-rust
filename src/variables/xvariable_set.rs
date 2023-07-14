@@ -77,7 +77,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn build_variable_int(&mut self, id: &str, domain_string: &String, symbolic: &String) {
+        pub fn build_variable_int(&mut self, id: &str, domain_string: &str, symbolic: &String) {
             if symbolic.eq("symbolic") {
                 let domain = XDomainInteger::from_symbolic(domain_string);
                 let var = XVariableType::new_int(id, domain);
@@ -114,7 +114,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn build_variable_array(&mut self, id: &str, sizes: &str, domain_string: &String) {
+        pub fn build_variable_array(&mut self, id: &str, sizes: &str, domain_string: &str) {
             match XDomainInteger::from_string(domain_string) {
                 Ok(domain) => {
                     let array = XVariableType::new_array(id, sizes, domain);
