@@ -43,30 +43,6 @@ pub mod xcsp3_xml {
     use serde::Deserialize;
 
     #[derive(Deserialize, Debug)]
-    pub struct ConstraintGroup {
-        #[serde(rename = "@class")]
-        pub class: Option<String>,
-        #[serde(rename = "@id")]
-        pub id: Option<String>,
-        #[serde(rename = "$value", default)]
-        pub constraints: Vec<ConstraintType>,
-        #[serde(rename = "args", default)]
-        pub args: Vec<String>,
-    }
-
-    #[derive(Deserialize, Debug)]
-    pub struct ConstraintBlock {
-        #[serde(rename = "@id", default)]
-        pub id: String,
-        #[serde(rename = "@note", default)]
-        pub note: String,
-        #[serde(rename = "@class", default)]
-        pub r#type: Option<String>,
-        #[serde(rename = "$value", default)]
-        pub constraints: Vec<ConstraintType>,
-    }
-
-    #[derive(Deserialize, Debug)]
     pub struct Constraint {
         // #[serde(rename = "constraint", default)]
         #[serde(rename = "$value", default)]

@@ -44,7 +44,8 @@ pub mod xcsp3_xml {
     use crate::xcsp_xml::constraint::xcsp3_xml::Constraint;
     use crate::xcsp_xml::constraint_type::xcsp3_xml::ConstraintType;
     use crate::xcsp_xml::objective::xcsp3_xml::{InstanceType, Objective};
-    use crate::xcsp_xml::variable::xcsp3_xml::{Variable, VariableType};
+    use crate::xcsp_xml::variable::xcsp3_xml::Variable;
+    use crate::xcsp_xml::variable_type::xcsp3_xml::VariableType;
     use quick_xml::de::from_str;
     use quick_xml::DeError;
     use serde::Deserialize;
@@ -56,7 +57,6 @@ pub mod xcsp3_xml {
     pub struct XcspXmlModel {
         #[serde(rename = "@format")]
         format: String,
-
         #[serde(rename = "@type")]
         r#type: InstanceType,
         variables: Option<Variable>,

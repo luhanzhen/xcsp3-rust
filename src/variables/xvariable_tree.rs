@@ -42,7 +42,7 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::{sizes_to_double_vec, sizes_to_vec};
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
-    use crate::xcsp_xml::variable::xcsp3_xml::VariableDomain;
+    use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
 
     #[derive(Clone)]
     pub struct XVariableTree {
@@ -53,7 +53,7 @@ pub mod xcsp3_core {
     }
 
     impl XVariableTree {
-        pub fn new(id: &str, sizes: &str, domain_vec: &Vec<VariableDomain>) -> Option<Self> {
+        pub fn new(id: &str, sizes: &str, domain_vec: &[VariableDomain]) -> Option<Self> {
             if let Ok((size_vec, _size)) = sizes_to_vec(sizes) {
                 let mut nodes: Vec<XVariableTreeNode> = Vec::new();
                 for dom in domain_vec.iter() {
@@ -82,7 +82,7 @@ pub mod xcsp3_core {
                                 }
                             }
                         }
-                    } else if let Err(_) = ret {
+                    } else if ret.is_err() {
                         return None;
                     }
                 }
@@ -113,10 +113,10 @@ pub mod xcsp3_core {
                 ret.push_str("[others]..");
             } else {
                 for i in 0..self.upper.len() {
-                    ret.push_str("[");
+                    ret.push('[');
                     if self.lower[i] == self.upper[i] {
                         if self.lower[i] == usize::MAX {
-                            ret.push_str("*");
+                            ret.push('*');
                         } else {
                             ret.push_str(&self.lower[i].to_string());
                         }
@@ -126,7 +126,7 @@ pub mod xcsp3_core {
                         ret.push_str(&self.upper[i].to_string());
                     }
 
-                    ret.push_str("]");
+                    ret.push(']');
                 }
             }
 
@@ -162,9 +162,9 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             let mut ret = format!("XVariableTree:  id = {}, sizes = ", self.id);
             for e in self.sizes.iter() {
-                ret.push_str("[");
+                ret.push('[');
                 ret.push_str(e.to_string().as_str());
-                ret.push_str("]");
+                ret.push(']');
             }
             ret.push_str("nodes = ");
             for e in self.nodes.iter() {

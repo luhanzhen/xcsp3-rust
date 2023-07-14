@@ -58,9 +58,9 @@ pub mod xcsp3_core {
             ret.push_str(self.id.as_str());
             ret.push_str("  size = ");
             for e in self.sizes.iter() {
-                ret.push_str("[");
+                ret.push('[');
                 ret.push_str(e.to_string().as_str());
-                ret.push_str("]");
+                ret.push(']');
             }
             ret.push_str(" domain = ");
             ret.push_str(self.domain.to_string().as_str());
@@ -70,7 +70,7 @@ pub mod xcsp3_core {
 
     impl XVariableArray {
         pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
-            return if let Ok((_size_vec, size)) = sizes_to_vec(id) {
+            if let Ok((_size_vec, size)) = sizes_to_vec(id) {
                 if size > self.size {
                     Err(Xcsp3Error::get_variable_size_invalid_error(
                         "parse the size of variable error",
@@ -82,7 +82,7 @@ pub mod xcsp3_core {
                 Err(Xcsp3Error::get_variable_size_invalid_error(
                     "parse the size of variable error",
                 ))
-            };
+            }
         }
 
         pub fn new(id: &str, sizes: &str, domain: XDomainInteger) -> Option<Self> {

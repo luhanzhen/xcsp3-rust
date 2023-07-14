@@ -24,51 +24,28 @@
 */
 
 /**
- * <p>@project_name: XCSP3-Rust
- * </p>
- * <p>@author: luhanzhen
- * </p>
- * <p>@date: 2023/7/7
- * </p>
- * <p>@time: 18:35
- * </p>
- * <p>@this_file_name:xcsp3constraint
- * </p>
+* <p>@project_name: xcsp3-rust
+* </p>
+* <p>@author: luhan zhen
+* </p>
+* <p>@date:  2023/7/14 20:47
+* </p>
+* <p>@email: zhenlh20@mails.jlu.edu.cn
+* </p>
+* <p>@version: 1.0
+* </p>
+ * <p>@description: 1.0
+* </p>
  **/
 
-pub mod xcsp3_core {
+pub mod xcsp3_xml {
+    use serde::Deserialize;
 
-    use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
-    use crate::constraints::xextension::xcsp3_core::XExtension;
-    use std::slice::Iter;
-
-    pub struct XConstraintSet {
-        constraints: Vec<XConstraintType>,
-    }
-
-    impl XConstraintSet {
-        pub fn new() -> XConstraintSet {
-            XConstraintSet {
-                constraints: vec![],
-            }
-        }
-        pub fn iter(&self) -> Iter<'_, XConstraintType> {
-            self.constraints.iter()
-        }
-
-        pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
-            match XExtension::new(list, tuple, is_support) {
-                None => {}
-                Some(c) => {
-                    self.constraints.push(XConstraintType::XExtension(c));
-                }
-            }
-        }
-    }
-
-    impl Default for XConstraintSet {
-        fn default() -> Self {
-            Self::new()
-        }
+    #[derive(Deserialize, Debug)]
+    pub struct VariableDomain {
+        #[serde(rename = "@for")]
+        pub r#for: String,
+        #[serde(rename = "$value")]
+        pub value: String,
     }
 }

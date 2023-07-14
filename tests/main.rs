@@ -25,15 +25,14 @@
 // }
 use std::time::Instant;
 use walkdir::WalkDir;
-// use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 
 fn main() {
     let start = Instant::now();
     // let aa = WalkDir::new("D://XCSP3")
     // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
-    let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
+    let aa = WalkDir::new("D:\\XCSP3\\Bibd")
+        // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
         .into_iter()
         .filter_map(|file| file.ok());
 
@@ -41,7 +40,20 @@ fn main() {
         if file.metadata().unwrap().is_file() && file.path().display().to_string().ends_with(".xml")
         {
             // println!("{}", file.path().display());
-
+            // let xml = fs::read_to_string(file.path().display().to_string()).unwrap();
+            // // println!("{}", xml);
+            // let model: Option<XcspXmlModel> = match from_str(&xml) {
+            //     Ok(m) => Some(m),
+            //     Err(_err) => None,
+            // };
+            //
+            // match model {
+            //     None => eprintln!("Err {}", file.path().display()),
+            //     Some(m) => {
+            //         // m.build_variables();
+            //         println!("Done {}", file.path().display());
+            //     }
+            // }
             let model = XcspXmlModel::from_path(&file.path().display().to_string());
             match model {
                 Err(_) => eprintln!("Err {}", file.path().display()),
@@ -56,7 +68,7 @@ fn main() {
                     //         break;
                     //     }
                     // }
-                    m.build_constraints();
+                    // m.build_constraints();
                     // println!("Done {}", file.path().display());
                 }
             }

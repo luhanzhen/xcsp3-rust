@@ -39,7 +39,9 @@
  **/
 
 pub mod xcsp3_xml {
-    use crate::xcsp_xml::constraint::xcsp3_xml::{ConstraintBlock, ConstraintGroup};
+
+    use crate::xcsp_xml::constraint_block::xcsp3_xml::ConstraintBlock;
+    use crate::xcsp_xml::constraint_group::xcsp3_xml::ConstraintGroup;
     use serde::Deserialize;
 
     #[derive(Deserialize, Debug)]

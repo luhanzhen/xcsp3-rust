@@ -105,21 +105,21 @@ pub mod xcsp3_core {
         fn get_integer_error(s: &str) -> ParseDomainError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
             ParseDomainError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: DomainError::UnknownInteger,
             }
         }
         fn get_interval_error(s: &str) -> ParseDomainError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
             ParseDomainError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: DomainError::UnknownInterval,
             }
         }
         fn get_domain_for_error(s: &str) -> ParseDomainError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
             ParseDomainError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: DomainError::UnknownFor,
             }
         }
@@ -139,14 +139,14 @@ pub mod xcsp3_core {
         fn get_not_found_error(s: &str) -> ParseVariableError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
             ParseVariableError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: VariableError::NotFoundAsVariable,
             }
         }
         fn get_size_invalid_error(s: &str) -> ParseVariableError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables";
             ParseVariableError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: VariableError::SizeInvalid,
             }
         }
@@ -172,7 +172,7 @@ pub mod xcsp3_core {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/generic/extension/";
             ParseConstraintError {
-                msg: (s.to_owned() + WEBSITE).to_string(),
+                msg: (s.to_owned() + WEBSITE),
                 r#type: ConstraintError::ExtensionError,
             }
         }

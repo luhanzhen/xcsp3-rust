@@ -39,53 +39,8 @@
  **/
 
 pub mod xcsp3_xml {
+    use crate::xcsp_xml::variable_type::xcsp3_xml::VariableType;
     use serde::Deserialize;
-
-    #[derive(Deserialize, Debug)]
-    pub struct VariableDomain {
-        #[serde(rename = "@for")]
-        pub r#for: String,
-        #[serde(rename = "$value")]
-        pub value: String,
-    }
-
-    #[derive(Deserialize, Debug)]
-    pub struct VariableArray {
-        #[serde(rename = "@id")]
-        pub id: String,
-        #[serde(rename = "@type", default)]
-        pub type_: String,
-        #[serde(rename = "@startIndex", default)]
-        pub start_index: String,
-        #[serde(rename = "@note", default)]
-        pub note: String,
-        #[serde(rename = "@size", default)]
-        pub size: String,
-        #[serde(rename = "$value", default)]
-        pub value: String,
-        #[serde(rename = "domain", default)]
-        pub domains: Vec<VariableDomain>,
-    }
-
-    #[derive(Deserialize, Debug)]
-    pub struct VariableVar {
-        #[serde(rename = "@id")]
-        pub id: String,
-        #[serde(rename = "@type", default)]
-        pub r#type: String,
-        #[serde(rename = "$value", default)]
-        pub value: String,
-        #[serde(rename = "@as", default)]
-        pub r#as: String,
-    }
-
-    #[derive(Deserialize, Debug)]
-    pub enum VariableType {
-        #[serde(rename = "var")]
-        Var(VariableVar),
-        #[serde(rename = "array")]
-        Array(VariableArray),
-    }
 
     #[derive(Deserialize, Debug)]
     pub struct Variable {

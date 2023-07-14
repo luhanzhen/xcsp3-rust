@@ -44,13 +44,19 @@ pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
-    use crate::xcsp_xml::variable::xcsp3_xml::VariableDomain;
+
+    use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
     use std::slice::Iter;
     use std::str::FromStr;
 
     pub struct XVariableSet {
         variables: Vec<XVariableType>,
         id_to_index: HashMap<String, usize>, //store the id and the index of the variable
+    }
+    impl Default for XVariableSet {
+        fn default() -> Self {
+            Self::new()
+        }
     }
 
     impl XVariableSet {
@@ -165,14 +171,14 @@ pub mod xcsp3_core {
         let mut lower: Vec<usize> = vec![];
         let mut upper: Vec<usize> = vec![];
 
-        let mut sizes = sizes.replace("[", " ");
-        sizes = sizes.replace("]", " ");
+        let mut sizes = sizes.replace('[', " ");
+        sizes = sizes.replace(']', " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
-            if n.find("*").is_some() {
+            if n.find('*').is_some() {
                 lower.push(usize::MAX);
                 upper.push(usize::MAX);
-            } else if n.find("..").is_some() {
+            } else if n.contains("..") {
                 let interval: Vec<&str> = n.split("..").collect();
                 if interval.len() == 2 {
                     let low = usize::from_str(interval[0]);
@@ -216,8 +222,8 @@ pub mod xcsp3_core {
     pub fn sizes_to_vec(sizes: &str) -> Result<(Vec<usize>, usize), Xcsp3Error> {
         let mut ret: Vec<usize> = vec![];
         let mut sz: usize = 1;
-        let mut sizes = sizes.replace("[", " ");
-        sizes = sizes.replace("]", " ");
+        let mut sizes = sizes.replace('[', " ");
+        sizes = sizes.replace(']', " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             match usize::from_str(n) {

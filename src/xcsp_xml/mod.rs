@@ -24,9 +24,15 @@
 */
 
 mod constraint;
+mod constraint_block;
+mod constraint_group;
 mod constraint_type;
 mod objective;
 pub mod variable;
+mod variable_array;
+pub mod variable_domain;
+mod variable_type;
+mod variable_var;
 /**
 * <p>@project_name: xcsp3-rust
 * </p>

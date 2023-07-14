@@ -76,7 +76,7 @@ pub mod xcsp3_core {
 
     impl XIntegerType {
         pub fn equals(&self, arg: &XIntegerType) -> bool {
-            return match self {
+            match self {
                 XIntegerType::IntegerValue(iv) => match arg {
                     XIntegerType::IntegerValue(iiv) => iv.equals(iiv),
                     _ => false,
@@ -90,7 +90,7 @@ pub mod xcsp3_core {
                     _ => false,
                 },
                 _ => false,
-            };
+            }
         }
 
         pub fn to_string(&self) -> String {
@@ -179,7 +179,7 @@ pub mod xcsp3_core {
     }
 
     impl XIntegerSymbolic {
-        pub fn new(domain: &String) -> XIntegerSymbolic {
+        pub fn new(domain: &str) -> XIntegerSymbolic {
             let dds: Vec<&str> = domain.split_whitespace().collect();
             let mut symbolic: Vec<String> = vec![];
             let mut values: Vec<i32> = vec![];
@@ -292,12 +292,12 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn from_string(domain: &String) -> Result<XDomainInteger, Xcsp3Error> {
+        pub fn from_string(domain: &str) -> Result<XDomainInteger, Xcsp3Error> {
             let mut ret: XDomainInteger = XDomainInteger::new();
             let domains: Vec<&str> = domain.split_whitespace().collect();
 
             for d in domains.iter() {
-                if d.find("..").is_some() {
+                if d.contains("..") {
                     let interval: Vec<&str> = d.split("..").collect();
                     if interval.len() == 2 {
                         let left = i32::from_str(interval[0]);
@@ -444,14 +444,13 @@ pub mod xcsp3_core {
                             self.current1 += 1;
                             break;
                         } else if self.current1 > s.maximum() {
-                                self.current += 1;
-                                continue;
-                            } else {
-                                ret = Some(self.current1);
-                                self.current1 += 1;
-                                break;
-                            }
-
+                            self.current += 1;
+                            continue;
+                        } else {
+                            ret = Some(self.current1);
+                            self.current1 += 1;
+                            break;
+                        }
                     }
                     XIntegerType::Empty => {
                         self.current += 1;
@@ -469,15 +468,14 @@ pub mod xcsp3_core {
                             self.current1 += 1;
                             break;
                         } else if self.current1 > i.maximum() {
-                                self.current1 = i32::MAX;
-                                self.current += 1;
-                                continue;
-                            }
-                        else {
-                                ret = Some(self.current1);
-                                self.current1 += 1;
-                                break;
-                            }
+                            self.current1 = i32::MAX;
+                            self.current += 1;
+                            continue;
+                        } else {
+                            ret = Some(self.current1);
+                            self.current1 += 1;
+                            break;
+                        }
                     }
                 }
             }
