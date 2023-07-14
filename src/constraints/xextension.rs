@@ -40,8 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use std::str::FromStr;
+    use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
 
     #[derive(Clone)]
     pub struct XExtension {
@@ -60,15 +59,8 @@ pub mod xcsp3_core {
     }
 
     impl XExtension {
-        // pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> XExtension {
         pub fn new(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
             if let Ok(tuples) = tuple_to_vector(tuple) {
-                //     self.constraints
-                //         .push(XConstraintType::XExtension(XExtension::new(
-                //             list_to_scope_ids(list),
-                //             tuples,
-                //             is_support,
-                //         )))
                 let scope = list_to_scope_ids(list);
                 Some(XExtension {
                     scope,
@@ -79,39 +71,5 @@ pub mod xcsp3_core {
                 None
             }
         }
-    }
-
-    fn list_to_scope_ids(list: &str) -> Vec<String> {
-        let mut ret: Vec<String> = Vec::new();
-        let lists: Vec<&str> = list.split_whitespace().collect();
-        for e in lists.iter() {
-            ret.push(e.to_string());
-        }
-        ret
-    }
-
-    fn tuple_to_vector(tuple: &str) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
-        let mut ret: Vec<Vec<i32>> = Vec::new();
-        let tuple = tuple.replace('(', " ");
-        let tuple = tuple.replace(')', " ");
-        let tuples_str: Vec<&str> = tuple.split_whitespace().collect();
-        for ts in tuples_str.iter() {
-            let tuple_str: Vec<&str> = ts.split(',').collect();
-            let mut tt: Vec<i32> = Vec::new();
-            for i in tuple_str.iter() {
-                match i32::from_str(i) {
-                    Ok(num) => {
-                        tt.push(num);
-                    }
-                    Err(_) => {
-                        return Err(Xcsp3Error::get_constraint_extension_error(
-                            "parse the tuple of extension error",
-                        ));
-                    }
-                }
-            }
-            ret.push(tt);
-        }
-        Ok(ret)
     }
 }

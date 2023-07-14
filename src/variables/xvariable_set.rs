@@ -47,7 +47,6 @@ pub mod xcsp3_core {
 
     use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
     use std::slice::Iter;
-    use std::str::FromStr;
 
     pub struct XVariableSet {
         variables: Vec<XVariableType>,
@@ -163,82 +162,5 @@ pub mod xcsp3_core {
                 Some(v) => Ok(&self.variables[*v]),
             }
         }
-    }
-
-    /// transform the string size to vector sizes
-    /// eg:  [2][3..4][4..8] -> ([2,3,4],[2][4][8])
-    pub fn sizes_to_double_vec(sizes: String) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
-        let mut lower: Vec<usize> = vec![];
-        let mut upper: Vec<usize> = vec![];
-
-        let mut sizes = sizes.replace('[', " ");
-        sizes = sizes.replace(']', " ");
-        let nums: Vec<&str> = sizes.split_whitespace().collect();
-        for n in nums.iter() {
-            if n.find('*').is_some() {
-                lower.push(usize::MAX);
-                upper.push(usize::MAX);
-            } else if n.contains("..") {
-                let interval: Vec<&str> = n.split("..").collect();
-                if interval.len() == 2 {
-                    let low = usize::from_str(interval[0]);
-                    let up = usize::from_str(interval[1]);
-                    match low {
-                        Ok(l) => match up {
-                            Ok(u) => {
-                                lower.push(l);
-                                upper.push(u);
-                            }
-                            Err(_) => {
-                                return Err(Xcsp3Error::get_domain_for_error(
-                                    "parse the domain for error",
-                                ));
-                            }
-                        },
-                        Err(_) => {
-                            return Err(Xcsp3Error::get_domain_for_error(
-                                "parse the domain for error",
-                            ));
-                        }
-                    }
-                }
-            } else {
-                match usize::from_str(n) {
-                    Ok(v) => {
-                        lower.push(v);
-                        upper.push(v);
-                    }
-                    Err(_) => {
-                        return Err(Xcsp3Error::get_domain_for_error("parse the domain error"));
-                    }
-                };
-            }
-        }
-        Ok((lower, upper))
-    }
-
-    /// transform the string size to vector sizes
-    /// eg:  [2][3][4] -> ([2,3,4], 24)
-    pub fn sizes_to_vec(sizes: &str) -> Result<(Vec<usize>, usize), Xcsp3Error> {
-        let mut ret: Vec<usize> = vec![];
-        let mut sz: usize = 1;
-        let mut sizes = sizes.replace('[', " ");
-        sizes = sizes.replace(']', " ");
-        let nums: Vec<&str> = sizes.split_whitespace().collect();
-        for n in nums.iter() {
-            match usize::from_str(n) {
-                Ok(v) => {
-                    ret.push(v);
-                    sz *= v;
-                }
-                Err(_) => {
-                    return Err(Xcsp3Error::get_variable_size_invalid_error(
-                        "parse the size of variable error",
-                    ));
-                }
-            };
-        }
-
-        Ok((ret, sz))
     }
 }

@@ -39,8 +39,9 @@
  **/
 
 pub mod xcsp3_core {
+    use crate::utils::xcsp3utils::xcsp3_core::{sizes_to_double_vec, sizes_to_vec};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
-    use crate::variables::xvariable_set::xcsp3_core::{sizes_to_double_vec, sizes_to_vec};
+
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
     use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
 

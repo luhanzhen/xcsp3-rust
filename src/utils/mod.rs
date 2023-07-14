@@ -23,13 +23,18 @@
 *=============================================================================
 */
 
-#![doc = include_str!("../README.md")]
-
-// pub mod xcsp3tree;
-// pub mod xcsp3treenode;
-// pub mod xcsp3utils;
-pub mod constraints;
-mod errors;
-mod utils;
-pub mod variables;
-pub mod xcsp_xml;
+/**
+* <p>@project_name: xcsp3-rust
+* </p>
+* <p>@author: luhan zhen
+* </p>
+* <p>@date:  2023/7/14 20:55
+* </p>
+* <p>@email: zhenlh20@mails.jlu.edu.cn
+* </p>
+* <p>@version: 1.0
+* </p>
+ * <p>@description: 1.0
+* </p>
+ **/
+pub mod xcsp3utils;
