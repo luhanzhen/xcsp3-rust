@@ -36,68 +36,68 @@
  * </p>
  */
 
-#[allow(dead_code)]
-pub mod xcsp3_core {
-
-    pub fn split_with_elems(s: &str, delim: &char, elems: &mut Vec<String>) {
-        let de = format!("{}", delim);
-        let result: Vec<&str> = s.split(de.as_str()).collect();
-        for elem in result {
-            elems.push(String::from(elem));
-        }
-    }
-
-    // pub fn parser_domain(domain: &String) -> XDomainInteger
-    // {
-    //     let mut ret:XDomainInteger = XDomainInteger::new();
-    //     let domains :Vec<&str>= domain.split_whitespace().collect();
-    //
-    //     for d in domains.iter()
-    //     {
-    //         if d.find("..").is_some()
-    //         {
-    //             let interval: Vec<&str> = d.split("..").collect();
-    //             if interval.len() == 2 {
-    //                 let left = i32::from_str(interval[0]);
-    //                 let right = i32::from_str(interval[1]);
-    //                 match left {
-    //                     Ok(l) => {
-    //                         match right {
-    //                             Ok(r) => {
-    //                                 ret.add_interval(l,r);
-    //                             }
-    //                             Err(_) => {}
-    //                         }
-    //                     }
-    //                     Err(_) => {}
-    //                 }
-    //             }
-    //
-    //
-    //         }else {
-    //              match  i32::from_str(d){
-    //                 Ok(v) => {
-    //                     ret.add_value(v)
-    //                 }
-    //                 Err(_) => { }
-    //             } ;
-    //         }
-    //     }
-    //
-    //     ret
-    // }
-
-    pub fn split(s: &str, delim: &char) -> Vec<String> {
-        let mut elems: Vec<String> = vec![];
-        split_with_elems(s, delim, &mut elems);
-        elems
-    }
-
-    pub fn replace_string_in_place(subject: &mut str, search: &str, replace: &str) {
-        let _ = subject.replace(search, replace);
-    }
-
-    pub fn remove_char(s: &mut str, c: char) {
-        let _ = s.replace(c, "");
-    }
-}
+// #[allow(dead_code)]
+// pub mod xcsp3_core {
+//
+//     pub fn split_with_elems(s: &str, delim: &char, elems: &mut Vec<String>) {
+//         let de = format!("{}", delim);
+//         let result: Vec<&str> = s.split(de.as_str()).collect();
+//         for elem in result {
+//             elems.push(String::from(elem));
+//         }
+//     }
+//
+//     // pub fn parser_domain(domain: &String) -> XDomainInteger
+//     // {
+//     //     let mut ret:XDomainInteger = XDomainInteger::new();
+//     //     let domains :Vec<&str>= domain.split_whitespace().collect();
+//     //
+//     //     for d in domains.iter()
+//     //     {
+//     //         if d.find("..").is_some()
+//     //         {
+//     //             let interval: Vec<&str> = d.split("..").collect();
+//     //             if interval.len() == 2 {
+//     //                 let left = i32::from_str(interval[0]);
+//     //                 let right = i32::from_str(interval[1]);
+//     //                 match left {
+//     //                     Ok(l) => {
+//     //                         match right {
+//     //                             Ok(r) => {
+//     //                                 ret.add_interval(l,r);
+//     //                             }
+//     //                             Err(_) => {}
+//     //                         }
+//     //                     }
+//     //                     Err(_) => {}
+//     //                 }
+//     //             }
+//     //
+//     //
+//     //         }else {
+//     //              match  i32::from_str(d){
+//     //                 Ok(v) => {
+//     //                     ret.add_value(v)
+//     //                 }
+//     //                 Err(_) => { }
+//     //             } ;
+//     //         }
+//     //     }
+//     //
+//     //     ret
+//     // }
+//
+//     pub fn split(s: &str, delim: &char) -> Vec<String> {
+//         let mut elems: Vec<String> = vec![];
+//         split_with_elems(s, delim, &mut elems);
+//         elems
+//     }
+//
+//     pub fn replace_string_in_place(subject: &mut str, search: &str, replace: &str) {
+//         let _ = subject.replace(search, replace);
+//     }
+//
+//     pub fn remove_char(s: &mut str, c: char) {
+//         let _ = s.replace(c, "");
+//     }
+// }

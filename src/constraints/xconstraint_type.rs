@@ -23,12 +23,37 @@
 *=============================================================================
 */
 
-#![doc = include_str!("../README.md")]
+/**
+* <p>@project_name: xcsp3-rust
+* </p>
+* <p>@author: luhan zhen
+* </p>
+* <p>@date:  2023/7/14 18:56
+* </p>
+* <p>@email: zhenlh20@mails.jlu.edu.cn
+* </p>
+* <p>@version: 1.0
+* </p>
+ * <p>@description: 1.0
+* </p>
+ **/
 
-// pub mod xcsp3tree;
-// pub mod xcsp3treenode;
-// pub mod xcsp3utils;
-pub mod constraints;
-mod errors;
-pub mod variables;
-pub mod xcsp_xml;
+pub mod xcsp3_core {
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xextension::xcsp3_core::XExtension;
+
+    #[derive(Clone)]
+    pub enum XConstraintType {
+        None,
+        XExtension(XExtension),
+    }
+
+    impl XConstraintType {
+        pub fn to_string(&self) -> String {
+            match self {
+                XConstraintType::None => String::default(),
+                XConstraintType::XExtension(c) => c.to_string(),
+            }
+        }
+    }
+}

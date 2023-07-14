@@ -10,8 +10,8 @@
  * <p>@this_file_name:xcsp3tree
  * </p>
  */
-#[allow(dead_code)]
-pub mod xcsp3_core {
+// #[allow(dead_code)]
+// pub mod xcsp3_core {
     // use crate::xcsp3treenode::xcsp3_core::*;
     // use std::collections::HashMap;
     //
@@ -61,4 +61,4 @@ pub mod xcsp3_core {
     //     // string.find()
     //     None
     // }
-}
+// }

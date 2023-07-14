@@ -23,6 +23,31 @@
 *=============================================================================
 */
 
+/*=============================================================================
+* parser for CSP instances represented in XCSP3 Format
+*
+* Copyright (c) 2023 xcsp.org (contact @ xcsp.org)
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*=============================================================================
+*/
+
 /**
  * <p>@project_name: XCSP3-Rust
  * </p>
@@ -35,17 +60,18 @@
  * <p>@this_file_name:xcsp3domain
  * </p>
  */
-#[allow(dead_code)]
-pub mod xcsp3_core {
+// #[allow(dead_code)]
 
-    use crate::xcsp3error::xcsp3_core::Xcsp3Error;
+pub mod xcsp3_core {
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
-    #[derive(Copy, Clone)]
+    #[derive(Clone)]
     pub enum XIntegerType {
         Empty,
         IntegerValue(XIntegerValue),
         IntegerInterval(XIntegerInterval),
+        XIntegerSymbolic(XIntegerSymbolic),
     }
 
     impl XIntegerType {
@@ -59,6 +85,10 @@ pub mod xcsp3_core {
                     XIntegerType::IntegerInterval(iii) => ii.equals(iii),
                     _ => false,
                 },
+                XIntegerType::XIntegerSymbolic(ii) => match arg {
+                    XIntegerType::XIntegerSymbolic(iii) => ii.equals(iii),
+                    _ => false,
+                },
                 _ => false,
             };
         }
@@ -67,6 +97,7 @@ pub mod xcsp3_core {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.to_string(),
                 XIntegerType::IntegerInterval(ii) => ii.to_string(),
+                XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
                 _ => "empty".to_string(),
             }
         }
@@ -74,6 +105,7 @@ pub mod xcsp3_core {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
                 XIntegerType::IntegerInterval(ii) => ii.maximum(),
+                XIntegerType::XIntegerSymbolic(ii) => ii.maximum(),
                 _ => 2_147_483_647i32,
                 //i32::MAX, my ide named clion tell me i32::MAX is private constant, but rustc can compile it...
             }
@@ -83,6 +115,7 @@ pub mod xcsp3_core {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.minimum(),
                 XIntegerType::IntegerInterval(ii) => ii.minimum(),
+                XIntegerType::XIntegerSymbolic(ii) => ii.minimum(),
                 _ => -2_147_483_648i32, //i32::MIN,
             }
         }
@@ -136,6 +169,57 @@ pub mod xcsp3_core {
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
             self.value == arg.minimum()
+        }
+    }
+
+    #[derive(Clone)]
+    pub struct XIntegerSymbolic {
+        values: Vec<i32>,
+        symbolic: Vec<String>,
+    }
+
+    impl XIntegerSymbolic {
+        pub fn new(domain: &String) -> XIntegerSymbolic {
+            let dds: Vec<&str> = domain.split_whitespace().collect();
+            let mut symbolic: Vec<String> = vec![];
+            let mut values: Vec<i32> = vec![];
+            for (i, s) in dds.iter().enumerate() {
+                values.push(i as i32);
+                symbolic.push(s.to_string());
+            }
+            XIntegerSymbolic { symbolic, values }
+        }
+    }
+
+    impl XIntegerEntity for XIntegerSymbolic {
+        fn width(&self) -> usize {
+            self.values.len()
+        }
+
+        fn minimum(&self) -> i32 {
+            self.values[0]
+        }
+
+        fn maximum(&self) -> i32 {
+            self.values[self.values.len() - 1]
+        }
+
+        fn print(&self) {
+            todo!()
+        }
+
+        fn to_string(&self) -> String {
+            // format!("{}..{}", self.minimum(), self.maximum())
+            let mut ret = String::default();
+            for i in 0..self.symbolic.len() {
+                let s = format!("{}({}), ", self.values[i], self.symbolic[i]);
+                ret.push_str(&s);
+            }
+            ret
+        }
+
+        fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
+            self.minimum() == arg.minimum() && self.minimum() == arg.maximum()
         }
     }
 
@@ -198,6 +282,16 @@ pub mod xcsp3_core {
                 values: vec![],
             }
         }
+
+        pub fn from_symbolic(domain: &String) -> XDomainInteger {
+            let entity = XIntegerType::XIntegerSymbolic(XIntegerSymbolic::new(domain));
+            XDomainInteger {
+                size: 0,
+                top: 0,
+                values: vec![entity],
+            }
+        }
+
         pub fn from_string(domain: &String) -> Result<XDomainInteger, Xcsp3Error> {
             let mut ret: XDomainInteger = XDomainInteger::new();
             let domains: Vec<&str> = domain.split_whitespace().collect();
@@ -230,6 +324,7 @@ pub mod xcsp3_core {
                     match i32::from_str(d) {
                         Ok(v) => ret.add_value(v),
                         Err(_) => {
+                            // ret.add_value(i as i32)
                             return Err(Xcsp3Error::get_domain_integer_error(
                                 "parse the domain error",
                             ));
@@ -308,12 +403,12 @@ pub mod xcsp3_core {
 
         pub fn to_string(&self) -> String {
             let mut s = String::new();
-            // for e in self.values.iter() {
-            //     s = format!("{} {}", s, e.to_string());
-            // }
-            for e in self.iter() {
+            for e in self.values.iter() {
                 s = format!("{} {}", s, e.to_string());
             }
+            // for e in self.iter() {
+            //     s = format!("{} {}", s, e.to_string());
+            // }
             s
         }
 
@@ -342,6 +437,22 @@ pub mod xcsp3_core {
             }
             for cc in self.current..self.values.len() {
                 match &self.values[cc] {
+                    XIntegerType::XIntegerSymbolic(s) => {
+                        if self.current1 == i32::MAX {
+                            self.current1 = s.minimum();
+                            ret = Some(self.current1);
+                            self.current1 += 1;
+                            break;
+                        } else if self.current1 > s.maximum() {
+                                self.current += 1;
+                                continue;
+                            } else {
+                                ret = Some(self.current1);
+                                self.current1 += 1;
+                                break;
+                            }
+
+                    }
                     XIntegerType::Empty => {
                         self.current += 1;
                         continue;
@@ -357,17 +468,16 @@ pub mod xcsp3_core {
                             ret = Some(self.current1);
                             self.current1 += 1;
                             break;
-                        } else {
-                            if self.current1 > i.maximum() {
+                        } else if self.current1 > i.maximum() {
                                 self.current1 = i32::MAX;
                                 self.current += 1;
                                 continue;
-                            } else {
+                            }
+                        else {
                                 ret = Some(self.current1);
                                 self.current1 += 1;
                                 break;
                             }
-                        }
                     }
                 }
             }

@@ -13,7 +13,7 @@
             <domain for="f[2][]">1..15</domain>
         </array>
         <array id="a" size="[10]">
-            <domain for="a[4]">0 1</domain>
+            <domain for="a[4..8]">0 1</domain>
             <domain for="others">2 4 6</domain>
         </array>
         <array id="z" size="[5][5][5]">

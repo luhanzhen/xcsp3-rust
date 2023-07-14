@@ -23,12 +23,48 @@
 *=============================================================================
 */
 
-#![doc = include_str!("../README.md")]
+/**
+* <p>@project_name: xcsp3-rust
+* </p>
+* <p>@author: luhan zhen
+* </p>
+* <p>@date:  2023/7/14 18:40
+* </p>
+* <p>@email: zhenlh20@mails.jlu.edu.cn
+* </p>
+* <p>@version: 1.0
+* </p>
+ * <p>@description: 1.0
+* </p>
+ **/
 
-// pub mod xcsp3tree;
-// pub mod xcsp3treenode;
-// pub mod xcsp3utils;
-pub mod constraints;
-mod errors;
-pub mod variables;
-pub mod xcsp_xml;
+pub mod xcsp3_core {
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
+
+    #[derive(Clone)]
+    pub struct XVariableInt {
+        pub(crate) domain: XDomainInteger,
+        pub(crate) id: String,
+    }
+
+    impl XVariableInt {
+        pub fn new(id: String, domain: XDomainInteger) -> XVariableInt {
+            XVariableInt { id, domain }
+        }
+
+        pub fn clone_domain(&self) -> XDomainInteger {
+            self.domain.clone()
+        }
+    }
+
+    impl XVariableTrait for XVariableInt {
+        fn to_string(&self) -> String {
+            format!(
+                "XVariableInt: id = {}, domain = {}",
+                self.id,
+                self.domain.to_string()
+            )
+        }
+    }
+}

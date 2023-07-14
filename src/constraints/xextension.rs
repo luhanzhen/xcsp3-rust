@@ -24,66 +24,24 @@
 */
 
 /**
- * <p>@project_name: XCSP3-Rust
- * </p>
- * <p>@author: luhanzhen
- * </p>
- * <p>@date: 2023/7/7
- * </p>
- * <p>@time: 18:35
- * </p>
- * <p>@this_file_name:xcsp3constraint
- * </p>
+* <p>@project_name: xcsp3-rust
+* </p>
+* <p>@author: luhan zhen
+* </p>
+* <p>@date:  2023/7/14 18:54
+* </p>
+* <p>@email: zhenlh20@mails.jlu.edu.cn
+* </p>
+* <p>@version: 1.0
+* </p>
+ * <p>@description: 1.0
+* </p>
  **/
 
 pub mod xcsp3_core {
-    use crate::xcsp3error::xcsp3_core::Xcsp3Error;
-    use std::slice::Iter;
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
-
-    pub struct XConstraintSet {
-        constraints: Vec<XConstraintType>,
-    }
-
-    impl XConstraintSet {
-        pub fn new() -> XConstraintSet {
-            XConstraintSet {
-                constraints: vec![],
-            }
-        }
-        pub fn iter(&self) -> Iter<'_, XConstraintType> {
-            self.constraints.iter()
-        }
-
-        pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
-            if let Ok(tuples) = tuple_to_vector(tuple) {
-                self.constraints
-                    .push(XConstraintType::XExtension(XExtension::new(
-                        list_to_scope_ids(list),
-                        tuples,
-                        is_support,
-                    )))
-            }
-        }
-    }
-    #[derive(Clone)]
-    pub enum XConstraintType {
-        None,
-        XExtension(XExtension),
-    }
-
-    impl XConstraintType {
-        pub fn to_string(&self) -> String {
-            match self {
-                XConstraintType::None => String::default(),
-                XConstraintType::XExtension(c) => c.to_string(),
-            }
-        }
-    }
-
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
-    }
 
     #[derive(Clone)]
     pub struct XExtension {
@@ -102,11 +60,23 @@ pub mod xcsp3_core {
     }
 
     impl XExtension {
-        pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> XExtension {
-            XExtension {
-                scope,
-                tuples,
-                is_support,
+        // pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> XExtension {
+        pub fn new(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
+            if let Ok(tuples) = tuple_to_vector(tuple) {
+                //     self.constraints
+                //         .push(XConstraintType::XExtension(XExtension::new(
+                //             list_to_scope_ids(list),
+                //             tuples,
+                //             is_support,
+                //         )))
+                let scope = list_to_scope_ids(list);
+                Some(XExtension {
+                    scope,
+                    tuples,
+                    is_support,
+                })
+            } else {
+                None
             }
         }
     }
@@ -122,11 +92,11 @@ pub mod xcsp3_core {
 
     fn tuple_to_vector(tuple: &str) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
         let mut ret: Vec<Vec<i32>> = Vec::new();
-        let tuple = tuple.replace("(", " ");
-        let tuple = tuple.replace(")", " ");
+        let tuple = tuple.replace('(', " ");
+        let tuple = tuple.replace(')', " ");
         let tuples_str: Vec<&str> = tuple.split_whitespace().collect();
         for ts in tuples_str.iter() {
-            let tuple_str: Vec<&str> = ts.split(",").collect();
+            let tuple_str: Vec<&str> = ts.split(',').collect();
             let mut tt: Vec<i32> = Vec::new();
             for i in tuple_str.iter() {
                 match i32::from_str(i) {
@@ -136,7 +106,7 @@ pub mod xcsp3_core {
                     Err(_) => {
                         return Err(Xcsp3Error::get_constraint_extension_error(
                             "parse the tuple of extension error",
-                        ))
+                        ));
                     }
                 }
             }

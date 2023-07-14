@@ -23,12 +23,53 @@
 *=============================================================================
 */
 
-#![doc = include_str!("../README.md")]
+/**
+ * <p>@project_name: XCSP3-Rust
+ * </p>
+ * <p>@author: luhanzhen
+ * </p>
+ * <p>@date: 2023/7/7
+ * </p>
+ * <p>@time: 18:35
+ * </p>
+ * <p>@this_file_name:xcsp3constraint
+ * </p>
+ **/
 
-// pub mod xcsp3tree;
-// pub mod xcsp3treenode;
-// pub mod xcsp3utils;
-pub mod constraints;
-mod errors;
-pub mod variables;
-pub mod xcsp_xml;
+pub mod xcsp3_core {
+
+    use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
+    use crate::constraints::xextension::xcsp3_core::XExtension;
+    use std::slice::Iter;
+
+    pub struct XConstraintSet {
+        constraints: Vec<XConstraintType>,
+    }
+
+    impl XConstraintSet {
+        pub fn new() -> XConstraintSet {
+            XConstraintSet {
+                constraints: vec![],
+            }
+        }
+        pub fn iter(&self) -> Iter<'_, XConstraintType> {
+            self.constraints.iter()
+        }
+
+        pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
+            match XExtension::new(list, tuple, is_support) {
+                None => {}
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XExtension(c));
+                }
+            }
+        }
+    }
+
+    impl Default for XConstraintSet {
+              fn default() -> Self {
+                        Self::new()
+                     }
+    }
+
+}
