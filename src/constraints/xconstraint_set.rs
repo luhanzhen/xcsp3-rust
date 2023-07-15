@@ -158,8 +158,8 @@ pub mod xcsp3_core {
             }
             for i in 0..mat[0].len() {
                 let mut column: Vec<String> = vec![];
-                for j in 0..mat.len() {
-                    column.push(mat[j][i].clone());
+                for  m in  mat.iter() {
+                    column.push(m[i].clone());
                 }
                 self.constraints
                     .push(XConstraintType::XAllDifferent(XAllDifferent::new(column)))
