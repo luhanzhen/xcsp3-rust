@@ -65,6 +65,15 @@ pub mod xcsp3_core {
     }
 
     impl<'a> XAllDifferent<'a> {
+        pub fn from_str_vec(scope_vec_str: Vec<String>, set: &'a XVariableSet) -> Option<Self> {
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => Some(XAllDifferent::new(scope_vec_str, scope)),
+                Err(e) => {
+                    eprintln!("{}", e.to_string());
+                    None
+                }
+            }
+        }
         pub fn from_str(list: &str, set: &'a XVariableSet) -> Option<Self> {
             let scope_vec_str = list_to_scope_ids(list);
             match set.construct_scope(&scope_vec_str) {

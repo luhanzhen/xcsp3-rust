@@ -156,20 +156,22 @@ pub mod xcsp3_core {
         }
         pub fn build_all_different_matrix(&mut self, list: &str) {
             let mat = list_to_matrix_ids(list);
-            // for line in mat.iter() {
-            //     self.constraints
-            //         .push(XConstraintType::XAllDifferent(XAllDifferent::new(
-            //             line.clone(),
-            //         )))
-            // }
-            // for i in 0..mat[0].len() {
-            //     let mut column: Vec<String> = vec![];
-            //     for m in mat.iter() {
-            //         column.push(m[i].clone());
-            //     }
-            //     self.constraints
-            //         .push(XConstraintType::XAllDifferent(XAllDifferent::new(column)))
-            // }
+            for line in mat.iter() {
+                match XAllDifferent::from_str_vec(line.clone(), self.set) {
+                    None => self.constraints.push(XConstraintType::XConstraintNone),
+                    Some(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
+                }
+            }
+            for i in 0..mat[0].len() {
+                let mut column: Vec<String> = vec![];
+                for m in mat.iter() {
+                    column.push(m[i].clone());
+                }
+                match XAllDifferent::from_str_vec(column, self.set) {
+                    None => self.constraints.push(XConstraintType::XConstraintNone),
+                    Some(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
+                }
+            }
         }
     }
 }
