@@ -90,6 +90,14 @@ pub mod xcsp3_xml {
     }
 
     impl XcspXmlModel {
+
+        // pub fn build(&self) -> (XVariableSet,XConstraintSet) {
+        //     let (v,c):(XVariableSet,XConstraintSet);
+        //     v = self.build_variables();
+        //     c = self.build_constraints(&v);
+        //     (v,c)
+        // }
+
         pub fn build_objectives(&self) {
             println!("{:?}", self.objectives)
         }
