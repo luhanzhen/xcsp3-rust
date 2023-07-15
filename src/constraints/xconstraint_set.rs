@@ -60,8 +60,13 @@ pub mod xcsp3_core {
         constraints: Vec<XConstraintType<'a>>,
     }
     //construct the scope from XVariableSet
-    fn construct_scope<'a>(scope_str: &Vec<String>, set: &'a XVariableSet) ->Result<Vec<(String, &'a XDomainInteger)>,Xcsp3Error> {
-        Err(Xcsp3Error::get_variable_not_found_error("the scope not found, "))
+    pub fn construct_scope<'a>(
+        _scope_str: &Vec<String>,
+        _set: &'a XVariableSet,
+    ) -> Result<Vec<(String, &'a XDomainInteger)>, Xcsp3Error> {
+        Err(Xcsp3Error::get_variable_not_found_error(
+            "the scope not found, ",
+        ))
     }
 
     impl XConstraintSet<'_> {

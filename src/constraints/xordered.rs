@@ -40,10 +40,9 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_values};
     use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
-    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XOrdered<'a> {
@@ -66,7 +65,7 @@ pub mod xcsp3_core {
         }
 
         fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            todo!()
+            &self.scope_vec_var
         }
     }
 
@@ -97,7 +96,5 @@ pub mod xcsp3_core {
         pub fn get_operator(&self) -> &str {
             &self.operator
         }
-
-
     }
 }

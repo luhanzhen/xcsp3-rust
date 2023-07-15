@@ -39,7 +39,6 @@ fn test_single() {
     }
 }
 
-#[warn(dead_code)]
 fn test_all() {
     let start = Instant::now();
     // let aa = WalkDir::new("D://XCSP3")

@@ -42,9 +42,8 @@ pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
     use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
-    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+
     use std::slice::Iter;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     #[derive(Clone)]
     pub struct XExtension<'a> {
@@ -81,8 +80,6 @@ pub mod xcsp3_core {
                 None
             }
         }
-
-
 
         pub fn new<'a>(
             scope: Vec<String>,

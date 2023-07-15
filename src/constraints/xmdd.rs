@@ -43,7 +43,6 @@ pub mod xcsp3_core {
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
     use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
 
-
     #[derive(Clone)]
     pub struct XMdd<'a> {
         scope_vec_str: Vec<String>,
@@ -64,7 +63,7 @@ pub mod xcsp3_core {
         }
 
         fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            todo!()
+            &self.scope_vec_var
         }
     }
 
@@ -87,7 +86,5 @@ pub mod xcsp3_core {
                 scope_vec_var: vec![],
             }
         }
-
-
     }
 }
