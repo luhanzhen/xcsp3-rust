@@ -109,7 +109,7 @@ pub mod xcsp3_xml {
         /// read the instance from string
         pub fn from_str(string: &str) -> Result<XcspXmlModel, DeError> {
             let now = Instant::now();
-            let r = from_str(&string);
+            let r = from_str(string);
             println!(
                 "read the instance by {} microseconds",
                 now.elapsed().as_micros()
@@ -187,20 +187,18 @@ pub mod xcsp3_xml {
                     } => {
                         if !vars.is_empty() {
                             constraint.build_all_different(vars)
-                        } else {
-                            if matrix.is_empty() {
-                                if !except.is_empty() {
-                                    for e in list.iter() {
-                                        constraint.build_all_different_except(e, except);
-                                    }
-                                } else {
-                                    for e in list.iter() {
-                                        constraint.build_all_different(e);
-                                    }
+                        } else if matrix.is_empty() {
+                            if !except.is_empty() {
+                                for e in list.iter() {
+                                    constraint.build_all_different_except(e, except);
                                 }
                             } else {
-                                constraint.build_all_different_matrix(matrix);
+                                for e in list.iter() {
+                                    constraint.build_all_different(e);
+                                }
                             }
+                        } else {
+                            constraint.build_all_different_matrix(matrix);
                         }
                     }
                     ConstraintType::AllEqual { vars, list } => {
