@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,34 +36,42 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_values};
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
-    pub struct XOrdered {
-        scope: Vec<String>,
+    pub struct XOrdered<'a> {
+        scope_vec_str: Vec<String>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
         lengths: Vec<i32>,
         operator: String,
     }
 
-    impl XConstraintTrait for XOrdered {
+    impl XConstraintTrait for XOrdered<'_> {
         fn to_string(&self) -> String {
             format!(
                 "XOrdered: scope = {:?},  lengths = {:?}, operator = {}",
-                self.scope, self.lengths, self.operator
+                self.scope_vec_str, self.lengths, self.operator
             )
         }
 
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            todo!()
         }
     }
 
-    impl XOrdered {
-        pub fn from_str(list: &str, lengths_str: &str, operator: &str) -> Option<XOrdered> {
+    impl XOrdered<'_> {
+        pub fn from_str(list: &str, lengths_str: &str, operator: &str) -> Option<Self> {
             let scope = list_to_scope_ids(list);
             match list_to_values(lengths_str) {
                 Ok(lengths) => Some(XOrdered::new(scope, lengths, operator.to_string())),
@@ -71,13 +79,14 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn from_str_without_lengths(list: &str, operator: &str) -> Option<XOrdered> {
+        pub fn from_str_without_lengths(list: &str, operator: &str) -> Option<Self> {
             let scope = list_to_scope_ids(list);
             Some(XOrdered::new(scope, vec![], operator.to_string()))
         }
-        pub fn new(scope: Vec<String>, lengths: Vec<i32>, operator: String) -> XOrdered {
+        pub fn new(scope_vec_str: Vec<String>, lengths: Vec<i32>, operator: String) -> Self {
             XOrdered {
-                scope,
+                scope_vec_str,
+                scope_vec_var: vec![],
                 lengths,
                 operator,
             }
@@ -88,5 +97,7 @@ pub mod xcsp3_core {
         pub fn get_operator(&self) -> &str {
             &self.operator
         }
+
+
     }
 }

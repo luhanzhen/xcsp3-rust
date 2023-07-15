@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,13 +36,19 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+
     pub trait XConstraintTrait {
         fn to_string(&self) -> String;
 
-        ///get the scope of constraint
-        fn get_scope(&self) -> &Vec<String>;
+        ///get the scope string of constraint
+        fn get_scope_string(&self) -> &Vec<String>;
+
+        ///get the scope string of constraint
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)>;
     }
 }

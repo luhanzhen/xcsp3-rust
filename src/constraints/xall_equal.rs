@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,34 +36,46 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::list_to_scope_ids;
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
-    pub struct XAllEqual {
-        scope: Vec<String>,
+    pub struct XAllEqual<'a> {
+        scope_vec_str: Vec<String>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
     }
 
-    impl XConstraintTrait for XAllEqual {
+    impl XConstraintTrait for XAllEqual<'_> {
         fn to_string(&self) -> String {
-            format!("XAllEqual: scope = {:?}", self.scope)
+            format!("XAllEqual: scope = {:?}", self.scope_vec_str)
         }
 
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            &self.scope_vec_var
         }
     }
 
-    impl XAllEqual {
-        pub fn from_str(list: &str) -> Option<XAllEqual> {
+    impl XAllEqual<'_> {
+        pub fn from_str(list: &str) -> Option<Self> {
             let scope = list_to_scope_ids(list);
             Some(XAllEqual::new(scope))
         }
-        pub fn new(scope: Vec<String>) -> XAllEqual {
-            XAllEqual { scope }
+        pub fn new(scope_vec_str: Vec<String>) -> Self {
+            XAllEqual {
+                scope_vec_str,
+                scope_vec_var: vec![],
+            }
         }
+
     }
 }

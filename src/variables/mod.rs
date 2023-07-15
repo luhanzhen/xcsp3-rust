@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,11 +36,11 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 pub mod xvariable_set;
 pub mod xvariable_type;
 
-mod xdomain;
+pub mod xdomain_integer;
 mod xvariable_array;
 mod xvariable_int;
 mod xvariable_trait;

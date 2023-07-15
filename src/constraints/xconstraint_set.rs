@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
  * <p>@project_name: XCSP3-Rust
  * </p>
  * <p>@author: luhanzhen
@@ -34,7 +34,7 @@
  * </p>
  * <p>@this_file_name:xcsp3constraint
  * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
@@ -49,13 +49,23 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
-    pub struct XConstraintSet {
-        constraints: Vec<XConstraintType>,
+    /**
+    the XConstraintSet is a container that store all constraints.
+     */
+    pub struct XConstraintSet<'a> {
+        constraints: Vec<XConstraintType<'a>>,
+    }
+    //construct the scope from XVariableSet
+    fn construct_scope<'a>(scope_str: &Vec<String>, set: &'a XVariableSet) ->Result<Vec<(String, &'a XDomainInteger)>,Xcsp3Error> {
+        Err(Xcsp3Error::get_variable_not_found_error("the scope not found, "))
     }
 
-    impl XConstraintSet {
-        pub fn new() -> XConstraintSet {
+    impl XConstraintSet<'_> {
+        pub fn new<'a>() -> XConstraintSet<'a> {
             XConstraintSet {
                 constraints: vec![],
             }
@@ -158,7 +168,7 @@ pub mod xcsp3_core {
             }
             for i in 0..mat[0].len() {
                 let mut column: Vec<String> = vec![];
-                for  m in  mat.iter() {
+                for m in mat.iter() {
                     column.push(m[i].clone());
                 }
                 self.constraints
@@ -167,7 +177,7 @@ pub mod xcsp3_core {
         }
     }
 
-    impl Default for XConstraintSet {
+    impl Default for XConstraintSet<'_> {
         fn default() -> Self {
             Self::new()
         }

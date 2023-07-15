@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,16 +36,19 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
+
 pub mod xconstraint_set;
 pub mod xconstraint_type;
 
 pub mod xall_different;
 pub mod xall_different_except;
 pub mod xall_equal;
-pub mod xconstraint_trait;
+
 pub mod xextension;
 pub mod xinstantiation;
 pub mod xmdd;
 pub mod xordered;
 pub mod xregular;
+
+mod xconstraint_trait;

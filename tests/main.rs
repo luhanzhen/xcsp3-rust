@@ -20,14 +20,14 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  **/
 
 fn main() {
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 #[warn(dead_code)]
 fn test_single() {
-    // let xml_file = ".//instances//my-example.xml";
-    let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
+    let xml_file = ".//instances//my-example.xml";
+    // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
     let model = XcspXmlModel::from_path(xml_file).unwrap();
     println!("variables:");
     for v in model.build_variables().iter() {

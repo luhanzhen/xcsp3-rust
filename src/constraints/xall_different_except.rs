@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,34 +36,42 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{
         list_to_scope_ids, list_with_bracket_comma_to_values,
     };
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
-    pub struct XAllDifferentExcept {
-        scope: Vec<String>,
+    pub struct XAllDifferentExcept<'a> {
+        scope_vec_str: Vec<String>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
         except: Vec<i32>,
     }
 
-    impl XConstraintTrait for XAllDifferentExcept {
+    impl XConstraintTrait for XAllDifferentExcept<'_> {
         fn to_string(&self) -> String {
             format!(
                 "XAllDifferentExcept: scope = {:?}, except = {:?}",
-                self.scope, self.except
+                self.scope_vec_str, self.except
             )
         }
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            &self.scope_vec_var
         }
     }
 
-    impl XAllDifferentExcept {
-        pub fn from_str(list: &str, except_str: &str) -> Option<XAllDifferentExcept> {
+    impl XAllDifferentExcept<'_> {
+        pub fn from_str<'a>(list: &str, except_str: &str) -> Option<XAllDifferentExcept<'a>> {
             let scope = list_to_scope_ids(list);
             match list_with_bracket_comma_to_values(except_str) {
                 Ok(except) => Some(XAllDifferentExcept::new(scope, except)),
@@ -71,13 +79,19 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn new(scope: Vec<String>, except: Vec<i32>) -> XAllDifferentExcept {
-            XAllDifferentExcept { scope, except }
+        pub fn new<'a>(scope: Vec<String>, except: Vec<i32>) -> XAllDifferentExcept<'a> {
+            XAllDifferentExcept {
+                scope_vec_str: scope,
+                scope_vec_var: vec![],
+                except,
+            }
         }
 
         /// return the except vec of the XAllDifferentExcept constraint
         pub fn get_except(&self) -> &Vec<i32> {
             &self.except
         }
+
+
     }
 }

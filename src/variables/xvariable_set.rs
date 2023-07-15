@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
  * <p>@project_name: XCSP3-Rust
  * </p>
  * <p>@author: luhanzhen
@@ -34,18 +34,21 @@
  * </p>
  * <p>@this_file_name:XCSP3Variable
  * </p>
- **/
+ */
 
 pub mod xcsp3_core {
 
     use std::collections::HashMap;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
 
     use std::slice::Iter;
 
+    /**
+    the XVariableSet is a container that store all variables.
+     */
     pub struct XVariableSet {
         variables: Vec<XVariableType>,
         id_to_index: HashMap<String, usize>, //store the id and the index of the variable

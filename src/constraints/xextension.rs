@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,36 +36,44 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     #[derive(Clone)]
-    pub struct XExtension {
-        scope: Vec<String>,
+    pub struct XExtension<'a> {
+        scope_vec_str: Vec<String>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
         tuples: Vec<Vec<i32>>,
         is_support: bool,
     }
 
-    impl XConstraintTrait for XExtension {
+    impl XConstraintTrait for XExtension<'_> {
         fn to_string(&self) -> String {
             format!(
                 "XExtension: scope = {:?}, tuples = {:?}, is_support = {}",
-                self.scope, self.tuples, self.is_support
+                self.scope_vec_str, self.tuples, self.is_support
             )
         }
 
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            &self.scope_vec_var
         }
     }
 
-    impl XExtension {
+    impl XExtension<'_> {
         /// construct the constraint from two strings and a bool
-        pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
+        pub fn from_str<'a>(list: &str, tuple: &str, is_support: bool) -> Option<XExtension<'a>> {
             let scope = list_to_scope_ids(list);
             if let Ok(tuples) = tuple_to_vector(tuple, scope.len() == 1) {
                 Some(XExtension::new(scope, tuples, is_support))
@@ -73,9 +81,17 @@ pub mod xcsp3_core {
                 None
             }
         }
-        pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> XExtension {
+
+
+
+        pub fn new<'a>(
+            scope: Vec<String>,
+            tuples: Vec<Vec<i32>>,
+            is_support: bool,
+        ) -> XExtension<'a> {
             XExtension {
-                scope,
+                scope_vec_str: scope,
+                scope_vec_var: vec![],
                 tuples,
                 is_support,
             }

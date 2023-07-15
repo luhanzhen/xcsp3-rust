@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,7 +36,12 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
+
+/**
+# this mod is about the xml file, and xcsp_xml_model is used to read the xml from file,
+
+*/
 
 /// only pub this mod
 pub mod xcsp_xml_model;

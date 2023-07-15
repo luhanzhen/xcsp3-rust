@@ -41,7 +41,7 @@
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::sizes_to_vec;
-    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
 
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
 

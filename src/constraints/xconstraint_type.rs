@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,7 +36,7 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
@@ -50,19 +50,19 @@ pub mod xcsp3_core {
     use crate::constraints::xregular::xcsp3_core::XRegular;
 
     #[derive(Clone)]
-    pub enum XConstraintType {
+    pub enum XConstraintType<'a> {
         XConstraintNone,
-        XExtension(XExtension),
-        XAllDifferent(XAllDifferent),
-        XAllDifferentExcept(XAllDifferentExcept),
-        XInstantiation(XInstantiation),
-        XAllEqual(XAllEqual),
-        XOrdered(XOrdered),
-        XRegular(XRegular),
-        XMdd(XMdd),
+        XExtension(XExtension<'a>),
+        XAllDifferent(XAllDifferent<'a>),
+        XAllDifferentExcept(XAllDifferentExcept<'a>),
+        XInstantiation(XInstantiation<'a>),
+        XAllEqual(XAllEqual<'a>),
+        XOrdered(XOrdered<'a>),
+        XRegular(XRegular<'a>),
+        XMdd(XMdd<'a>),
     }
 
-    impl XConstraintType {
+    impl XConstraintType<'_> {
         pub fn to_string(&self) -> String {
             match self {
                 XConstraintType::XConstraintNone => String::from(

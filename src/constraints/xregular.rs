@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,40 +36,48 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
-    pub struct XRegular {
-        scope: Vec<String>,
+    pub struct XRegular<'a> {
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope_vec_str: Vec<String>,
         start: String,
         r#final: Vec<String>,
         transitions: Vec<(String, i32, String)>,
     }
 
-    impl XConstraintTrait for XRegular {
+    impl XConstraintTrait for XRegular<'_> {
         fn to_string(&self) -> String {
             format!(
                 "XRegular: scope = {:?},  transitions = {:?}, start = {}, final = {:?},",
-                self.scope, self.transitions, self.start, self.r#final,
+                self.scope_vec_str, self.transitions, self.start, self.r#final,
             )
         }
 
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            todo!()
         }
     }
 
-    impl XRegular {
+    impl XRegular<'_> {
         pub fn from_str(
             list: &str,
             transitions_str: &str,
             start_str: &str,
             final_str: &str,
-        ) -> Option<XRegular> {
+        ) -> Option<Self> {
             let scope = list_to_scope_ids(list);
             let mut finals: Vec<String> = vec![];
             let t_final: Vec<&str> = final_str.split_whitespace().collect();
@@ -87,14 +95,17 @@ pub mod xcsp3_core {
             }
         }
 
+
+
         pub fn new(
-            scope: Vec<String>,
+            scope_vec_str: Vec<String>,
             start: String,
             r#final: Vec<String>,
             transitions: Vec<(String, i32, String)>,
-        ) -> XRegular {
+        ) -> Self {
             XRegular {
-                scope,
+                scope_vec_var: vec![],
+                scope_vec_str,
                 start,
                 r#final,
                 transitions,

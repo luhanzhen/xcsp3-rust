@@ -25,6 +25,22 @@
 
     </variables>
     <constraints>
+        <maximum>
+            <list>x1 x2 x3 x4</list>
+            <condition>(eq,y)</condition>
+        </maximum>
+        <maximum>
+            <list>z1 z2 z3 z4 z5</list>
+            <condition>(lt,w)</condition>
+        </maximum>
+        <minimum>
+            <list>x1 x2 x3 x4</list>
+            <condition>(eq,y)</condition>
+        </minimum>
+        <minimum>
+            <list>z1 z2 z3 z4 z5</list>
+            <condition>(ne,w)</condition>
+        </minimum>
         <sum>
             <list>x1 x2 x3</list>
             <coeffs>1 2 3</coeffs>
@@ -155,22 +171,7 @@
             <list> y[] </list>
             <value> z </value>
         </element>
-        <maximum>
-            <list>x1 x2 x3 x4</list>
-            <condition>(eq,y)</condition>
-        </maximum>
-        <maximum>
-            <list>z1 z2 z3 z4 z5</list>
-            <condition>(lt,w)</condition>
-        </maximum>
-        <minimum>
-            <list>x1 x2 x3 x4</list>
-            <condition>(eq,y)</condition>
-        </minimum>
-        <minimum>
-            <list>z1 z2 z3 z4 z5</list>
-            <condition>(ne,w)</condition>
-        </minimum>
+
         <cardinality>
             <list>x1 x2 x3 x4</list>
             <values>2 5 10</values>

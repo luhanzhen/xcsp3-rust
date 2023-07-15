@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,33 +36,40 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
+    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+
 
     #[derive(Clone)]
-    pub struct XMdd {
-        scope: Vec<String>,
+    pub struct XMdd<'a> {
+        scope_vec_str: Vec<String>,
         transitions: Vec<(String, i32, String)>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
     }
 
-    impl XConstraintTrait for XMdd {
+    impl XConstraintTrait for XMdd<'_> {
         fn to_string(&self) -> String {
             format!(
                 "XMdd: scope = {:?},  transitions = {:?}",
-                self.scope, self.transitions,
+                self.scope_vec_str, self.transitions,
             )
         }
 
-        fn get_scope(&self) -> &Vec<String> {
-            &self.scope
+        fn get_scope_string(&self) -> &Vec<String> {
+            &self.scope_vec_str
+        }
+
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+            todo!()
         }
     }
 
-    impl XMdd {
-        pub fn from_str(list: &str, transitions_str: &str) -> Option<XMdd> {
+    impl XMdd<'_> {
+        pub fn from_str(list: &str, transitions_str: &str) -> Option<Self> {
             let scope = list_to_scope_ids(list);
             match list_to_transitions(transitions_str) {
                 Ok(transitions) => Some(XMdd::new(scope, transitions)),
@@ -73,8 +80,14 @@ pub mod xcsp3_core {
         pub fn get_transitions(&self) -> &Vec<(String, i32, String)> {
             &self.transitions
         }
-        pub fn new(scope: Vec<String>, transitions: Vec<(String, i32, String)>) -> XMdd {
-            XMdd { scope, transitions }
+        pub fn new(scope_vec_str: Vec<String>, transitions: Vec<(String, i32, String)>) -> Self {
+            XMdd {
+                scope_vec_str,
+                transitions,
+                scope_vec_var: vec![],
+            }
         }
+
+
     }
 }

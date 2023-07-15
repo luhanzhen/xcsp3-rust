@@ -364,12 +364,22 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <minimum>
+          <list> (intVar wspace)2+ </list>
+          <condition> "(" operator "," operand ")" </condition>
+        </minimum>
         ```
 
         eg.
         ```xml
-
+        <minimum>
+          <list> x1 x2 x3 x4 </list>
+          <condition> (eq,y) </condition>
+        </minimum>
+        <minimum>
+          <list> z1 z2 z3 z4 z5 </list>
+          <condition> (ne,w) </condition>
+        </minimum>
         ```
          */
         #[serde(rename = "minimum")]
@@ -383,12 +393,22 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <maximum>
+          <list> (intVar wspace)2+ </list>
+          <condition> "(" operator "," operand ")" </condition>
+        </maximum>
         ```
 
         eg.
         ```xml
-
+        <maximum>
+          <list> x1 x2 x3 x4 </list>
+          <condition> (eq,y) </condition>
+        </maximum>
+        <maximum>
+          <list> z1 z2 z3 z4 z5 </list>
+          <condition> (lt,w) </condition>
+        </maximum>
         ```
          */
         #[serde(rename = "maximum")]
