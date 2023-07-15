@@ -39,9 +39,9 @@
  **/
 pub mod xvariable_set;
 
-pub mod xdomain;
+mod xdomain;
 mod xvariable_array;
 mod xvariable_int;
 mod xvariable_trait;
 mod xvariable_tree;
-pub mod xvariable_type;
+mod xvariable_type;

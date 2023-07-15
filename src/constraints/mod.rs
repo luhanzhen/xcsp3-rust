@@ -23,8 +23,7 @@
 *=============================================================================
 */
 
-mod xall_different;
-mod xall_different_except;
+
 /**
 * <p>@project_name: xcsp3-rust
 * </p>
@@ -39,7 +38,10 @@ mod xall_different_except;
  * <p>@description: 1.0
 * </p>
  **/
+
 pub mod xconstraint_set;
 mod xconstraint_trait;
 mod xconstraint_type;
 mod xextension;
+mod xall_different;
+mod xall_different_except;

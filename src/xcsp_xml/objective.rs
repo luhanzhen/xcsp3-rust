@@ -57,6 +57,13 @@ pub mod xcsp3_xml {
         Lex,
     }
 
+    /**
+    ```xml
+    <minimize or maximize [ id="identifier" ]  [ type="expression" ]>
+      intExpr
+    </minimize or maximize>
+    ````
+     */
     #[derive(Deserialize, Debug)]
     pub struct MaximizeMinimize {
         #[serde(rename = "id", default)]
@@ -71,6 +78,13 @@ pub mod xcsp3_xml {
         pub value: String,
     }
 
+    /**
+    ```xml
+    <objectives  [ combination="combinationType" ]>
+      (<minimize.../> | <maximize.../>)+
+    </objectives>
+    ````
+    */
     #[derive(Deserialize, Debug)]
     pub struct Objective {
         #[serde(rename = "minimize", default)]
@@ -81,7 +95,9 @@ pub mod xcsp3_xml {
 
     #[derive(Deserialize, Debug)]
     pub enum InstanceType {
-        CSP,
-        COP,
+        #[serde(rename = "CSP")]
+        Csp,
+        #[serde(rename = "COP")]
+        Cop,
     }
 }

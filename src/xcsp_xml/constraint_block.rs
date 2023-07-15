@@ -41,7 +41,31 @@
 pub mod xcsp3_xml {
     use crate::xcsp_xml::constraint_type::xcsp3_xml::ConstraintType;
     use serde::Deserialize;
+    /**
+    syntax.
+    ```xml
+    <block  [ id="identifier" ]  [ class="(identifier wspace)+" ]>
+      (<constraint.../> | <metaConstraint.../> | <group.../> | <block... />)+
+    </block>
+    ```
 
+    eg.
+    ```xml
+    <block class="clues">
+        <intension> ... </intension>
+        <intension> ... </intension>
+        ...
+      </block>
+      <block class="symmetryBreaking">
+        <lex> ... </lex>
+        <lex> ... </lex>
+        ...
+      </block>
+      <block class="redundantConstraints"> ... </block>
+      <block note="Management of first week"> ... </block>
+      <block note="Management of second week"> ... </block>
+    ```
+     */
     #[derive(Deserialize, Debug)]
     pub struct ConstraintBlock {
         #[serde(rename = "@id", default)]

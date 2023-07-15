@@ -70,5 +70,9 @@ pub mod xcsp3_core {
                 Err(_) => None,
             }
         }
+        /// return the except vec of the XAllDifferentExcept constraint
+        pub fn get_except(&self) -> &Vec<i32> {
+            &self.except
+        }
     }
 }

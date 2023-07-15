@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 19:06
+* <p>@date:  2023/7/15 13:23
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -38,17 +38,35 @@
 * </p>
  **/
 
-/// only pub this mod
-pub mod xcsp_xml_model;
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParseVariableError {
+    pub msg: String,
+    pub r#type: VariableError,
+}
 
-//private mod
-mod constraint;
-mod constraint_block;
-mod constraint_group;
-mod constraint_type;
-mod objective;
-mod variable;
-mod variable_array;
-mod variable_domain;
-mod variable_type;
-mod variable_var;
+impl ParseVariableError {
+    pub(crate) fn to_string(&self) -> String {
+        format!("{:?}:{}", self.r#type, self.msg)
+    }
+
+    pub(crate) fn get_not_found_error(s: &str) -> ParseVariableError {
+        const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
+        ParseVariableError {
+            msg: (s.to_owned() + WEBSITE),
+            r#type: VariableError::NotFoundAsVariable,
+        }
+    }
+    pub(crate) fn get_size_invalid_error(s: &str) -> ParseVariableError {
+        const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables";
+        ParseVariableError {
+            msg: (s.to_owned() + WEBSITE),
+            r#type: VariableError::SizeInvalid,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum VariableError {
+    NotFoundAsVariable,
+    SizeInvalid,
+}

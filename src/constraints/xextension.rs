@@ -41,6 +41,7 @@
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
+    use std::slice::Iter;
 
     #[derive(Clone)]
     pub struct XExtension {
@@ -63,6 +64,7 @@ pub mod xcsp3_core {
     }
 
     impl XExtension {
+        /// construct the constraint from two strings and a bool
         pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
             if let Ok(tuples) = tuple_to_vector(tuple) {
                 let scope = list_to_scope_ids(list);
@@ -71,6 +73,24 @@ pub mod xcsp3_core {
                     tuples,
                     is_support,
                 })
+            } else {
+                None
+            }
+        }
+
+        ///return the iter of the supports tuples
+        pub fn supports_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
+            if self.is_support {
+                Some(self.tuples.iter())
+            } else {
+                None
+            }
+        }
+
+        ///return the iter of the conflict tuples
+        pub fn conflicts_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
+            if !self.is_support {
+                Some(self.tuples.iter())
             } else {
                 None
             }

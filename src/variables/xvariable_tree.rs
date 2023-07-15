@@ -43,7 +43,6 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
-    use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
 
     #[derive(Clone)]
     pub struct XVariableTree {
@@ -54,16 +53,22 @@ pub mod xcsp3_core {
     }
 
     impl XVariableTree {
-        pub fn new(id: &str, sizes: &str, domain_vec: &[VariableDomain]) -> Option<Self> {
+        pub fn new(
+            id: &str,
+            sizes: &str,
+            domain_for: Vec<&String>,
+            domain_value: Vec<&String>,
+        ) -> Option<Self> {
             if let Ok((size_vec, _size)) = sizes_to_vec(sizes) {
                 let mut nodes: Vec<XVariableTreeNode> = Vec::new();
-                for dom in domain_vec.iter() {
-                    let ret = XDomainInteger::from_string(&dom.value);
+                // for dom in domain_vec.iter() {
+                for i in 0..domain_for.len() {
+                    let ret = XDomainInteger::from_string(domain_value[i]);
                     if let Ok(domain) = ret {
-                        if dom.r#for.eq("others") {
+                        if domain_for[i].eq("others") {
                             nodes.push(XVariableTreeNode::new_other(domain));
                         } else {
-                            let for_strs: Vec<&str> = dom.r#for.split_whitespace().collect();
+                            let for_strs: Vec<&str> = domain_for[i].split_whitespace().collect();
                             for e in for_strs.iter() {
                                 let mut for_str = e.to_string();
                                 for_str = for_str.replace(id, "");

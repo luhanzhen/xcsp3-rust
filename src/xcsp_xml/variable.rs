@@ -42,6 +42,11 @@ pub mod xcsp3_xml {
     use crate::xcsp_xml::variable_type::xcsp3_xml::VariableType;
     use serde::Deserialize;
 
+    /**
+    Variables are the basic components of combinatorial problems. In XCSP3-core, you can declare:
+    integer variables, including 0/1 variables that can be used to represent Boolean variables too
+    k-dimensional arrays of integer variables, with k >= 1
+    */
     #[derive(Deserialize, Debug)]
     pub struct Variable {
         #[serde(rename = "$value", default)]

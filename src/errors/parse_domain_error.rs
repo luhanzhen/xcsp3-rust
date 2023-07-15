@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 19:06
+* <p>@date:  2023/7/15 13:23
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -38,17 +38,45 @@
 * </p>
  **/
 
-/// only pub this mod
-pub mod xcsp_xml_model;
+pub mod xcsp3_core {
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub enum DomainError {
+        UnknownInteger,
+        UnknownInterval,
+        UnknownFor,
+    }
 
-//private mod
-mod constraint;
-mod constraint_block;
-mod constraint_group;
-mod constraint_type;
-mod objective;
-mod variable;
-mod variable_array;
-mod variable_domain;
-mod variable_type;
-mod variable_var;
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub struct ParseDomainError {
+        pub msg: String,
+        pub r#type: DomainError,
+    }
+
+    impl ParseDomainError {
+        pub(crate) fn to_string(&self) -> String {
+            format!("{:?}:{}", self.r#type, self.msg)
+        }
+
+        pub(crate) fn get_integer_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";
+            ParseDomainError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: DomainError::UnknownInteger,
+            }
+        }
+        pub(crate) fn get_interval_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
+            ParseDomainError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: DomainError::UnknownInterval,
+            }
+        }
+        pub(crate) fn get_domain_for_error(s: &str) -> ParseDomainError {
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/arrays/";
+            ParseDomainError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: DomainError::UnknownFor,
+            }
+        }
+    }
+}

@@ -41,6 +41,18 @@
 pub mod xcsp3_xml {
     use serde::Deserialize;
 
+    /**
+      syntax.
+      ```xml
+       (<domain for="(intVar wspace)+"> ... </domain>)+
+      ```
+
+      eg.
+      ```xml
+       <domain for="z[][0..1][] z[][2][2..4]"> 0..10 </domain>
+    <domain for="others"> 0 1 </domain>
+      ```
+     */
     #[derive(Deserialize, Debug)]
     pub struct VariableDomain {
         #[serde(rename = "@for")]

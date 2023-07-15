@@ -36,7 +36,6 @@
  * </p>
  **/
 
-// #[allow(dead_code)]
 pub mod xcsp3_core {
 
     use std::collections::HashMap;
@@ -45,7 +44,6 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
 
-    use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
     use std::slice::Iter;
 
     pub struct XVariableSet {
@@ -140,9 +138,10 @@ pub mod xcsp3_core {
             &mut self,
             id: &str,
             sizes: &str,
-            domain_vec: &Vec<VariableDomain>,
+            domain_for: Vec<&String>,
+            domain_value: Vec<&String>,
         ) {
-            let tree = XVariableType::new_tree(id, sizes, domain_vec);
+            let tree = XVariableType::new_tree(id, sizes, domain_for, domain_value);
             match tree {
                 XVariableType::XVariableTree(_) => {
                     self.id_to_index.insert(tree.get_id(), self.variables.len());

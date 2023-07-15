@@ -25,11 +25,10 @@
 
 #![doc = include_str!("../README.md")]
 
-// pub mod xcsp3tree;
-// pub mod xcsp3treenode;
-// pub mod xcsp3utils;
+
 pub mod constraints;
-mod errors;
-mod utils;
 pub mod variables;
 pub mod xcsp_xml;
+
+mod errors;
+mod utils;

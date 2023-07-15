@@ -59,8 +59,8 @@ pub mod xcsp3_core {
         let mut list = list.to_string();
         list = list.replace(')', "@");
         list = list.replace('\n', "");
-        list = list.replace("(", " ");
-        let lists: Vec<&str> = list.split("@").collect();
+        list = list.replace('(', " ");
+        let lists: Vec<&str> = list.split('@').collect();
         for e in lists.iter() {
             if !e.is_empty() {
                 let ss = e.replace(',', " ");
@@ -72,21 +72,21 @@ pub mod xcsp3_core {
 
     /// return the list of values,
     /// eg str"1 3 5 76" -> vec[1,3,5,76],
-    pub fn list_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
-        let mut ret: Vec<i32> = Vec::new();
-        let lists: Vec<&str> = list.split_whitespace().collect();
-        for e in lists.iter() {
-            match i32::from_str(e) {
-                Ok(n) => ret.push(n),
-                Err(_) => {
-                    return Err(Xcsp3Error::get_constraint_list_of_values_error(
-                        "parse the list of values error. ",
-                    ));
-                }
-            }
-        }
-        Ok(ret)
-    }
+    // pub fn list_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
+    //     let mut ret: Vec<i32> = Vec::new();
+    //     let lists: Vec<&str> = list.split_whitespace().collect();
+    //     for e in lists.iter() {
+    //         match i32::from_str(e) {
+    //             Ok(n) => ret.push(n),
+    //             Err(_) => {
+    //                 return Err(Xcsp3Error::get_constraint_list_of_values_error(
+    //                     "parse the list of values error. ",
+    //                 ));
+    //             }
+    //         }
+    //     }
+    //     Ok(ret)
+    // }
 
     /// return the list of values,
     /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],

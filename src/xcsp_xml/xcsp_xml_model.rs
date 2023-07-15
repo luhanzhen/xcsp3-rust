@@ -38,6 +38,31 @@
 * </p>
  **/
 
+/**
+the SYNTAX of xcsp3 is as follows:
+```xml
+<instance format="XCSP<sup>3</sup>" type="frameworkType">
+  <variables>
+    ( <var .../>
+    | <array .../>
+    )+
+  </variables>
+  <constraints>
+    ( <constraint .../>
+    | <metaConstraint .../>
+    | <group .../>
+    | <block .../>
+    )*
+  </constraints>
+  [<objectives  [ combination="combinationType" ]>
+    ( <minimize .../>
+    | <maximize .../>
+    )+
+  </objectives>]
+  [<annotations .../>]
+</instance>
+```
+ */
 pub mod xcsp3_xml {
     use crate::constraints::xconstraint_set::xcsp3_core::XConstraintSet;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
@@ -68,6 +93,8 @@ pub mod xcsp3_xml {
         pub fn build_objectives(&self) {
             println!("{:?}", self.objectives)
         }
+
+
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<XcspXmlModel, DeError> {
             let now = Instant::now();
@@ -79,6 +106,17 @@ pub mod xcsp3_xml {
             println!(
                 "read the instance named {} by {} microseconds",
                 path,
+                now.elapsed().as_micros()
+            );
+            r
+        }
+
+        /// read the instance from string
+        pub fn from_str(string: &str) -> Result<XcspXmlModel, DeError> {
+            let now = Instant::now();
+            let r = from_str(&string);
+            println!(
+                "read the instance by {} microseconds",
                 now.elapsed().as_micros()
             );
             r
@@ -121,17 +159,22 @@ pub mod xcsp3_xml {
                                 &var_array_str.value,
                             );
                         } else {
+                            let mut domain_for: Vec<&String> = vec![];
+                            let mut domain_value: Vec<&String> = vec![];
+                            for e in var_array_str.domains.iter() {
+                                domain_value.push(&e.value);
+                                domain_for.push(&e.r#for);
+                            }
                             variables.build_variable_tree(
                                 &var_array_str.id,
                                 &var_array_str.size,
-                                &var_array_str.domains,
+                                domain_for,
+                                domain_value,
                             );
                         }
                     }
                 }
             }
-            // println!("{}", variables.to_string());
-
             variables
         }
 

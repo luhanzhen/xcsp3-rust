@@ -39,7 +39,6 @@
  **/
 
 pub mod xcsp3_xml {
-
     use crate::xcsp_xml::constraint_block::xcsp3_xml::ConstraintBlock;
     use crate::xcsp_xml::constraint_group::xcsp3_xml::ConstraintGroup;
     use serde::Deserialize;
@@ -52,6 +51,37 @@ pub mod xcsp3_xml {
         Group(ConstraintGroup),
         #[serde(rename = "block")]
         Block(ConstraintBlock),
+
+        /**
+          syntax.
+          ```xml
+           <allDifferent>
+          <list> (intVar wspace)2+ </list>
+          [<except> (intVal wspace)+ </except>]
+        </allDifferent>
+          ```
+
+          eg.
+          ```xml
+         <allDifferent>
+          x1 x2 x3 x4 x5
+        </allDifferent>
+        <allDifferent>
+          <list> y[] </list>
+          <except> 0 </except>
+        </allDifferent>
+          ```
+        or
+          ```xml
+        <allDifferent>
+          <matrix>
+            (x1,x2,x3,x4,x5)
+            (y1,y2,y3,y4,y5)
+            (z1,z2,z3,z4,z5)
+          </matrix>
+        </allDifferent>
+          ```
+         */
         #[serde(rename = "allDifferent")]
         AllDifferent {
             #[serde(rename = "$value", default)]
@@ -63,16 +93,51 @@ pub mod xcsp3_xml {
             #[serde(rename = "matrix", default)]
             matrix: String,
         },
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "allEqual")]
         AllEqual {
             #[serde(rename = "$value")]
             vars: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "circuit")]
         Circuit {
             #[serde(rename = "$value")]
             vars: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "ordered")]
         Ordered {
             #[serde(rename = "list", default)]
@@ -82,12 +147,33 @@ pub mod xcsp3_xml {
             #[serde(rename = "lengths", default)]
             lengths: String,
         },
+        /**
+        syntax.
+        ```xml
 
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "intension")]
         Intension {
             #[serde(rename = "$value")]
             value: String,
         },
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "extension")]
         Extension {
             #[serde(rename = "list", default)]
@@ -97,6 +183,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "conflicts", default)]
             conflicts: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "regular")]
         Regular {
             #[serde(rename = "list", default)]
@@ -108,6 +206,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "final", default)]
             r#final: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "mdd")]
         Mdd {
             #[serde(rename = "list", default)]
@@ -115,6 +225,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "transitions", default)]
             transitions: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "sum")]
         Sum {
             #[serde(rename = "list", default)]
@@ -124,6 +246,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "coeffs", default)]
             coeffs: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "count")]
         Count {
             #[serde(rename = "@id", default)]
@@ -135,6 +269,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "nValues")]
         NValues {
             #[serde(rename = "list", default)]
@@ -144,6 +290,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "cardinality")]
         Cardinality {
             #[serde(rename = "list", default)]
@@ -153,6 +311,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "occurs", default)]
             occurs: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "minimum")]
         Minimum {
             #[serde(rename = "list", default)]
@@ -160,6 +330,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "maximum")]
         Maximum {
             #[serde(rename = "list", default)]
@@ -167,6 +349,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "element")]
         Element {
             #[serde(rename = "list", default)]
@@ -176,6 +370,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "index", default)]
             index: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "stretch")]
         Stretch {
             #[serde(rename = "list", default)]
@@ -187,6 +393,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "patterns", default)]
             patterns: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "noOverlap")]
         NoOverlap {
             #[serde(rename = "origins", default)]
@@ -194,6 +412,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "lengths", default)]
             lengths: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "cumulative")]
         Cumulative {
             #[serde(rename = "origins", default)]
@@ -209,6 +439,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "machines", default)]
             machines: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "instantiation")]
         Instantiation {
             #[serde(rename = "list", default)]
@@ -216,6 +458,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "values", default)]
             values: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "slide")]
         Slide {
             #[serde(rename = "@id", default)]
@@ -225,6 +479,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "$value", default)]
             constraints: Vec<ConstraintType>,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "channel")]
         Channel {
             #[serde(rename = "list", default)]
@@ -232,6 +498,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "value", default)]
             value: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "allDistant")]
         AllDistant {
             #[serde(rename = "list", default)]
@@ -239,6 +517,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "precedence")]
         Precedence {
             #[serde(rename = "list", default)]
@@ -246,6 +536,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "values", default)]
             values: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "balance")]
         Balance {
             #[serde(rename = "list", default)]
@@ -255,6 +557,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "values", default)]
             values: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "spread")]
         Spread {
             #[serde(rename = "list", default)]
@@ -264,6 +578,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "total", default)]
             total: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "deviation")]
         Deviation {
             #[serde(rename = "list", default)]
@@ -273,7 +599,17 @@ pub mod xcsp3_xml {
             #[serde(rename = "total", default)]
             total: String,
         },
+        /**
+        syntax.
+        ```xml
 
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "binPacking")]
         BinPacking {
             #[serde(rename = "list", default)]
@@ -283,6 +619,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "condition", default)]
             condition: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "lex")]
         Lex {
             #[serde(rename = "matrix", default)]
@@ -290,6 +638,18 @@ pub mod xcsp3_xml {
             #[serde(rename = "operator", default)]
             operator: String,
         },
+
+        /**
+        syntax.
+        ```xml
+
+        ```
+
+        eg.
+        ```xml
+
+        ```
+         */
         #[serde(rename = "clause")]
         Clause {
             #[serde(rename = "$value", default)]

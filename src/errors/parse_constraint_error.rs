@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 18:54
+* <p>@date:  2023/7/15 13:23
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -39,10 +39,48 @@
  **/
 
 pub mod xcsp3_core {
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub struct ParseConstraintError {
+        pub msg: String,
+        pub r#type: ConstraintError,
+    }
 
-        ///get the scope of constraint
-        fn get_scope(&self) -> &Vec<String>;
+    impl ParseConstraintError {
+        pub(crate) fn to_string(&self) -> String {
+            format!("{:?}:{}", self.r#type, self.msg)
+        }
+
+        pub(crate) fn get_scope_not_found_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ScopeNotFoundError,
+            }
+        }
+
+        pub(crate) fn get_extension_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/generic/extension/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ExtensionError,
+            }
+        }
+
+        pub(crate) fn get_list_of_values_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ExtensionError,
+            }
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub enum ConstraintError {
+        ExtensionError,
+        ScopeNotFoundError,
     }
 }

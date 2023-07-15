@@ -42,6 +42,46 @@ pub mod xcsp3_xml {
     use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
     use serde::Deserialize;
 
+    /**
+        syntax.
+        ```xml
+         <array id="identifier"  [ type="varType" ]  size="dimensions"  [ startIndex="integer" ]>
+          ...
+        </array>
+        ```
+
+        eg.
+        ```xml
+        <array id="x" size="[10]"> 1..100 </array>
+        <array id="y" size="[5][8]"> 0 1 </array>
+        ```
+
+        or
+        syntax.
+        ```xml
+          <array id="identifier"  [ type="varType" ]  size="dimensions"  [ startIndex="integer" ]>
+            (<domain for="(intVar wspace)+"> ... </domain>)+
+            [<domain for="others"> ... </domain>]
+         </array>
+        ```
+
+        eg.
+        ```xml
+       <array id="x" size="[3][5]">
+      <domain for="x[0][]"> 1..10 </domain>
+      <domain for="x[1][]"> 1..20 </domain>
+      <domain for="x[2][]"> 1..15 </domain>
+    </array>
+    <array id="y" size="[10]">
+      <domain for="y[4]"> 0 1 </domain>
+      <domain for="others"> 2 4 6 </domain>
+    </array>
+    <array id="z" size="[5][5][5]">
+      <domain for="z[][0..1][] z[][2][2..4]"> 0..10 </domain>
+      <domain for="others"> 0 1 </domain>
+    </array>
+        ```
+     */
     #[derive(Deserialize, Debug)]
     pub struct VariableArray {
         #[serde(rename = "@id")]

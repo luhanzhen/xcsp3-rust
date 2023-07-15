@@ -68,7 +68,7 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub enum XIntegerType {
-        Empty,
+        XIntegerNone,
         IntegerValue(XIntegerValue),
         IntegerInterval(XIntegerInterval),
         XIntegerSymbolic(XIntegerSymbolic),
@@ -89,7 +89,7 @@ pub mod xcsp3_core {
                     XIntegerType::XIntegerSymbolic(iii) => ii.equals(iii),
                     _ => false,
                 },
-                _ => false,
+                XIntegerType::XIntegerNone => false,
             }
         }
 
@@ -98,7 +98,7 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => iv.to_string(),
                 XIntegerType::IntegerInterval(ii) => ii.to_string(),
                 XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
-                _ => "empty".to_string(),
+                XIntegerType::XIntegerNone => "XIntegerNone: there must be an error when parse this domain.".to_string(),
             }
         }
         pub fn maximum(&self) -> i32 {
@@ -106,7 +106,7 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
                 XIntegerType::IntegerInterval(ii) => ii.maximum(),
                 XIntegerType::XIntegerSymbolic(ii) => ii.maximum(),
-                _ => 2_147_483_647i32,
+                XIntegerType::XIntegerNone => 2_147_483_647i32,
                 //i32::MAX, my ide named clion tell me i32::MAX is private constant, but rustc can compile it...
             }
         }
@@ -116,7 +116,7 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => iv.minimum(),
                 XIntegerType::IntegerInterval(ii) => ii.minimum(),
                 XIntegerType::XIntegerSymbolic(ii) => ii.minimum(),
-                _ => -2_147_483_648i32, //i32::MIN,
+                XIntegerType::XIntegerNone => -2_147_483_648i32, //i32::MIN,
             }
         }
     }
@@ -308,12 +308,14 @@ pub mod xcsp3_core {
                                     ret.add_interval(l, r);
                                 }
                                 Err(_) => {
+                                    ret.values.push(XIntegerType::XIntegerNone);
                                     return Err(Xcsp3Error::get_domain_interval_error(
                                         "parse the domain error",
                                     ));
                                 }
                             },
                             Err(_) => {
+                                ret.values.push(XIntegerType::XIntegerNone);
                                 return Err(Xcsp3Error::get_domain_interval_error(
                                     "parse the domain error",
                                 ));
@@ -324,7 +326,7 @@ pub mod xcsp3_core {
                     match i32::from_str(d) {
                         Ok(v) => ret.add_value(v),
                         Err(_) => {
-                            // ret.add_value(i as i32)
+                            ret.values.push(XIntegerType::XIntegerNone);
                             return Err(Xcsp3Error::get_domain_integer_error(
                                 "parse the domain error",
                             ));
@@ -416,7 +418,7 @@ pub mod xcsp3_core {
             XDomainIter {
                 values: &self.values,
                 current: 0,
-                current1: i32::MAX,
+                current1: 2_147_483_647i32, //i32::MAX {
             }
         }
     }
@@ -438,7 +440,8 @@ pub mod xcsp3_core {
             for cc in self.current..self.values.len() {
                 match &self.values[cc] {
                     XIntegerType::XIntegerSymbolic(s) => {
-                        if self.current1 == i32::MAX {
+                        if self.current1 == 2_147_483_647i32 {
+                            //i32::MAX {
                             self.current1 = s.minimum();
                             ret = Some(self.current1);
                             self.current1 += 1;
@@ -452,7 +455,7 @@ pub mod xcsp3_core {
                             break;
                         }
                     }
-                    XIntegerType::Empty => {
+                    XIntegerType::XIntegerNone => {
                         self.current += 1;
                         continue;
                     }
@@ -462,13 +465,14 @@ pub mod xcsp3_core {
                         break;
                     }
                     XIntegerType::IntegerInterval(i) => {
-                        if self.current1 == i32::MAX {
+                        if self.current1 == 2_147_483_647i32 {
+                            //i32::MAX {
                             self.current1 = i.minimum();
                             ret = Some(self.current1);
                             self.current1 += 1;
                             break;
                         } else if self.current1 > i.maximum() {
-                            self.current1 = i32::MAX;
+                            self.current1 = 2_147_483_647i32; //i32::MAX {
                             self.current += 1;
                             continue;
                         } else {

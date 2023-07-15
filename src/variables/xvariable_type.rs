@@ -44,7 +44,6 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_int::xcsp3_core::XVariableInt;
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
     use crate::variables::xvariable_tree::xcsp3_core::XVariableTree;
-    use crate::xcsp_xml::variable_domain::xcsp3_xml::VariableDomain;
 
     #[derive(Clone)]
     pub enum XVariableType {
@@ -67,8 +66,13 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn new_tree(id: &str, sizes: &str, domain_vec: &Vec<VariableDomain>) -> XVariableType {
-            if let Some(t) = XVariableTree::new(id, sizes, domain_vec) {
+        pub fn new_tree(
+            id: &str,
+            sizes: &str,
+            domain_for: Vec<&String>,
+            domain_value: Vec<&String>,
+        ) -> XVariableType {
+            if let Some(t) = XVariableTree::new(id, sizes, domain_for, domain_value) {
                 XVariableType::XVariableTree(t)
             } else {
                 XVariableType::XVariableNone

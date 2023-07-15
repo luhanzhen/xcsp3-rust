@@ -41,6 +41,21 @@
 pub mod xcsp3_xml {
     use serde::Deserialize;
 
+    /**
+    syntax.
+    ```xml
+     <var id="identifier"  [ type="integer" ]>
+      ((intVal | intIntvl) wspace)*
+    </var>
+    ```
+
+    eg.
+    ```xml
+    <var id="foo"> 0 1 2 3 4 5 6 </var>
+    <var id="bar"> 0..6 </var>
+    <var id="qux"> -6..-2 0 1..3 4 7 8..11 </var>
+    ```
+    */
     #[derive(Deserialize, Debug)]
     pub struct VariableVar {
         #[serde(rename = "@id")]

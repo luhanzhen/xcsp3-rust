@@ -41,7 +41,25 @@
 pub mod xcsp3_xml {
     use crate::xcsp_xml::constraint_type::xcsp3_xml::ConstraintType;
     use serde::Deserialize;
+    /**
+    syntax.
+    ```xml
+    <group  [ id="identifier" ]>
+      <constraint.../>  <!-- constraint template -->
+      (<args> (intExpr wspace)+ </args>)2+
+    </group>
+    ```
 
+    eg.
+    ```xml
+    <group id="g">
+      <intension> eq(add(%0,%1),%2) </intension>
+      <args> x0 x1 x2 </args>
+      <args> x3 x4 x5 </args>
+      <args> x6 x7 x8 </args>
+    </group>
+    ```
+     */
     #[derive(Deserialize, Debug)]
     pub struct ConstraintGroup {
         #[serde(rename = "@class")]
