@@ -47,7 +47,7 @@ pub mod xcsp3_core {
     #[derive(Clone)]
     pub struct XOrdered<'a> {
         scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope_vec_var: Vec<(&'a String, &'a XDomainInteger)>,
         lengths: Vec<i32>,
         operator: String,
     }
@@ -64,7 +64,7 @@ pub mod xcsp3_core {
             &self.scope_vec_str
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)> {
             &self.scope_vec_var
         }
     }

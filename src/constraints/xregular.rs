@@ -46,7 +46,7 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub struct XRegular<'a> {
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope_vec_var: Vec<(&'a String, &'a XDomainInteger)>,
         scope_vec_str: Vec<String>,
         start: String,
         r#final: Vec<String>,
@@ -65,7 +65,7 @@ pub mod xcsp3_core {
             &self.scope_vec_str
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
+        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)> {
             &self.scope_vec_var
         }
     }

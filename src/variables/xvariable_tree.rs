@@ -39,6 +39,7 @@
  **/
 
 pub mod xcsp3_core {
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{sizes_to_double_vec, sizes_to_vec};
     use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
 
@@ -49,17 +50,35 @@ pub mod xcsp3_core {
         nodes: Vec<XVariableTreeNode>,
         pub(crate) id: String,
         sizes: Vec<usize>,
-        _size: usize,
+        size: usize,
     }
 
     impl XVariableTree {
+        pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
+            if let Ok((_size_vec, size)) = sizes_to_vec(id) {
+                if size > self.size {
+                    Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "parse the size of variable error",
+                    ))
+                } else {
+                    Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "parse the size of variable error",
+                    ))
+                }
+            } else {
+                Err(Xcsp3Error::get_variable_size_invalid_error(
+                    "parse the size of variable error",
+                ))
+            }
+        }
+
         pub fn new(
             id: &str,
             sizes: &str,
             domain_for: Vec<&String>,
             domain_value: Vec<&String>,
         ) -> Option<Self> {
-            if let Ok((size_vec, _size)) = sizes_to_vec(sizes) {
+            if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
                 let mut nodes: Vec<XVariableTreeNode> = Vec::new();
                 // for dom in domain_vec.iter() {
                 for i in 0..domain_for.len() {
@@ -95,7 +114,7 @@ pub mod xcsp3_core {
                 Some(XVariableTree {
                     id: id.to_string(),
                     sizes: size_vec,
-                    _size,
+                    size,
                     nodes,
                 })
             } else {

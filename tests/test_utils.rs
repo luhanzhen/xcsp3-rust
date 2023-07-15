@@ -24,31 +24,27 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:54
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: XCSP3-Rust
+ * </p>
+ * <p>@author: luhanzhen
+ * </p>
+ * <p>@date: 2023/7/15
+ * </p>
+ * <p>@time: 21:14
+ * </p>
+ * <p>@this_file_name: test_utils
+ * </p>
  */
 
-pub mod xcsp3_core {
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+#[cfg(test)]
+mod test_xcsp3domain {
 
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
+    use xcsp3_rust::utils::bitset::xcsp3_core::Bitset;
 
-        ///get the scope string of constraint
-        fn get_scope_string(&self) -> &Vec<String>;
+    #[test]
+    fn test_bitset() {
+        let set = Bitset::from_width(1000);
 
-        ///get the scope string of constraint
-
-        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)>;
+        println!("set: {} {}", set.remove(9), set.to_string());
     }
 }

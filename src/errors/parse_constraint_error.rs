@@ -47,7 +47,7 @@ pub mod xcsp3_core {
 
     impl ParseConstraintError {
         pub(crate) fn to_string(&self) -> String {
-            format!("{:?}:{}", self.r#type, self.msg)
+            format!("{:?}: {}", self.r#type, self.msg)
         }
 
         pub(crate) fn get_scope_not_found_error(s: &str) -> ParseConstraintError {

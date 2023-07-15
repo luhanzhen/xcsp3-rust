@@ -42,37 +42,28 @@ pub mod xcsp3_core {
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
-    use crate::utils::xcsp3utils::xcsp3_core::list_to_matrix_ids;
-    use std::slice::Iter;
-
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::utils::xcsp3utils::xcsp3_core::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::slice::Iter;
 
     /**
     the XConstraintSet is a container that store all constraints.
      */
     pub struct XConstraintSet<'a> {
         constraints: Vec<XConstraintType<'a>>,
+        set: &'a XVariableSet,
     }
     //construct the scope from XVariableSet
-    pub fn construct_scope<'a>(
-        _scope_str: &Vec<String>,
-        _set: &'a XVariableSet,
-    ) -> Result<Vec<(String, &'a XDomainInteger)>, Xcsp3Error> {
-        Err(Xcsp3Error::get_variable_not_found_error(
-            "the scope not found, ",
-        ))
-    }
 
-    impl XConstraintSet<'_> {
-        pub fn new<'a>() -> XConstraintSet<'a> {
+    impl<'a> XConstraintSet<'a> {
+        pub fn new(set: &'a XVariableSet) -> XConstraintSet<'a> {
             XConstraintSet {
                 constraints: vec![],
+                set,
             }
         }
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
@@ -146,7 +137,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_all_different(&mut self, list: &str) {
-            match XAllDifferent::from_str(list) {
+            match XAllDifferent::from_str(list, self.set) {
                 None => self.constraints.push(XConstraintType::XConstraintNone),
                 Some(c) => {
                     self.constraints.push(XConstraintType::XAllDifferent(c));
@@ -165,26 +156,20 @@ pub mod xcsp3_core {
         }
         pub fn build_all_different_matrix(&mut self, list: &str) {
             let mat = list_to_matrix_ids(list);
-            for line in mat.iter() {
-                self.constraints
-                    .push(XConstraintType::XAllDifferent(XAllDifferent::new(
-                        line.clone(),
-                    )))
-            }
-            for i in 0..mat[0].len() {
-                let mut column: Vec<String> = vec![];
-                for m in mat.iter() {
-                    column.push(m[i].clone());
-                }
-                self.constraints
-                    .push(XConstraintType::XAllDifferent(XAllDifferent::new(column)))
-            }
-        }
-    }
-
-    impl Default for XConstraintSet<'_> {
-        fn default() -> Self {
-            Self::new()
+            // for line in mat.iter() {
+            //     self.constraints
+            //         .push(XConstraintType::XAllDifferent(XAllDifferent::new(
+            //             line.clone(),
+            //         )))
+            // }
+            // for i in 0..mat[0].len() {
+            //     let mut column: Vec<String> = vec![];
+            //     for m in mat.iter() {
+            //         column.push(m[i].clone());
+            //     }
+            //     self.constraints
+            //         .push(XConstraintType::XAllDifferent(XAllDifferent::new(column)))
+            // }
         }
     }
 }

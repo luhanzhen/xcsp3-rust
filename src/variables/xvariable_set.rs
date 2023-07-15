@@ -100,7 +100,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_variable_int_as(&mut self, id: &str, as_str: &str) {
-            match self.find_variable_int(as_str) {
+            match self.find_variable(as_str) {
                 Ok(v) => {
                     if let XVariableType::XVariableInt(vv) = v {
                         let var = XVariableType::new_int(id, vv.domain.clone());
@@ -156,13 +156,42 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn find_variable_int(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
+        fn find_variable(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
             match self.id_to_index.get(id) {
                 None => Err(Xcsp3Error::get_variable_not_found_error(
                     &("not find the variable named ".to_owned() + id),
                 )),
                 Some(v) => Ok(&self.variables[*v]),
             }
+        }
+
+        pub fn construct_scope(
+            &self,
+            scope_str: &Vec<String>,
+        ) -> Result<Vec<(&String, &XDomainInteger)>, Xcsp3Error> {
+            let mut ret: Vec<(&String, &XDomainInteger)> = vec![];
+            // println!("{:?}", scope_str);
+            for e in scope_str.iter() {
+                let r = self.find_variable(&e);
+                match r {
+                    Ok(var_type) => match var_type {
+                        XVariableType::XVariableArray(a) => {
+                            a.find_variable(e);
+                        }
+                        XVariableType::XVariableInt(i) => ret.push((&i.id, &i.domain)),
+                        XVariableType::XVariableTree(t) => {
+                            t.find_variable(e);
+                        }
+                        _ => {}
+                    },
+                    Err(_) => {
+                        return Err(Xcsp3Error::get_variable_not_found_error(
+                            "the scope not found, ",
+                        ));
+                    }
+                }
+            }
+            Ok(ret)
         }
     }
 }

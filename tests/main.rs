@@ -29,12 +29,13 @@ fn test_single() {
     let xml_file = ".//instances//my-example.xml";
     // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
     let model = XcspXmlModel::from_path(xml_file).unwrap();
+    let variable = model.build_variables();
     println!("variables:");
-    for v in model.build_variables().iter() {
+    for v in variable.iter() {
         println!("\t{}", v.to_string())
     }
     println!("constraints:");
-    for c in model.build_constraints().iter() {
+    for c in model.build_constraints(&variable).iter() {
         println!("\t{}", c.to_string())
     }
 }
@@ -66,7 +67,7 @@ fn test_all() {
                             break;
                         }
                     }
-                    for c in m.build_constraints().iter() {
+                    for c in m.build_constraints(&variable).iter() {
                         if let XConstraintType::XConstraintNone = c {
                             eprintln!("Err {}", file.path().display());
                             break;

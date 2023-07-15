@@ -24,31 +24,58 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:54
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: XCSP3-Rust
+ * </p>
+ * <p>@author: luhanzhen
+ * </p>
+ * <p>@date: 2023/7/15
+ * </p>
+ * <p>@time: 21:10
+ * </p>
+ * <p>@this_file_name: bitset.rs
+ * </p>
  */
 
 pub mod xcsp3_core {
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
 
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
+    #[derive(Clone)]
+    pub struct Bitset {
+        values: Vec<u128>,
+    }
 
-        ///get the scope string of constraint
-        fn get_scope_string(&self) -> &Vec<String>;
+    impl From<Vec<u128>> for Bitset {
+        fn from(value: Vec<u128>) -> Self {
+            Bitset::new(value)
+        }
+    }
 
-        ///get the scope string of constraint
+    impl Bitset {
+        pub fn remove(&self, index: usize) -> usize {
+            let mut cnt: usize = 0;
+            for e in self.values.iter() {
+                cnt += e.count_zeros() as usize
+            }
+            cnt
+        }
 
-        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)>;
+        pub fn add(index: usize) {}
+
+        pub fn to_string(&self) -> String {
+            format!("{:?}", self.values)
+        }
+
+        pub fn from_width(max: usize) -> Self {
+            let mut values: Vec<u128> = vec![];
+            let mut width = max / 128;
+            if max % 128 != 0 {
+                width += 1
+            }
+            values.resize(width, 0);
+            Bitset::new(values)
+        }
+
+        pub fn new(values: Vec<u128>) -> Self {
+            Bitset { values }
+        }
     }
 }

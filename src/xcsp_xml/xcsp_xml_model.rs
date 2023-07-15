@@ -173,8 +173,8 @@ pub mod xcsp3_xml {
             variables
         }
 
-        pub fn build_constraints(&self) -> XConstraintSet {
-            let mut constraint: XConstraintSet = XConstraintSet::new();
+        pub fn build_constraints<'a>(&'a self, set: &'a XVariableSet) -> XConstraintSet {
+            let mut constraint: XConstraintSet = XConstraintSet::new(set);
             for con_type in self.constraints.constraints.iter() {
                 match con_type {
                     ConstraintType::Group(_) => {}

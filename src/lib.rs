@@ -30,4 +30,4 @@ pub mod variables;
 pub mod xcsp_xml;
 
 mod errors;
-mod utils;
+pub mod utils;
