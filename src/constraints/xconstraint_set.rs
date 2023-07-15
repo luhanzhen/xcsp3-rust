@@ -37,13 +37,18 @@
  **/
 
 pub mod xcsp3_core {
-
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
+    use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::utils::xcsp3utils::xcsp3_core::list_to_matrix_ids;
     use std::slice::Iter;
+
+    use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
+    use crate::constraints::xmdd::xcsp3_core::XMdd;
+    use crate::constraints::xordered::xcsp3_core::XOrdered;
+    use crate::constraints::xregular::xcsp3_core::XRegular;
 
     pub struct XConstraintSet {
         constraints: Vec<XConstraintType>,
@@ -59,11 +64,68 @@ pub mod xcsp3_core {
             self.constraints.iter()
         }
 
+        pub fn build_regular(
+            &mut self,
+            list: &str,
+            transitions_str: &str,
+            start_str: &str,
+            final_str: &str,
+        ) {
+            match XRegular::from_str(list, transitions_str, start_str, final_str) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XRegular(c));
+                }
+            }
+        }
+
+        pub fn build_mdd(&mut self, list: &str, transitions_str: &str) {
+            match XMdd::from_str(list, transitions_str) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XMdd(c));
+                }
+            }
+        }
+
+        pub fn build_ordered(&mut self, list: &str, lengths_str: &str, operator: &str) {
+            if lengths_str.is_empty() {
+                self.constraints.push(XConstraintType::XOrdered(
+                    XOrdered::from_str_without_lengths(list, operator).unwrap(),
+                ));
+            } else {
+                match XOrdered::from_str(list, lengths_str, operator) {
+                    None => self.constraints.push(XConstraintType::XConstraintNone),
+                    Some(c) => {
+                        self.constraints.push(XConstraintType::XOrdered(c));
+                    }
+                }
+            }
+        }
+
+        pub fn build_instantiation(&mut self, list: &str, values: &str) {
+            match XInstantiation::from_str(list, values) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XInstantiation(c));
+                }
+            }
+        }
+
         pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
             match XExtension::from_str(list, tuple, is_support) {
                 None => self.constraints.push(XConstraintType::XConstraintNone),
                 Some(c) => {
                     self.constraints.push(XConstraintType::XExtension(c));
+                }
+            }
+        }
+
+        pub fn build_all_equal(&mut self, list: &str) {
+            match XAllEqual::from_str(list) {
+                None => self.constraints.push(XConstraintType::XConstraintNone),
+                Some(c) => {
+                    self.constraints.push(XConstraintType::XAllEqual(c));
                 }
             }
         }

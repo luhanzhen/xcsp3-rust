@@ -25,7 +25,6 @@
 
 #![doc = include_str!("../README.md")]
 
-
 pub mod constraints;
 pub mod variables;
 pub mod xcsp_xml;

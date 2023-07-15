@@ -37,7 +37,6 @@
  */
 
 pub mod xcsp3_core {
-
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
@@ -50,6 +49,29 @@ pub mod xcsp3_core {
             ret.push(e.to_string());
         }
         ret
+    }
+
+    /// return the transitions,
+    /// eg  "(a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)" -> vec[ (a,0,a),(a,1,b),(b,1,c),(c,0,d),(d,0,d),(d,1,e),(e,0,e)]
+    pub fn list_to_transitions(list: &str) -> Result<Vec<(String, i32, String)>, Xcsp3Error> {
+        let mut ret: Vec<(String, i32, String)> = Vec::new();
+        let list = list.to_string().replace(')', "@").replace('(', " ");
+        let lists: Vec<&str> = list.split('@').collect();
+        for e in lists.iter() {
+            if !e.is_empty() {
+                let tran_str = e.to_string().replace(',', " ");
+                let tran: Vec<&str> = tran_str.split_whitespace().collect();
+                match i32::from_str(tran[1]) {
+                    Ok(n) => ret.push((tran[0].to_string(), n, tran[2].to_string())),
+                    Err(_) => {
+                        return Err(Xcsp3Error::get_constraint_regular_transitions_error(
+                            "parse the transitions error, ",
+                        ));
+                    }
+                }
+            }
+        }
+        Ok(ret)
     }
 
     /// return the matrix,
@@ -72,21 +94,21 @@ pub mod xcsp3_core {
 
     /// return the list of values,
     /// eg str"1 3 5 76" -> vec[1,3,5,76],
-    // pub fn list_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
-    //     let mut ret: Vec<i32> = Vec::new();
-    //     let lists: Vec<&str> = list.split_whitespace().collect();
-    //     for e in lists.iter() {
-    //         match i32::from_str(e) {
-    //             Ok(n) => ret.push(n),
-    //             Err(_) => {
-    //                 return Err(Xcsp3Error::get_constraint_list_of_values_error(
-    //                     "parse the list of values error. ",
-    //                 ));
-    //             }
-    //         }
-    //     }
-    //     Ok(ret)
-    // }
+    pub fn list_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
+        let mut ret: Vec<i32> = Vec::new();
+        let lists: Vec<&str> = list.split_whitespace().collect();
+        for l in lists.iter() {
+            match i32::from_str(l) {
+                Ok(n) => ret.push(n),
+                Err(_) => {
+                    return Err(Xcsp3Error::get_constraint_list_of_values_error(
+                        "parse the list of values error. ",
+                    ));
+                }
+            }
+        }
+        Ok(ret)
+    }
 
     /// return the list of values,
     /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],
@@ -113,27 +135,55 @@ pub mod xcsp3_core {
 
     ///return the tuples by given string,
     /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
-    pub fn tuple_to_vector(tuple: &str) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
+    pub fn tuple_to_vector(tuple: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
         let mut ret: Vec<Vec<i32>> = Vec::new();
-        let tuple = tuple.replace('(', " ");
-        let tuple = tuple.replace(')', " ");
-        let tuples_str: Vec<&str> = tuple.split_whitespace().collect();
-        for ts in tuples_str.iter() {
-            let tuple_str: Vec<&str> = ts.split(',').collect();
-            let mut tt: Vec<i32> = Vec::new();
-            for i in tuple_str.iter() {
-                match i32::from_str(i) {
-                    Ok(num) => {
-                        tt.push(num);
-                    }
+        let err = Xcsp3Error::get_constraint_extension_error("parse the tuple of extension error");
+        if is_unary {
+            let interval: Vec<&str> = tuple.split("..").collect();
+            if interval.len() == 2 {
+                let left = i32::from_str(interval[0]);
+                let right = i32::from_str(interval[1]);
+                match left {
+                    Ok(l) => match right {
+                        Ok(r) => {
+                            if l <= r {
+                                for i in l..r + 1 {
+                                    ret.push(vec![i])
+                                }
+                            } else {
+                                return Err(err);
+                            }
+                        }
+                        Err(_) => {
+                            return Err(err);
+                        }
+                    },
                     Err(_) => {
-                        return Err(Xcsp3Error::get_constraint_extension_error(
-                            "parse the tuple of extension error",
-                        ));
+                        return Err(err);
                     }
                 }
             }
-            ret.push(tt);
+        } else {
+            let tuple = tuple.replace('(', " ");
+            let tuple = tuple.replace(')', " ");
+            let tuples_str: Vec<&str> = tuple.split_whitespace().collect();
+            for ts in tuples_str.iter() {
+                let tuple_str: Vec<&str> = ts.split(',').collect();
+                let mut tt: Vec<i32> = Vec::new();
+                for i in tuple_str.iter() {
+                    match i32::from_str(i) {
+                        Ok(num) => {
+                            tt.push(num);
+                        }
+                        Err(_) => {
+                            return Err(Xcsp3Error::get_constraint_extension_error(
+                                "parse the tuple of extension error",
+                            ));
+                        }
+                    }
+                }
+                ret.push(tt);
+            }
         }
         Ok(ret)
     }

@@ -41,8 +41,13 @@
 pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
+    use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xextension::xcsp3_core::XExtension;
+    use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
+    use crate::constraints::xmdd::xcsp3_core::XMdd;
+    use crate::constraints::xordered::xcsp3_core::XOrdered;
+    use crate::constraints::xregular::xcsp3_core::XRegular;
 
     #[derive(Clone)]
     pub enum XConstraintType {
@@ -50,6 +55,11 @@ pub mod xcsp3_core {
         XExtension(XExtension),
         XAllDifferent(XAllDifferent),
         XAllDifferentExcept(XAllDifferentExcept),
+        XInstantiation(XInstantiation),
+        XAllEqual(XAllEqual),
+        XOrdered(XOrdered),
+        XRegular(XRegular),
+        XMdd(XMdd),
     }
 
     impl XConstraintType {
@@ -59,8 +69,13 @@ pub mod xcsp3_core {
                     "XConstraintNone: there must be an error when parse this constraint.",
                 ),
                 XConstraintType::XExtension(c) => c.to_string(),
+                XConstraintType::XAllEqual(c) => c.to_string(),
                 XConstraintType::XAllDifferent(c) => c.to_string(),
                 XConstraintType::XAllDifferentExcept(c) => c.to_string(),
+                XConstraintType::XInstantiation(c) => c.to_string(),
+                XConstraintType::XOrdered(c) => c.to_string(),
+                XConstraintType::XRegular(c) => c.to_string(),
+                XConstraintType::XMdd(c) => c.to_string(),
             }
         }
     }

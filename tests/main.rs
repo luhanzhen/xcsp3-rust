@@ -1,3 +1,7 @@
+use std::time::Instant;
+use walkdir::WalkDir;
+use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
+use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 
 /**
@@ -14,8 +18,16 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  * <p>@description: 1.0
 * </p>
  **/
+
 fn main() {
-    let xml_file = ".//instances//my-example.xml";
+    // test_single();
+    test_all();
+}
+
+#[warn(dead_code)]
+fn test_single() {
+    // let xml_file = ".//instances//my-example.xml";
+    let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
     let model = XcspXmlModel::from_path(xml_file).unwrap();
     println!("variables:");
     for v in model.build_variables().iter() {
@@ -26,61 +38,49 @@ fn main() {
         println!("\t{}", c.to_string())
     }
 }
-// use std::time::Instant;
-// use walkdir::WalkDir;
-// use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
-//
 
-// fn main() {
-//     let start = Instant::now();
-//     // let aa = WalkDir::new("D://XCSP3")
-//     // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
-//     let aa = WalkDir::new("D:\\XCSP3\\Bibd")
-//         // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
-//         .into_iter()
-//         .filter_map(|file| file.ok());
-//
-//     for file in aa {
-//         if file.metadata().unwrap().is_file() && file.path().display().to_string().ends_with(".xml")
-//         {
-//             // println!("{}", file.path().display());
-//             // let xml = fs::read_to_string(file.path().display().to_string()).unwrap();
-//             // // println!("{}", xml);
-//             // let model: Option<XcspXmlModel> = match from_str(&xml) {
-//             //     Ok(m) => Some(m),
-//             //     Err(_err) => None,
-//             // };
-//             //
-//             // match model {
-//             //     None => eprintln!("Err {}", file.path().display()),
-//             //     Some(m) => {
-//             //         // m.build_variables();
-//             //         println!("Done {}", file.path().display());
-//             //     }
-//             // }
-//             let model = XcspXmlModel::from_path(&file.path().display().to_string());
-//             match model {
-//                 Err(_) => eprintln!("Err {}", file.path().display()),
-//                 Ok(m) => {
-//                     let variable = m.build_variables();
-//                     for v in variable.iter() {
-//                         println!("{}", v.to_string())
-//                     }
-//                     // for v in variable.iter() {
-//                     //     if let XVariableType::XVariableNone = v {
-//                     //         eprintln!("Err {}", file.path().display());
-//                     //         break;
-//                     //     }
-//                     // }
-//                     // m.build_constraints();
-//                     // println!("Done {}", file.path().display());
-//                 }
-//             }
-//         }
-//     }
-//     let duration = start.elapsed();
-//     println!("Time elapsed in parse all instances is: {:?}", duration);
-// }
+#[warn(dead_code)]
+fn test_all() {
+    let start = Instant::now();
+    // let aa = WalkDir::new("D://XCSP3")
+    let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
+        // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
+        // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
+        .into_iter()
+        .filter_map(|file| file.ok());
+
+    for file in aa {
+        if file.metadata().unwrap().is_file() && file.path().display().to_string().ends_with(".xml")
+        {
+            let model = XcspXmlModel::from_path(&file.path().display().to_string());
+            match model {
+                Err(_) => eprintln!("Err {}", file.path().display()),
+                Ok(m) => {
+                    let variable = m.build_variables();
+                    // for v in variable.iter() {
+                    //     println!("{}", v.to_string())
+                    // }
+                    for v in variable.iter() {
+                        if let XVariableType::XVariableNone = v {
+                            eprintln!("Err {}", file.path().display());
+                            break;
+                        }
+                    }
+                    for c in m.build_constraints().iter() {
+                        if let XConstraintType::XConstraintNone = c {
+                            eprintln!("Err {}", file.path().display());
+                            break;
+                        }
+                    }
+                    // println!("Done {}", file.path().display());
+                }
+            }
+        }
+    }
+    let duration = start.elapsed();
+    println!("Time elapsed in parse all instances is: {:?}", duration);
+}
 
 // Time elapsed in parse all instances is: 346.9358413s
 

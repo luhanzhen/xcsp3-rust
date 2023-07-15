@@ -43,7 +43,6 @@ pub mod xcsp3_core {
     use crate::errors::parse_domain_error::xcsp3_core::ParseDomainError;
     use crate::errors::parse_variable_error::ParseVariableError;
 
-
     #[derive(Debug, Clone, PartialEq, Eq)]
     pub enum Xcsp3Error {
         ParseDomainError(ParseDomainError),
@@ -59,6 +58,10 @@ pub mod xcsp3_core {
 
         pub fn get_constraint_scope_not_found_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_scope_not_found_error(s))
+        }
+
+        pub fn get_constraint_regular_transitions_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_regular_transitions_error(s))
         }
 
         pub fn get_constraint_list_of_values_error(s: &str) -> Xcsp3Error {

@@ -23,7 +23,6 @@
 *=============================================================================
 */
 
-
 /**
 * <p>@project_name: xcsp3-rust
 * </p>
@@ -38,10 +37,7 @@
  * <p>@description: 1.0
 * </p>
  **/
-
-
 pub mod xcsp3error;
-
 
 mod parse_constraint_error;
 mod parse_domain_error;

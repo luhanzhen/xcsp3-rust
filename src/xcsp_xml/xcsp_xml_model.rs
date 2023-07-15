@@ -94,7 +94,6 @@ pub mod xcsp3_xml {
             println!("{:?}", self.objectives)
         }
 
-
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<XcspXmlModel, DeError> {
             let now = Instant::now();
@@ -103,11 +102,7 @@ pub mod xcsp3_xml {
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            println!(
-                "read the instance named {} by {} microseconds",
-                path,
-                now.elapsed().as_micros()
-            );
+            println!("read the instance named {} by {:?}.", path, now.elapsed());
             r
         }
 
@@ -208,9 +203,21 @@ pub mod xcsp3_xml {
                             }
                         }
                     }
-                    ConstraintType::AllEqual { .. } => {}
+                    ConstraintType::AllEqual { vars, list } => {
+                        if !vars.is_empty() {
+                            constraint.build_all_equal(vars);
+                        } else {
+                            for e in list.iter() {
+                                constraint.build_all_equal(e);
+                            }
+                        }
+                    }
                     ConstraintType::Circuit { .. } => {}
-                    ConstraintType::Ordered { .. } => {}
+                    ConstraintType::Ordered {
+                        vars,
+                        operator,
+                        lengths,
+                    } => constraint.build_ordered(vars, lengths, operator),
                     ConstraintType::Intension { .. } => {}
                     ConstraintType::Extension {
                         vars,
@@ -227,8 +234,15 @@ pub mod xcsp3_xml {
                             )
                         }
                     }
-                    ConstraintType::Regular { .. } => {}
-                    ConstraintType::Mdd { .. } => {}
+                    ConstraintType::Regular {
+                        vars,
+                        transitions,
+                        start,
+                        r#final,
+                    } => constraint.build_regular(vars, transitions, start, r#final),
+                    ConstraintType::Mdd { vars, transitions } => {
+                        constraint.build_mdd(vars, transitions)
+                    }
                     ConstraintType::Sum { .. } => {}
                     ConstraintType::Count { .. } => {}
                     ConstraintType::NValues { .. } => {}
@@ -239,7 +253,10 @@ pub mod xcsp3_xml {
                     ConstraintType::Stretch { .. } => {}
                     ConstraintType::NoOverlap { .. } => {}
                     ConstraintType::Cumulative { .. } => {}
-                    ConstraintType::Instantiation { .. } => {}
+                    ConstraintType::Instantiation { vars, values } => {
+                        // println!("{}{:?}", vars, values);
+                        constraint.build_instantiation(vars, values);
+                    }
                     ConstraintType::Slide { .. } => {}
                     ConstraintType::Channel { .. } => {}
                     ConstraintType::AllDistant { .. } => {}

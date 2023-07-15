@@ -98,7 +98,9 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => iv.to_string(),
                 XIntegerType::IntegerInterval(ii) => ii.to_string(),
                 XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
-                XIntegerType::XIntegerNone => "XIntegerNone: there must be an error when parse this domain.".to_string(),
+                XIntegerType::XIntegerNone => {
+                    "XIntegerNone: there must be an error when parse this domain.".to_string()
+                }
             }
         }
         pub fn maximum(&self) -> i32 {

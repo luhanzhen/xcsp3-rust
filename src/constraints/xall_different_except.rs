@@ -66,10 +66,15 @@ pub mod xcsp3_core {
         pub fn from_str(list: &str, except_str: &str) -> Option<XAllDifferentExcept> {
             let scope = list_to_scope_ids(list);
             match list_with_bracket_comma_to_values(except_str) {
-                Ok(except) => Some(XAllDifferentExcept { scope, except }),
+                Ok(except) => Some(XAllDifferentExcept::new(scope, except)),
                 Err(_) => None,
             }
         }
+
+        pub fn new(scope: Vec<String>, except: Vec<i32>) -> XAllDifferentExcept {
+            XAllDifferentExcept { scope, except }
+        }
+
         /// return the except vec of the XAllDifferentExcept constraint
         pub fn get_except(&self) -> &Vec<i32> {
             &self.except

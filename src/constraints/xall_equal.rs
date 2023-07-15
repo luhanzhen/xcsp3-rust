@@ -28,7 +28,7 @@
 * </p>
 * <p>@author: luhan zhen
 * </p>
-* <p>@date:  2023/7/14 18:54
+* <p>@date:  2023/7/15 14:34
 * </p>
 * <p>@email: zhenlh20@mails.jlu.edu.cn
 * </p>
@@ -40,22 +40,16 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
-    use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
-    use std::slice::Iter;
+    use crate::utils::xcsp3utils::xcsp3_core::list_to_scope_ids;
 
     #[derive(Clone)]
-    pub struct XExtension {
+    pub struct XAllEqual {
         scope: Vec<String>,
-        tuples: Vec<Vec<i32>>,
-        is_support: bool,
     }
 
-    impl XConstraintTrait for XExtension {
+    impl XConstraintTrait for XAllEqual {
         fn to_string(&self) -> String {
-            format!(
-                "XExtension: scope = {:?}, tuples = {:?}, is_support = {}",
-                self.scope, self.tuples, self.is_support
-            )
+            format!("XAllEqual: scope = {:?}", self.scope)
         }
 
         fn get_scope(&self) -> &Vec<String> {
@@ -63,39 +57,13 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XExtension {
-        /// construct the constraint from two strings and a bool
-        pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Option<XExtension> {
+    impl XAllEqual {
+        pub fn from_str(list: &str) -> Option<XAllEqual> {
             let scope = list_to_scope_ids(list);
-            if let Ok(tuples) = tuple_to_vector(tuple, scope.len() == 1) {
-                Some(XExtension::new(scope, tuples, is_support))
-            } else {
-                None
-            }
+            Some(XAllEqual::new(scope))
         }
-        pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> XExtension {
-            XExtension {
-                scope,
-                tuples,
-                is_support,
-            }
-        }
-        ///return the iter of the supports tuples
-        pub fn supports_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
-            if self.is_support {
-                Some(self.tuples.iter())
-            } else {
-                None
-            }
-        }
-
-        ///return the iter of the conflict tuples
-        pub fn conflicts_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
-            if !self.is_support {
-                Some(self.tuples.iter())
-            } else {
-                None
-            }
+        pub fn new(scope: Vec<String>) -> XAllEqual {
+            XAllEqual { scope }
         }
     }
 }

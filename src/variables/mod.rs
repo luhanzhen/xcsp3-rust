@@ -38,10 +38,10 @@
 * </p>
  **/
 pub mod xvariable_set;
+pub mod xvariable_type;
 
 mod xdomain;
 mod xvariable_array;
 mod xvariable_int;
 mod xvariable_trait;
 mod xvariable_tree;
-mod xvariable_type;

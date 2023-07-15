@@ -51,11 +51,19 @@ pub mod xcsp3_core {
         }
 
         pub(crate) fn get_scope_not_found_error(s: &str) -> ParseConstraintError {
-            const WEBSITE: &str =
-                " please visit http://xcsp.org/specifications/constraints/";
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/constraints/";
             ParseConstraintError {
                 msg: (s.to_owned() + WEBSITE),
                 r#type: ConstraintError::ScopeNotFoundError,
+            }
+        }
+
+        pub(crate) fn get_regular_transitions_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/language/regular/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::RegularError,
             }
         }
 
@@ -69,8 +77,7 @@ pub mod xcsp3_core {
         }
 
         pub(crate) fn get_list_of_values_error(s: &str) -> ParseConstraintError {
-            const WEBSITE: &str =
-                " please visit http://xcsp.org/specifications/constraints";
+            const WEBSITE: &str = " please visit http://xcsp.org/specifications/constraints";
             ParseConstraintError {
                 msg: (s.to_owned() + WEBSITE),
                 r#type: ConstraintError::ExtensionError,
@@ -82,5 +89,6 @@ pub mod xcsp3_core {
     pub enum ConstraintError {
         ExtensionError,
         ScopeNotFoundError,
+        RegularError,
     }
 }

@@ -45,8 +45,6 @@ pub mod xcsp3_xml {
 
     #[derive(Deserialize, Debug)]
     pub enum ConstraintType {
-        // #[serde(rename = "metaConstraint")]
-        // eta_constraint(ConstraintMetaConstraint),
         #[serde(rename = "group")]
         Group(ConstraintGroup),
         #[serde(rename = "block")]
@@ -96,31 +94,48 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <allEqual> (intVar wspace)2+ </allEqual>
         ```
-
+        or
+        ```xml
+            <allEqual>
+          <list> (intVar wspace)2+ </list>
+        </allEqual>
+        ```
         eg.
         ```xml
-
+        <allEqual>
+          x1 x2 x3 x4 x5
+        </allEqual>
+        ```
+        or
+        ```xml
+        <allEqual>
+            <list>  x1 x2 x3 </list>
+            <list>  y1 y2 y3 </list>
+        </allEqual>
         ```
          */
         #[serde(rename = "allEqual")]
         AllEqual {
-            #[serde(rename = "$value")]
+            #[serde(rename = "$value", default)]
             vars: String,
+            #[serde(rename = "list", default)]
+            list: Vec<String>,
         },
 
         /**
-        syntax.
-        ```xml
 
-        ```
+        syntax
+           ```xm
 
-        eg.
-        ```xml
+           ```
 
-        ```
-         */
+         eg.
+         ```xml
+
+         ```
+          */
         #[serde(rename = "circuit")]
         Circuit {
             #[serde(rename = "$value")]
@@ -130,12 +145,24 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <ordered>
+          <list> (intVar wspace)2+ </list>
+          [<lengths> (intVal wspace)2+ | (intVar wspace)2+ </lengths>]
+          <operator> "lt" | "le" | "ge" | "gt" </operator>
+        </ordered>
         ```
 
         eg.
         ```xml
-
+        <ordered>
+          <list> x1 x2 x3 x4 </list>
+          <operator> lt </operator>
+        </ordered>
+        <ordered>
+          <list> y1 y2 y3  </list>
+          <lengths> 5 3 </lengths>
+          <operator> ge </operator>
+        </ordered>
         ```
          */
         #[serde(rename = "ordered")]
@@ -187,12 +214,24 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <regular>
+          <list> (intVar wspace)+ </list>
+          <transitions> ("(" state "," intVal "," state ")")+ </transitions>
+          <start> state </start>
+          <final> (state wspace)+ </final>
+        </regular>
         ```
 
         eg.
         ```xml
-
+        <regular>
+          <list> x1 x2 x3 x4 x5 x6 x7 </list>
+          <transitions>
+            (a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)
+          </transitions>
+          <start> a </start>
+          <final> e </final>
+        </regular>
         ```
          */
         #[serde(rename = "regular")]
@@ -210,12 +249,22 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <mdd>
+          <list> (intVar wspace)+ </list>
+          <transitions> ("(" state "," intVal "," state ")")+ </transitions>
+        </mdd>
         ```
 
         eg.
         ```xml
-
+        <mdd>
+          <list> x1 x2 x3 </list>
+          <transitions>
+            (r,0,n1)(r,1,n2)(r,2,n3)
+            (n1,2,n4)(n2,2,n4)(n3,0,n5)
+            (n4,0,t)(n5,0,t)
+          </transitions>
+        </mdd>
         ```
          */
         #[serde(rename = "mdd")]
@@ -443,12 +492,22 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <instantiation>
+            <list> (intVar wspace)+ </list>
+            <values> (intVal wspace)+ </values>
+        </instantiation>
         ```
 
         eg.
         ```xml
-
+        <instantiation>
+            <list> x y z </list>
+            <values> 12 4 30 </values>
+        </instantiation>
+        <instantiation>
+        <list> w[] </list>
+        <values> 1 0 2 1 3 1 </values>
+        </instantiation>
         ```
          */
         #[serde(rename = "instantiation")]

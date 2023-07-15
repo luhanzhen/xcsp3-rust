@@ -60,7 +60,7 @@ pub mod xcsp3_core {
     impl XAllDifferent {
         pub fn from_str(list: &str) -> Option<XAllDifferent> {
             let scope = list_to_scope_ids(list);
-            Some(XAllDifferent { scope })
+            Some(XAllDifferent::new(scope))
         }
         pub fn new(scope: Vec<String>) -> XAllDifferent {
             XAllDifferent { scope }
