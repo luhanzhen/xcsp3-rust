@@ -39,6 +39,7 @@
  **/
 
 pub mod xcsp3_core {
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_array::xcsp3_core::XVariableArray;
     use crate::variables::xvariable_int::xcsp3_core::XVariableInt;
@@ -47,7 +48,7 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub enum XVariableType {
-        XVariableNone,
+        XVariableNone(Xcsp3Error),
         XVariableArray(XVariableArray),
         XVariableInt(XVariableInt),
         XVariableTree(XVariableTree),
@@ -59,10 +60,9 @@ pub mod xcsp3_core {
         }
 
         pub fn new_array(id: &str, sizes: &str, domain: XDomainInteger) -> XVariableType {
-            if let Some(e) = XVariableArray::new(id, sizes, domain) {
-                XVariableType::XVariableArray(e)
-            } else {
-                XVariableType::XVariableNone
+            match XVariableArray::new(id, sizes, domain) {
+                Ok(array) => XVariableType::XVariableArray(array),
+                Err(e) => XVariableType::XVariableNone(e),
             }
         }
 
@@ -71,11 +71,10 @@ pub mod xcsp3_core {
             sizes: &str,
             domain_for: Vec<&String>,
             domain_value: Vec<&String>,
-        ) -> XVariableType {
-            if let Some(t) = XVariableTree::new(id, sizes, domain_for, domain_value) {
-                XVariableType::XVariableTree(t)
-            } else {
-                XVariableType::XVariableNone
+        ) -> Result<Self, Xcsp3Error> {
+            match XVariableTree::new(id, sizes, domain_for, domain_value) {
+                Ok(t) => Ok(XVariableType::XVariableTree(t)),
+                Err(e) => Err(e),
             }
         }
 

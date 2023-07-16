@@ -40,6 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     use crate::utils::xcsp3utils::xcsp3_core::{
         list_to_scope_ids, list_with_bracket_comma_to_values,
@@ -70,15 +71,15 @@ pub mod xcsp3_core {
     }
 
     impl XAllDifferentExcept<'_> {
-        pub fn from_str<'a>(list: &str, except_str: &str) -> Option<XAllDifferentExcept<'a>> {
+        pub fn from_str(list: &str, except_str: &str) -> Result<Self, Xcsp3Error> {
             let scope = list_to_scope_ids(list);
             match list_with_bracket_comma_to_values(except_str) {
-                Ok(except) => Some(XAllDifferentExcept::new(scope, except)),
-                Err(_) => None,
+                Ok(except) => Ok(XAllDifferentExcept::new(scope, except)),
+                Err(e) => Err(e),
             }
         }
 
-        pub fn new<'a>(scope: Vec<String>, except: Vec<i32>) -> XAllDifferentExcept<'a> {
+        pub fn new(scope: Vec<String>, except: Vec<i32>) -> Self {
             XAllDifferentExcept {
                 scope_vec_str: scope,
                 scope_vec_var: vec![],

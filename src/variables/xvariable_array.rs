@@ -49,7 +49,7 @@ pub mod xcsp3_core {
     pub struct XVariableArray {
         pub(crate) id: String,
         sizes: Vec<usize>,
-        size: usize,
+        _size: usize,
         domain: XDomainInteger,
     }
 
@@ -70,32 +70,41 @@ pub mod xcsp3_core {
     }
 
     impl XVariableArray {
-        pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
-            if let Ok((_size_vec, size)) = sizes_to_vec(id) {
-                if size > self.size {
-                    Err(Xcsp3Error::get_variable_size_invalid_error(
-                        "parse the size of variable error",
-                    ))
-                } else {
-                    Ok((id.to_string(), &self.domain))
-                }
-            } else {
-                Err(Xcsp3Error::get_variable_size_invalid_error(
-                    "parse the size of variable error",
-                ))
+        pub fn find_variable(
+            &self,
+            id: &str,
+        ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
+            let mut ret: Vec<(String, &XDomainInteger)> = vec![];
+            if id.contains("[]") {
+                return Ok(ret);
             }
+            Err(Xcsp3Error::get_variable_size_invalid_error(
+                "parse the size of variable error",
+            ))
+            // if let Ok((_size_vec, size)) = sizes_to_vec(id) {
+            //     if size > self.size {
+            //         Err(Xcsp3Error::get_variable_size_invalid_error(
+            //             "parse the size of variable error",
+            //         ))
+            //     } else {
+            //         Ok((id.to_string(), &self.domain))
+            //     }
+            // } else {
+            //     Err(Xcsp3Error::get_variable_size_invalid_error(
+            //         "parse the size of variable error",
+            //     ))
+            // }
         }
 
-        pub fn new(id: &str, sizes: &str, domain: XDomainInteger) -> Option<Self> {
-            if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
-                Some(XVariableArray {
+        pub fn new(id: &str, sizes: &str, domain: XDomainInteger) -> Result<Self, Xcsp3Error> {
+            match sizes_to_vec(sizes) {
+                Ok((size_vec, size)) => Ok(XVariableArray {
                     id: id.to_string(),
                     sizes: size_vec,
-                    size,
+                    _size: size,
                     domain,
-                })
-            } else {
-                None
+                }),
+                Err(e) => Err(e),
             }
         }
     }

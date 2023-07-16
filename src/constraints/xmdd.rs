@@ -40,6 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
@@ -68,11 +69,11 @@ pub mod xcsp3_core {
     }
 
     impl XMdd<'_> {
-        pub fn from_str(list: &str, transitions_str: &str) -> Option<Self> {
+        pub fn from_str(list: &str, transitions_str: &str) -> Result<Self, Xcsp3Error> {
             let scope = list_to_scope_ids(list);
             match list_to_transitions(transitions_str) {
-                Ok(transitions) => Some(XMdd::new(scope, transitions)),
-                Err(_) => None,
+                Ok(transitions) => Ok(XMdd::new(scope, transitions)),
+                Err(e) => Err(e),
             }
         }
 

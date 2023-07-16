@@ -48,10 +48,11 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     #[derive(Clone)]
     pub enum XConstraintType<'a> {
-        XConstraintNone,
+        XConstraintNone(Xcsp3Error),
         XExtension(XExtension<'a>),
         XAllDifferent(XAllDifferent<'a>),
         XAllDifferentExcept(XAllDifferentExcept<'a>),
@@ -65,8 +66,8 @@ pub mod xcsp3_core {
     impl XConstraintType<'_> {
         pub fn to_string(&self) -> String {
             match self {
-                XConstraintType::XConstraintNone => String::from(
-                    "XConstraintNone: there must be an error when parse this constraint.",
+                XConstraintType::XConstraintNone(e) => format!(
+                    "XConstraintNone: there must be an error when parse this constraint. Error is {}",e.to_string()
                 ),
                 XConstraintType::XExtension(c) => c.to_string(),
                 XConstraintType::XAllEqual(c) => c.to_string(),

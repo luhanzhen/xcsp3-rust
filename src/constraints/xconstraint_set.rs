@@ -51,13 +51,12 @@ pub mod xcsp3_core {
     use std::slice::Iter;
 
     /**
-    the XConstraintSet is a container that store all constraints.
+    the XConstraintSet is a container that stores all constraints.
      */
     pub struct XConstraintSet<'a> {
         constraints: Vec<XConstraintType<'a>>,
         set: &'a XVariableSet,
     }
-    //construct the scope from XVariableSet
 
     impl<'a> XConstraintSet<'a> {
         pub fn new(set: &'a XVariableSet) -> XConstraintSet<'a> {
@@ -78,8 +77,8 @@ pub mod xcsp3_core {
             final_str: &str,
         ) {
             match XRegular::from_str(list, transitions_str, start_str, final_str) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XRegular(c));
                 }
             }
@@ -87,8 +86,8 @@ pub mod xcsp3_core {
 
         pub fn build_mdd(&mut self, list: &str, transitions_str: &str) {
             match XMdd::from_str(list, transitions_str) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XMdd(c));
                 }
             }
@@ -101,8 +100,8 @@ pub mod xcsp3_core {
                 ));
             } else {
                 match XOrdered::from_str(list, lengths_str, operator) {
-                    None => self.constraints.push(XConstraintType::XConstraintNone),
-                    Some(c) => {
+                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                    Ok(c) => {
                         self.constraints.push(XConstraintType::XOrdered(c));
                     }
                 }
@@ -111,8 +110,8 @@ pub mod xcsp3_core {
 
         pub fn build_instantiation(&mut self, list: &str, values: &str) {
             match XInstantiation::from_str(list, values) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XInstantiation(c));
                 }
             }
@@ -120,8 +119,8 @@ pub mod xcsp3_core {
 
         pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
             match XExtension::from_str(list, tuple, is_support) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XExtension(c));
                 }
             }
@@ -129,8 +128,8 @@ pub mod xcsp3_core {
 
         pub fn build_all_equal(&mut self, list: &str) {
             match XAllEqual::from_str(list) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XAllEqual(c));
                 }
             }
@@ -138,8 +137,8 @@ pub mod xcsp3_core {
 
         pub fn build_all_different(&mut self, list: &str) {
             match XAllDifferent::from_str(list, self.set) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints.push(XConstraintType::XAllDifferent(c));
                 }
             }
@@ -147,8 +146,8 @@ pub mod xcsp3_core {
 
         pub fn build_all_different_except(&mut self, list: &str, except: &str) {
             match XAllDifferentExcept::from_str(list, except) {
-                None => self.constraints.push(XConstraintType::XConstraintNone),
-                Some(c) => {
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                Ok(c) => {
                     self.constraints
                         .push(XConstraintType::XAllDifferentExcept(c));
                 }
@@ -158,8 +157,8 @@ pub mod xcsp3_core {
             let mat = list_to_matrix_ids(list);
             for line in mat.iter() {
                 match XAllDifferent::from_str_vec(line.clone(), self.set) {
-                    None => self.constraints.push(XConstraintType::XConstraintNone),
-                    Some(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
+                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                    Ok(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
                 }
             }
             for i in 0..mat[0].len() {
@@ -168,8 +167,8 @@ pub mod xcsp3_core {
                     column.push(m[i].clone());
                 }
                 match XAllDifferent::from_str_vec(column, self.set) {
-                    None => self.constraints.push(XConstraintType::XConstraintNone),
-                    Some(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
+                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                    Ok(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
                 }
             }
         }

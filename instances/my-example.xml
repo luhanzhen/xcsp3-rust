@@ -2,6 +2,7 @@
     <variables>
         <array id="x" size="[5][3][8]">0 2 4..10 61..65 77</array>
         <array id="zz" size="[2][3][4]">0 2</array>
+        <array id="yy" size="[4]">0 2</array>
         <array id="y" note="x[i] is the ith value of the series" size="[9]">0..8</array>
         <var id="v2">0..70</var>
         <var id="x1">0..7</var>
@@ -90,6 +91,9 @@
         </instantiation>
         <allDifferent>
             x1 x2 x3 x4 x5
+        </allDifferent>
+        <allDifferent>
+            yy[]
         </allDifferent>
         <allDifferent>
             <matrix>

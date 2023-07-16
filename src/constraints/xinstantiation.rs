@@ -40,6 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_values};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
@@ -69,11 +70,11 @@ pub mod xcsp3_core {
     }
 
     impl XInstantiation<'_> {
-        pub fn from_str(list: &str, values_str: &str) -> Option<Self> {
+        pub fn from_str(list: &str, values_str: &str) -> Result<Self, Xcsp3Error> {
             let scope_vec_str = list_to_scope_ids(list);
             match list_to_values(values_str) {
-                Ok(values) => Some(XInstantiation::new(scope_vec_str, values)),
-                Err(_) => None,
+                Ok(values) => Ok(XInstantiation::new(scope_vec_str, values)),
+                Err(e) => Err(e),
             }
         }
 

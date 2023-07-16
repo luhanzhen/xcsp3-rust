@@ -40,6 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::list_to_scope_ids;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
@@ -65,23 +66,20 @@ pub mod xcsp3_core {
     }
 
     impl<'a> XAllDifferent<'a> {
-        pub fn from_str_vec(scope_vec_str: Vec<String>, set: &'a XVariableSet) -> Option<Self> {
+        pub fn from_str_vec(
+            scope_vec_str: Vec<String>,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
             match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => Some(XAllDifferent::new(scope_vec_str, scope)),
-                Err(e) => {
-                    eprintln!("{}", e.to_string());
-                    None
-                }
+                Ok(scope) => Ok(XAllDifferent::new(scope_vec_str, scope)),
+                Err(e) => Err(e),
             }
         }
-        pub fn from_str(list: &str, set: &'a XVariableSet) -> Option<Self> {
+        pub fn from_str(list: &str, set: &'a XVariableSet) -> Result<Self, Xcsp3Error> {
             let scope_vec_str = list_to_scope_ids(list);
             match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => Some(XAllDifferent::new(scope_vec_str, scope)),
-                Err(e) => {
-                    eprintln!("{}", e.to_string());
-                    None
-                }
+                Ok(scope) => Ok(XAllDifferent::new(scope_vec_str, scope)),
+                Err(e) => Err(e),
             }
         }
         pub fn new(

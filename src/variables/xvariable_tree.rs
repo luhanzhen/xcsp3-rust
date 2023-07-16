@@ -54,7 +54,10 @@ pub mod xcsp3_core {
     }
 
     impl XVariableTree {
-        pub fn find_variable(&self, id: &str) -> Result<(String, &XDomainInteger), Xcsp3Error> {
+        pub fn find_variable(
+            &self,
+            id: &str,
+        ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
             if let Ok((_size_vec, size)) = sizes_to_vec(id) {
                 if size > self.size {
                     Err(Xcsp3Error::get_variable_size_invalid_error(
@@ -77,48 +80,52 @@ pub mod xcsp3_core {
             sizes: &str,
             domain_for: Vec<&String>,
             domain_value: Vec<&String>,
-        ) -> Option<Self> {
-            if let Ok((size_vec, size)) = sizes_to_vec(sizes) {
-                let mut nodes: Vec<XVariableTreeNode> = Vec::new();
-                // for dom in domain_vec.iter() {
-                for i in 0..domain_for.len() {
-                    let ret = XDomainInteger::from_string(domain_value[i]);
-                    if let Ok(domain) = ret {
-                        if domain_for[i].eq("others") {
-                            nodes.push(XVariableTreeNode::new_other(domain));
-                        } else {
-                            let for_strs: Vec<&str> = domain_for[i].split_whitespace().collect();
-                            for e in for_strs.iter() {
-                                let mut for_str = e.to_string();
-                                for_str = for_str.replace(id, "");
-                                for_str = for_str.replace("[]", "[*]");
-                                match sizes_to_double_vec(for_str) {
-                                    Ok((lower, upper)) => {
-                                        nodes.push(XVariableTreeNode::new(
-                                            lower,
-                                            upper,
-                                            domain.clone(),
-                                        ));
-                                    }
-                                    Err(e) => {
-                                        eprintln!("{}", e.to_string());
-                                        return None;
+        ) -> Result<Self, Xcsp3Error> {
+            match sizes_to_vec(sizes) {
+                Ok((size_vec, size)) => {
+                    let mut nodes: Vec<XVariableTreeNode> = Vec::new();
+                    // for dom in domain_vec.iter() {
+                    for i in 0..domain_for.len() {
+                        match XDomainInteger::from_string(domain_value[i]) {
+                            Ok(domain) => {
+                                if domain_for[i].eq("others") {
+                                    nodes.push(XVariableTreeNode::new_other(domain));
+                                } else {
+                                    let for_strs: Vec<&str> =
+                                        domain_for[i].split_whitespace().collect();
+                                    for e in for_strs.iter() {
+                                        let mut for_str = e.to_string();
+                                        for_str = for_str.replace(id, "");
+                                        for_str = for_str.replace("[]", "[*]");
+                                        match sizes_to_double_vec(for_str) {
+                                            Ok((lower, upper)) => {
+                                                nodes.push(XVariableTreeNode::new(
+                                                    lower,
+                                                    upper,
+                                                    domain.clone(),
+                                                ));
+                                            }
+                                            Err(e) => {
+                                                eprintln!("{}", e.to_string());
+                                                return Err(e);
+                                            }
+                                        }
                                     }
                                 }
                             }
+                            Err(e) => {
+                                return Err(e);
+                            }
                         }
-                    } else if ret.is_err() {
-                        return None;
                     }
+                    Ok(XVariableTree {
+                        id: id.to_string(),
+                        sizes: size_vec,
+                        size,
+                        nodes,
+                    })
                 }
-                Some(XVariableTree {
-                    id: id.to_string(),
-                    sizes: size_vec,
-                    size,
-                    nodes,
-                })
-            } else {
-                None
+                Err(e) => Err(e),
             }
         }
     }

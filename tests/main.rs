@@ -62,14 +62,14 @@ fn test_all() {
                     //     println!("{}", v.to_string())
                     // }
                     for v in variable.iter() {
-                        if let XVariableType::XVariableNone = v {
-                            eprintln!("Err {}", file.path().display());
+                        if let XVariableType::XVariableNone(e) = v {
+                            eprintln!("Err {} {}", file.path().display(), e.to_string());
                             break;
                         }
                     }
                     for c in m.build_constraints(&variable).iter() {
-                        if let XConstraintType::XConstraintNone = c {
-                            eprintln!("Err {}", file.path().display());
+                        if let XConstraintType::XConstraintNone(e) = c {
+                            eprintln!("Err {} {}", file.path().display(), e.to_string());
                             break;
                         }
                     }

@@ -43,6 +43,7 @@ pub mod xcsp3_core {
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, tuple_to_vector};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::slice::Iter;
 
     #[derive(Clone)]
@@ -72,20 +73,15 @@ pub mod xcsp3_core {
 
     impl XExtension<'_> {
         /// construct the constraint from two strings and a bool
-        pub fn from_str<'a>(list: &str, tuple: &str, is_support: bool) -> Option<XExtension<'a>> {
+        pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Result<Self, Xcsp3Error> {
             let scope = list_to_scope_ids(list);
-            if let Ok(tuples) = tuple_to_vector(tuple, scope.len() == 1) {
-                Some(XExtension::new(scope, tuples, is_support))
-            } else {
-                None
+            match tuple_to_vector(tuple, scope.len() == 1) {
+                Ok(tuples) => Ok(XExtension::new(scope, tuples, is_support)),
+                Err(e) => Err(e),
             }
         }
 
-        pub fn new<'a>(
-            scope: Vec<String>,
-            tuples: Vec<Vec<i32>>,
-            is_support: bool,
-        ) -> XExtension<'a> {
+        pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> Self {
             XExtension {
                 scope_vec_str: scope,
                 scope_vec_var: vec![],

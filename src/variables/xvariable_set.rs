@@ -38,11 +38,10 @@
 
 pub mod xcsp3_core {
 
-    use std::collections::HashMap;
-
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
+    use std::collections::HashMap;
 
     use std::slice::Iter;
 
@@ -92,8 +91,8 @@ pub mod xcsp3_core {
                         self.variables.push(var);
                     }
                     Err(e) => {
-                        eprintln!("{}", e.to_string());
-                        self.variables.push(XVariableType::XVariableNone);
+                        // eprintln!("{}", e.to_string());
+                        self.variables.push(XVariableType::XVariableNone(e));
                     }
                 }
             }
@@ -109,8 +108,8 @@ pub mod xcsp3_core {
                     }
                 }
                 Err(e) => {
-                    eprintln!("{}", e.to_string());
-                    self.variables.push(XVariableType::XVariableNone);
+                    // eprintln!("{}", e.to_string());
+                    self.variables.push(XVariableType::XVariableNone(e));
                 }
             }
         }
@@ -126,13 +125,14 @@ pub mod xcsp3_core {
                             self.variables.push(array);
                         }
                         _ => {
-                            self.variables.push(XVariableType::XVariableNone);
+                            self.variables.push(XVariableType::XVariableNone(
+                                Xcsp3Error::get_variable_size_invalid_error(""),
+                            ));
                         }
                     }
                 }
                 Err(e) => {
-                    eprintln!("{}", e.to_string());
-                    self.variables.push(XVariableType::XVariableNone);
+                    self.variables.push(XVariableType::XVariableNone(e));
                 }
             };
         }
@@ -146,25 +146,30 @@ pub mod xcsp3_core {
         ) {
             let tree = XVariableType::new_tree(id, sizes, domain_for, domain_value);
             match tree {
-                XVariableType::XVariableTree(_) => {
+                Ok(tree) => {
                     self.id_to_index.insert(tree.get_id(), self.variables.len());
                     self.variables.push(tree);
                 }
-                _ => {
-                    self.variables.push(XVariableType::XVariableNone);
+                Err(e) => {
+                    self.variables.push(XVariableType::XVariableNone(e));
                 }
             }
         }
 
         fn find_variable(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
-            match self.id_to_index.get(id) {
+            let name = match id.find("[") {
+                None => id,
+                Some(n) => &id[..n],
+            };
+            match self.id_to_index.get(name) {
                 None => Err(Xcsp3Error::get_variable_not_found_error(
-                    &("not find the variable named ".to_owned() + id),
+                    &("not find the variable named ".to_owned() + name),
                 )),
                 Some(v) => Ok(&self.variables[*v]),
             }
         }
 
+        ///construct the scope from XVariableSet
         pub fn construct_scope(
             &self,
             scope_str: &Vec<String>,
@@ -175,13 +180,27 @@ pub mod xcsp3_core {
                 let r = self.find_variable(&e);
                 match r {
                     Ok(var_type) => match var_type {
-                        XVariableType::XVariableArray(a) => {
-                            a.find_variable(e);
-                        }
+                        XVariableType::XVariableArray(a) => match a.find_variable(e) {
+                            Ok(mut vec) => {
+                                for (e1, e2) in vec.iter_mut() {
+                                    ret.push((e1.to_string(), e2));
+                                }
+                            }
+                            Err(e) => {
+                                return Err(e);
+                            }
+                        },
                         XVariableType::XVariableInt(i) => ret.push((i.id.clone(), &i.domain)),
-                        XVariableType::XVariableTree(t) => {
-                            t.find_variable(e);
-                        }
+                        XVariableType::XVariableTree(t) => match t.find_variable(e) {
+                            Ok(mut vec) => {
+                                for (e1, e2) in vec.iter_mut() {
+                                    ret.push((e1.to_string(), e2));
+                                }
+                            }
+                            Err(e) => {
+                                return Err(e);
+                            }
+                        },
                         _ => {}
                     },
                     Err(_) => {
