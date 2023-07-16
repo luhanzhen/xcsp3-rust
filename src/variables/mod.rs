@@ -40,7 +40,7 @@
 pub mod xvariable_set;
 pub mod xvariable_type;
 
-pub mod xdomain_integer;
+pub mod xdomain;
 mod xvariable_array;
 mod xvariable_int;
 mod xvariable_trait;

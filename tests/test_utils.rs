@@ -38,13 +38,26 @@
 
 #[cfg(test)]
 mod test_xcsp3domain {
-
+    // use bitmaps::Bitmap;
     use xcsp3_rust::utils::bitset::xcsp3_core::Bitset;
 
     #[test]
     fn test_bitset() {
-        let set = Bitset::from_width(1000);
+        let mut set = Bitset::from_width(1000);
+        set.remove(9);
+        println!("set:  {}", set.to_string());
 
-        println!("set: {} {}", set.remove(9), set.to_string());
+        assert_eq!(set.count(), 0);
+        set.add(300);
+        set.add(400);
+        println!("set:  {}", set.to_string());
+        assert_eq!(set.count(), 2);
+        // set.flip();
+        print!("set: ");
+        for e in set.iter() {
+            print!(" {}  ", e);
+        }
+
+        // let mut bit: Bitmap<1024> = Bitmap::new();
     }
 }

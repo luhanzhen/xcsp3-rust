@@ -39,7 +39,7 @@
  **/
 
 pub mod xcsp3_core {
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_array::xcsp3_core::XVariableArray;
     use crate::variables::xvariable_int::xcsp3_core::XVariableInt;
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;

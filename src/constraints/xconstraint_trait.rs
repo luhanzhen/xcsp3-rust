@@ -39,7 +39,7 @@
  */
 
 pub mod xcsp3_core {
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     pub trait XConstraintTrait {
         fn to_string(&self) -> String;
@@ -49,6 +49,6 @@ pub mod xcsp3_core {
 
         ///get the scope string of constraint
 
-        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)>;
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)>;
     }
 }

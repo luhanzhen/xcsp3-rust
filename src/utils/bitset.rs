@@ -40,28 +40,106 @@ pub mod xcsp3_core {
 
     #[derive(Clone)]
     pub struct Bitset {
-        values: Vec<u128>,
+        words: Vec<u128>,
+        size: usize,
     }
 
     impl From<Vec<u128>> for Bitset {
         fn from(value: Vec<u128>) -> Self {
-            Bitset::new(value)
+            let size = value.len() * 128usize;
+            Bitset::new(value, size)
+        }
+    }
+
+    pub struct IterBitSet<'a> {
+        current: usize,
+        bitset: &'a Bitset,
+    }
+
+    impl Iterator for IterBitSet<'_> {
+        type Item = usize;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.bitset.next_set_bit(self.current) {
+                None => None,
+                Some(c) => {
+                    self.current = c + 1;
+                    Some(c)
+                }
+            }
         }
     }
 
     impl Bitset {
-        pub fn remove(&self, index: usize) -> usize {
+        pub fn iter(&self) -> IterBitSet {
+            IterBitSet {
+                current: 0usize,
+                bitset: &self,
+            }
+        }
+        pub fn next_set_bit(&self, from: usize) -> Option<usize> {
+            if from >= self.size {
+                return None;
+            }
+            let mut u: usize = from / 128usize;
+            let mut word: u128 = self.words[u] & (u128::MAX << (from % 128usize));
+            loop {
+                if word != 0u128 {
+                    let t: usize = (u * 128usize) + word.trailing_zeros() as usize;
+                    return Some(t);
+                }
+                u += 1;
+                if u == self.words.len() {
+                    return None;
+                }
+                word = self.words[u];
+            }
+        }
+
+        pub fn remove(&mut self, index: usize) {
+            let tmp: u128 = 1u128 << (index % 128usize);
+            self.words[index / 128usize] &= !tmp
+        }
+        pub fn flip(&mut self) {
+            for e in self.words.iter_mut() {
+                let t = !(*e);
+                *e = t;
+            }
+        }
+
+        pub fn clear(&mut self) {
+            for e in self.words.iter_mut() {
+                *e = 0u128;
+            }
+        }
+
+        pub fn count(&mut self) -> usize {
             let mut cnt: usize = 0;
-            for e in self.values.iter() {
-                cnt += e.count_zeros() as usize
+            for e in self.words.iter() {
+                cnt += e.count_ones() as usize;
             }
             cnt
         }
 
-        pub fn add(index: usize) {}
+        pub fn add(&mut self, index: usize) {
+            self.words[index / 128usize] |= 1u128 << (index % 128usize)
+        }
+
+        // pub fn to_string(&self) -> String {
+        //     let mut ret = String::default();
+        //     for e in self.words.iter()
+        //     {
+        //         ret.push_str(&format!("{:b}  ", e));
+        //     }
+        //     ret
+        // }
 
         pub fn to_string(&self) -> String {
-            format!("{:?}", self.values)
+            let mut ret = String::default();
+            for e in self.iter() {
+                ret.push_str(&format!("{} ", e));
+            }
+            ret
         }
 
         pub fn from_width(max: usize) -> Self {
@@ -71,11 +149,14 @@ pub mod xcsp3_core {
                 width += 1
             }
             values.resize(width, 0);
-            Bitset::new(values)
+            Bitset::new(values, max)
         }
 
-        pub fn new(values: Vec<u128>) -> Self {
-            Bitset { values }
+        pub fn new(values: Vec<u128>, size: usize) -> Self {
+            Bitset {
+                words: values,
+                size,
+            }
         }
     }
 }

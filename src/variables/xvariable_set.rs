@@ -41,7 +41,7 @@ pub mod xcsp3_core {
     use std::collections::HashMap;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
 
     use std::slice::Iter;
@@ -168,8 +168,8 @@ pub mod xcsp3_core {
         pub fn construct_scope(
             &self,
             scope_str: &Vec<String>,
-        ) -> Result<Vec<(&String, &XDomainInteger)>, Xcsp3Error> {
-            let mut ret: Vec<(&String, &XDomainInteger)> = vec![];
+        ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
+            let mut ret: Vec<(String, &XDomainInteger)> = vec![];
             // println!("{:?}", scope_str);
             for e in scope_str.iter() {
                 let r = self.find_variable(&e);
@@ -178,7 +178,7 @@ pub mod xcsp3_core {
                         XVariableType::XVariableArray(a) => {
                             a.find_variable(e);
                         }
-                        XVariableType::XVariableInt(i) => ret.push((&i.id, &i.domain)),
+                        XVariableType::XVariableInt(i) => ret.push((i.id.clone(), &i.domain)),
                         XVariableType::XVariableTree(t) => {
                             t.find_variable(e);
                         }

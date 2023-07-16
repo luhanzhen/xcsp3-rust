@@ -42,12 +42,12 @@ pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
 
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_values};
-    use crate::variables::xdomain_integer::xcsp3_core::XDomainInteger;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     #[derive(Clone)]
     pub struct XOrdered<'a> {
         scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(&'a String, &'a XDomainInteger)>,
+        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
         lengths: Vec<i32>,
         operator: String,
     }
@@ -64,7 +64,7 @@ pub mod xcsp3_core {
             &self.scope_vec_str
         }
 
-        fn get_scope(&self) -> &Vec<(&String, &XDomainInteger)> {
+        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
             &self.scope_vec_var
         }
     }
