@@ -54,12 +54,16 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XInstantiation<'_> {
         fn to_string(&self) -> String {
-            format!(
-                "XInstantiation: scope = {:?}, values = {:?}",
-                self.scope_vec_str, self.values
-            )
+            let mut ret = format!("XInstantiation: scope =  ",);
+            for e in self.scope_vec_var.iter() {
+                ret.push_str(e.0.as_str());
+                ret.push_str("(");
+                ret.push_str(e.1.to_string().as_str());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!("values = {:?}", self.values));
+            ret
         }
-
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }

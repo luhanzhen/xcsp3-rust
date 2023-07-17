@@ -1,29 +1,25 @@
 <instance format="XCSP3" type="CSP">
     <variables>
-        <array id="x" size="[5][3][8]">0 2 4..10 61..65 77</array>
-        <array id="zz" size="[2][3][4]">0 2</array>
-        <array id="yy" size="[4]">0 2</array>
-        <array id="y" note="x[i] is the ith value of the series" size="[9]">0..8</array>
-        <var id="v2">0..70</var>
-        <var id="x1">0..7</var>
-        <var id="x2">0..7</var>
-        <var id="x3">0..7</var>
-        <var id="x4">0..7</var>
-        <var id="x5">0..7</var>
+        <array id="x" size="[6]">0 2 4..10 61..65 77</array>
+        <array id="y" size="[6]">0 2</array>
+        <array id="z" size="[6]">0..10 14 22..24</array>
+        <array id="yy" note="x[i] is the ith value of the series" size="[9]">0..8</array>
+        <var id="vv2">0..70</var>
+        <var id="vv1">0..7</var>
         <var id="foo">0 1 2 3 4 5 6</var>
-        <var id="v1"> 2 5 8 9 12 15 22 25 30 50 </var>
-        <var id="v44" as="v1" />
-        <array id="f" size="[3][5]">
-            <domain for="f[0][]">1..10</domain>
-            <domain for="f[1][]">1..20</domain>
-            <domain for="f[2][]">1..15</domain>
+        <var id="vv3"> 2 5 8 9 12 15 22 25 30 50 </var>
+        <var id="v44" as="vv1" />
+        <array id="v" size="[3][5]">
+            <domain for="v[0][]">1..10</domain>
+            <domain for="v[1][]">1..20</domain>
+            <domain for="v[2][]">1..15</domain>
         </array>
-        <array id="a" size="[10]">
-            <domain for="a[4..8]">0 1</domain>
+        <array id="treea" size="[10]">
+            <domain for="treea[4..8]">0 1</domain>
             <domain for="others">2 4 6</domain>
         </array>
-        <array id="z" size="[5][5][5]">
-            <domain for="z[][0..1][] z[][2][2..4]">0..10</domain>
+        <array id="treez" size="[5][5][5]">
+            <domain for="treez[][0..1][] treez[][2][2..4]">0..10</domain>
             <domain for="others">0 1</domain>
         </array>
         <var id="bar">0..6</var>
@@ -31,6 +27,31 @@
 
     </variables>
     <constraints>
+        <allDifferent>
+            x[1..4] x[0]
+        </allDifferent>
+        <allDifferent>
+            v[0][]
+        </allDifferent>
+        <allDifferent>
+            <matrix>
+                (x[1] x[2] x[3] x[4] x[5])( y[1] y[2] y[3] y[4] y[5])(z[1] z[2] z[3] z[4] z[5])
+            </matrix>
+        </allDifferent>
+        <allDifferent>
+            <list> y[] </list>
+            <except> 0 </except>
+        </allDifferent>
+        <allDifferent id="c1">
+            <list> v[0][1] v[1][2] v[2][0] </list>
+            <list> v[1][1] v[2][2] v[2][0] treez[3][3][3] </list>
+        </allDifferent>
+        <allDifferent id="c2">
+            <list> v1 v2 v3 v4 </list>
+            <list> w1 w2 w3 w4 </list>
+            <list> z1 z2 z3 z4 </list>
+            <except> (0,0,0,0) </except>
+        </allDifferent>
         <maximum>
             <list>x1 x2 x3 x4</list>
             <condition>(eq,y)</condition>
@@ -58,7 +79,7 @@
         </sum>
 
         <regular>
-            <list>x1 x2 x3 x4 x5 x6 x7</list>
+            <list>treez[1][][3] treez[2][1][3]</list>
             <transitions>
                 (a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)
             </transitions>
@@ -89,31 +110,7 @@
             <list> w[] </list>
             <values> 1 0 2 1 3 1 </values>
         </instantiation>
-        <allDifferent>
-            x1 x2 x3 x4 x5
-        </allDifferent>
-        <allDifferent>
-            yy[]
-        </allDifferent>
-        <allDifferent>
-            <matrix>
-                (x1,x2,x3,x4,x5)(y1,y2,y3,y4,y5)(z1,z2,z3,z4,z5)
-            </matrix>
-        </allDifferent>
-        <allDifferent>
-            <list> y[] </list>
-            <except> 0 </except>
-        </allDifferent>
-        <allDifferent id="c1">
-            <list> x1 x2 x3 x4 </list>
-            <list> y1 y2 y3 y4 </list>
-        </allDifferent>
-        <allDifferent id="c2">
-            <list> v1 v2 v3 v4 </list>
-            <list> w1 w2 w3 w4 </list>
-            <list> z1 z2 z3 z4 </list>
-            <except> (0,0,0,0) </except>
-        </allDifferent>
+
         <extension>
             <list> x </list>
             <conflicts> 2 6 </conflicts>

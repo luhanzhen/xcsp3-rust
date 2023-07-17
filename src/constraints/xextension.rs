@@ -56,12 +56,19 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XExtension<'_> {
         fn to_string(&self) -> String {
-            format!(
-                "XExtension: scope = {:?}, tuples = {:?}, is_support = {}",
-                self.scope_vec_str, self.tuples, self.is_support
-            )
+            let mut ret = format!("XExtension: scope =  ",);
+            for e in self.scope_vec_var.iter() {
+                ret.push_str(e.0.as_str());
+                ret.push_str("(");
+                ret.push_str(e.1.to_string().as_str());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!(
+                "tuples = {:?}, is_support = {}",
+                self.tuples, self.is_support
+            ));
+            ret
         }
-
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }

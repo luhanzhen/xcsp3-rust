@@ -56,11 +56,17 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XAllDifferentExcept<'_> {
         fn to_string(&self) -> String {
-            format!(
-                "XAllDifferentExcept: scope = {:?}, except = {:?}",
-                self.scope_vec_str, self.except
-            )
+            let mut ret = format!("XAllDifferentExcept: scope =  ",);
+            for e in self.scope_vec_var.iter() {
+                ret.push_str(e.0.as_str());
+                ret.push_str("(");
+                ret.push_str(e.1.to_string().as_str());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!("except = {:?}", self.except));
+            ret
         }
+
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }

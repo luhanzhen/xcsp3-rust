@@ -44,6 +44,7 @@ pub mod xcsp3_core {
 
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XRegular<'a> {
@@ -56,12 +57,19 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XRegular<'_> {
         fn to_string(&self) -> String {
-            format!(
-                "XRegular: scope = {:?},  transitions = {:?}, start = {}, final = {:?},",
-                self.scope_vec_str, self.transitions, self.start, self.r#final,
-            )
+            let mut ret = format!("XRegular: scope =  ",);
+            for e in self.scope_vec_var.iter() {
+                ret.push_str(e.0.as_str());
+                ret.push_str("(");
+                ret.push_str(e.1.to_string().as_str());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!(
+                " transitions = {:?}, start = {}, final = {:?},",
+                self.transitions, self.start, self.r#final
+            ));
+            ret
         }
-
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }
@@ -71,38 +79,47 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XRegular<'_> {
+    impl<'a> XRegular<'a> {
         pub fn from_str(
             list: &str,
             transitions_str: &str,
             start_str: &str,
             final_str: &str,
+            set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope = list_to_scope_ids(list);
-            let mut finals: Vec<String> = vec![];
-            let t_final: Vec<&str> = final_str.split_whitespace().collect();
-            for s in t_final.iter() {
-                finals.push(s.to_string());
-            }
-            match list_to_transitions(transitions_str) {
-                Ok(transitions) => Ok(XRegular::new(
-                    scope,
-                    start_str.to_string(),
-                    finals,
-                    transitions,
-                )),
+            let scope_vec_str = list_to_scope_ids(list);
+
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => {
+                    let mut finals: Vec<String> = vec![];
+                    let t_final: Vec<&str> = final_str.split_whitespace().collect();
+                    for s in t_final.iter() {
+                        finals.push(s.to_string());
+                    }
+                    match list_to_transitions(transitions_str) {
+                        Ok(transitions) => Ok(XRegular::new(
+                            scope_vec_str,
+                            scope,
+                            start_str.to_string(),
+                            finals,
+                            transitions,
+                        )),
+                        Err(e) => Err(e),
+                    }
+                }
                 Err(e) => Err(e),
             }
         }
 
         pub fn new(
             scope_vec_str: Vec<String>,
+            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
             start: String,
             r#final: Vec<String>,
             transitions: Vec<(String, i32, String)>,
         ) -> Self {
             XRegular {
-                scope_vec_var: vec![],
+                scope_vec_var,
                 scope_vec_str,
                 start,
                 r#final,

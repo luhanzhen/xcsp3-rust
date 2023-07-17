@@ -40,8 +40,25 @@ pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
+    /// return the nth of the [] in id(str)
+    /// eg x[2][5][] -> 2,  y[] -> 0, z[3][] ->1, zzz[4][][4] ->1
+    pub fn get_nth_square_of_name(id: &str) -> usize {
+        match id.find("[]") {
+            None => 0,
+            Some(v) => {
+                let mut cnt: usize = 0;
+                for (_, c) in id[..v].chars().enumerate() {
+                    if c == '[' {
+                        cnt += 1
+                    }
+                }
+                cnt
+            }
+        }
+    }
+
     /// return the list of scopes,
-    /// eg str"x[1], x[3], x[5]" - > vec[x[1], x[3], x[5]]
+    /// eg str"x[1] x[3] x[5]" - > vec[x[1], x[3], x[5]]
     pub fn list_to_scope_ids(list: &str) -> Vec<String> {
         let mut ret: Vec<String> = Vec::new();
         let lists: Vec<&str> = list.split_whitespace().collect();
@@ -193,9 +210,7 @@ pub mod xcsp3_core {
     pub fn sizes_to_double_vec(sizes: String) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
         let mut lower: Vec<usize> = vec![];
         let mut upper: Vec<usize> = vec![];
-
-        let mut sizes = sizes.replace('[', " ");
-        sizes = sizes.replace(']', " ");
+        let sizes = sizes.replace('[', " ").replace(']', " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             if n.find('*').is_some() {

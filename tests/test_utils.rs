@@ -40,6 +40,7 @@
 mod test_xcsp3domain {
     // use bitmaps::Bitmap;
     use xcsp3_rust::utils::bitset::xcsp3_core::Bitset;
+    use xcsp3_rust::utils::xcsp3utils::xcsp3_core::{get_nth_square_of_name, list_to_scope_ids};
 
     #[test]
     fn test_bitset() {
@@ -59,5 +60,21 @@ mod test_xcsp3domain {
         }
 
         // let mut bit: Bitmap<1024> = Bitmap::new();
+    }
+
+    #[test]
+    fn test_get_nth_square_of_name() {
+        assert_eq!(2, get_nth_square_of_name("x[2][5][]"));
+        assert_eq!(0, get_nth_square_of_name("y[]"));
+        assert_eq!(1, get_nth_square_of_name("z[3][]"));
+        assert_eq!(1, get_nth_square_of_name("zzz[4][][4]"));
+    }
+
+    #[test]
+    fn test_list_to_scope_ids() {
+        assert_eq!(
+            list_to_scope_ids("x[1] x[3] x[5]"),
+            vec!["x[1]", "x[3]", "x[5]",]
+        )
     }
 }

@@ -53,12 +53,16 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XMdd<'_> {
         fn to_string(&self) -> String {
-            format!(
-                "XMdd: scope = {:?},  transitions = {:?}",
-                self.scope_vec_str, self.transitions,
-            )
+            let mut ret = format!("XMdd: scope =  ",);
+            for e in self.scope_vec_var.iter() {
+                ret.push_str(e.0.as_str());
+                ret.push_str("(");
+                ret.push_str(e.1.to_string().as_str());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!("transitions = {:?}", self.transitions));
+            ret
         }
-
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }

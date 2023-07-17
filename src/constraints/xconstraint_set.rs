@@ -76,7 +76,7 @@ pub mod xcsp3_core {
             start_str: &str,
             final_str: &str,
         ) {
-            match XRegular::from_str(list, transitions_str, start_str, final_str) {
+            match XRegular::from_str(list, transitions_str, start_str, final_str, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XRegular(c));
