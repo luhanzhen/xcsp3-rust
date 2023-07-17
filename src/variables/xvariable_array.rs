@@ -40,7 +40,10 @@
 
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::xcsp3utils::xcsp3_core::{get_nth_square_of_name, sizes_to_vec};
+    use crate::utils::xcsp3utils::xcsp3_core::{
+        get_all_variables_between_lower_and_upper, size_to_string, sizes_to_double_vec,
+        sizes_to_vec,
+    };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
@@ -75,40 +78,72 @@ pub mod xcsp3_core {
         ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
             // println!("{}", id);
             let mut ret: Vec<(String, &XDomainInteger)> = vec![];
-            if id.contains("[]") {
-                let n = get_nth_square_of_name(id);
-                for i in 0..self.sizes[n] {
-                    let mut s = id.to_string();
-                    s = s.replace("[]", format!("[{i}]").as_str());
-                    ret.push((s, &self.domain));
+            // println!("{}", id);
+            match id.find('[') {
+                None => {
+                    return Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "find_variable in XVariableArray error",
+                    ));
                 }
-            } else {
-                match id.find('[') {
-                    None => {}
-                    Some(v) => match sizes_to_vec(&id[v..]) {
-                        Ok((size_vec, _)) => {
-                            if size_vec.len() == self.sizes.len() {
-                                for (i, s) in size_vec.iter().enumerate() {
-                                    if *s >= self.sizes[i] {
-                                        return Err(Xcsp3Error::get_variable_size_invalid_error(
-                                            "parse the size of variable error",
-                                        ));
-                                    }
-                                }
-                            } else {
+                Some(v) => match sizes_to_double_vec(&id[v..]) {
+                    Ok((mut lower, mut upper)) => {
+                        for i in 0..lower.len() {
+                            if lower[i] == usize::MAX && upper[i] == usize::MAX {
+                                lower[i] = 0;
+                                upper[i] = self.sizes[i] - 1;
+                            }
+                            if lower[i] > upper[i] || upper[i] >= self.sizes[i] {
                                 return Err(Xcsp3Error::get_variable_size_invalid_error(
-                                    "parse the size of variable error",
+                                    "find_variable in XVariableArray error",
                                 ));
                             }
                         }
-                        Err(e) => {
-                            return Err(e);
+                        let all_variable = get_all_variables_between_lower_and_upper(lower, upper);
+                        for size_vec in all_variable.iter() {
+                            ret.push((size_to_string(&id[..v], size_vec), &self.domain));
                         }
-                    },
-                }
-                ret.push((id.to_string(), &self.domain));
+                    }
+                    Err(e) => {
+                        return Err(e);
+                    }
+                },
             }
-            return Ok(ret);
+            Ok(ret)
+            // let mut ret: Vec<(String, &XDomainInteger)> = vec![];
+            // if id.contains("[]") {
+            //     let n = get_nth_square_of_name(id);
+            //     for i in 0..self.sizes[n] {
+            //         let mut s = id.to_string();
+            //         s = s.replace("[]", format!("[{i}]").as_str());
+            //         ret.push((s, &self.domain));
+            //     }
+            // } else {
+            //     match id.find('[') {
+            //         None => {}
+            //         Some(v) => match sizes_to_vec(&id[v..]) {
+            //             Ok((size_vec, _)) => {
+            //                 if size_vec.len() == self.sizes.len() {
+            //                     for (i, s) in size_vec.iter().enumerate() {
+            //                         if *s >= self.sizes[i] {
+            //                             return Err(Xcsp3Error::get_variable_size_invalid_error(
+            //                                 "parse the size of variable error",
+            //                             ));
+            //                         }
+            //                     }
+            //                 } else {
+            //                     return Err(Xcsp3Error::get_variable_size_invalid_error(
+            //                         "parse the size of variable error",
+            //                     ));
+            //                 }
+            //             }
+            //             Err(e) => {
+            //                 return Err(e);
+            //             }
+            //         },
+            //     }
+            //     ret.push((id.to_string(), &self.domain));
+            // }
+            // return Ok(ret);
         }
 
         pub fn new(id: &str, sizes: &str, domain: XDomainInteger) -> Result<Self, Xcsp3Error> {

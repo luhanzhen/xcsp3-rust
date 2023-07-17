@@ -127,7 +127,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_all_equal(&mut self, list: &str) {
-            match XAllEqual::from_str(list) {
+            match XAllEqual::from_str(list, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XAllEqual(c));
@@ -145,7 +145,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_all_different_except(&mut self, list: &str, except: &str) {
-            match XAllDifferentExcept::from_str(list, except) {
+            match XAllDifferentExcept::from_str(list, except, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints

@@ -46,6 +46,7 @@ pub mod xcsp3_core {
         list_to_scope_ids, list_with_bracket_comma_to_values,
     };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XAllDifferentExcept<'a> {
@@ -76,19 +77,30 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XAllDifferentExcept<'_> {
-        pub fn from_str(list: &str, except_str: &str) -> Result<Self, Xcsp3Error> {
-            let scope = list_to_scope_ids(list);
-            match list_with_bracket_comma_to_values(except_str) {
-                Ok(except) => Ok(XAllDifferentExcept::new(scope, except)),
+    impl<'a> XAllDifferentExcept<'a> {
+        pub fn from_str(
+            list: &str,
+            except_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            let scope_vec_str = list_to_scope_ids(list);
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => match list_with_bracket_comma_to_values(except_str) {
+                    Ok(except) => Ok(XAllDifferentExcept::new(scope_vec_str, scope, except)),
+                    Err(e) => Err(e),
+                },
                 Err(e) => Err(e),
             }
         }
 
-        pub fn new(scope: Vec<String>, except: Vec<i32>) -> Self {
+        pub fn new(
+            scope_vec_str: Vec<String>,
+            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            except: Vec<i32>,
+        ) -> Self {
             XAllDifferentExcept {
-                scope_vec_str: scope,
-                scope_vec_var: vec![],
+                scope_vec_str,
+                scope_vec_var,
                 except,
             }
         }

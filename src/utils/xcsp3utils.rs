@@ -40,6 +40,43 @@ pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
+    pub fn size_to_string(id: &str, size: &Vec<usize>) -> String {
+        let mut ret = id.to_string();
+
+        for e in size.iter() {
+            ret.push_str(&format!("[{}]", e))
+        }
+        ret
+    }
+
+    ///([2,3,4],[2,4,8]) -> [[2,3,4],[2,3,5],[2,3,6],[2,3,7],[2,3,8],[2,4,4],[2,4,5],[2,4,6],[2,4,7],[2,4,8]]
+    pub fn get_all_variables_between_lower_and_upper(
+        lower: Vec<usize>,
+        upper: Vec<usize>,
+    ) -> Vec<Vec<usize>> {
+        let mut ret: Vec<Vec<usize>> = vec![];
+        let mut tmp: Vec<Vec<usize>> = vec![];
+        // println!("{:?},{:?}", lower, upper);
+
+        // recursion_for_get_all_variables(0,&lower,&upper,&ret);
+        for i in lower[0]..upper[0] + 1 {
+            tmp.push(vec![i]);
+        }
+        for deep in 1..lower.len() {
+            for i in lower[deep]..upper[deep] + 1 {
+                for e in tmp.iter() {
+                    let mut ee = e.clone();
+                    ee.push(i);
+                    ret.push(ee)
+                }
+            }
+            tmp = ret.clone();
+            ret.clear();
+        }
+        // println!("ret = {:?}\n", ret);
+        // println!("tmp = {:?}\n", tmp);
+        tmp
+    }
     /// return the nth of the [] in id(str)
     /// eg x[2][5][] -> 2,  y[] -> 0, z[3][] ->1, zzz[4][][4] ->1
     pub fn get_nth_square_of_name(id: &str) -> usize {
@@ -206,11 +243,14 @@ pub mod xcsp3_core {
     }
 
     /// transform the string size to vector sizes
-    /// eg:  [2][3..4][4..8] -> ([2,3,4],[2][4][8])
-    pub fn sizes_to_double_vec(sizes: String) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
+    /// eg:  [2][3..4][4..8] -> ([2,3,4],[2,4,8])
+    pub fn sizes_to_double_vec(sizes: &str) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
         let mut lower: Vec<usize> = vec![];
         let mut upper: Vec<usize> = vec![];
-        let sizes = sizes.replace('[', " ").replace(']', " ");
+        let sizes = sizes
+            .replace("[]", "[*]")
+            .replace('[', " ")
+            .replace(']', " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             if n.find('*').is_some() {

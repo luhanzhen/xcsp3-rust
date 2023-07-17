@@ -41,7 +41,8 @@
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{
-        get_nth_square_of_name, sizes_to_double_vec, sizes_to_vec,
+        get_all_variables_between_lower_and_upper, size_to_string, sizes_to_double_vec,
+        sizes_to_vec,
     };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
@@ -57,7 +58,7 @@ pub mod xcsp3_core {
 
     impl XVariableTree {
         /// return which node the variable belongs to
-        fn get_node_by_vec(&self, v: Vec<usize>) -> &XVariableTreeNode {
+        fn get_node_by_vec(&self, v: &Vec<usize>) -> &XVariableTreeNode {
             for e in self.nodes.iter() {
                 if e.belongs_to_this_node(&v) {
                     return &e;
@@ -65,43 +66,72 @@ pub mod xcsp3_core {
             }
             &self.others
         }
+
         pub fn find_variable(
             &self,
             id: &str,
         ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
             let mut ret: Vec<(String, &XDomainInteger)> = vec![];
-            if !id.contains("[]") {
-                match id.find('[') {
-                    None => {}
-                    Some(v) => match sizes_to_vec(&id[v..]) {
-                        Ok((size_vec, _)) => {
+            // println!("{}", id);
+            match id.find('[') {
+                None => {
+                    return Err(Xcsp3Error::get_variable_size_invalid_error(
+                        "find_variable in XVariableTree error",
+                    ));
+                }
+                Some(v) => match sizes_to_double_vec(&id[v..]) {
+                    Ok((mut lower, mut upper)) => {
+                        for i in 0..lower.len() {
+                            if lower[i] == usize::MAX && upper[i] == usize::MAX {
+                                lower[i] = 0;
+                                upper[i] = self.sizes[i] - 1;
+                            }
+                        }
+                        let all_variable = get_all_variables_between_lower_and_upper(lower, upper);
+                        for size_vec in all_variable.iter() {
                             let node = self.get_node_by_vec(size_vec);
-                            ret.push((id.to_string(), &node.domain));
+                            ret.push((size_to_string(&id[..v], size_vec), &node.domain));
                         }
-                        Err(e) => {
-                            return Err(e);
-                        }
-                    },
-                }
-            } else {
-                let n = get_nth_square_of_name(id);
-                for i in 0..self.sizes[n] {
-                    let mut s = id.to_string();
-                    s = s.replace("[]", format!("[{i}]").as_str());
-                    match s.find('[') {
-                        None => {}
-                        Some(v) => match sizes_to_vec(&s[v..]) {
-                            Ok((size_vec, _)) => {
-                                let node = self.get_node_by_vec(size_vec);
-                                ret.push((s, &node.domain));
-                            }
-                            Err(e) => {
-                                return Err(e);
-                            }
-                        },
                     }
-                }
+                    Err(e) => {
+                        return Err(e);
+                    }
+                },
             }
+
+            //
+            // if !id.contains("[]") {
+            //     match id.find('[') {
+            //         None => {}
+            //         Some(v) => match sizes_to_vec(&id[v..]) {
+            //             Ok((size_vec, _)) => {
+            //                 let node = self.get_node_by_vec(size_vec);
+            //                 ret.push((id.to_string(), &node.domain));
+            //             }
+            //             Err(e) => {
+            //                 return Err(e);
+            //             }
+            //         },
+            //     }
+            // } else {
+            //     let n = get_nth_square_of_name(id);
+            //     for i in 0..self.sizes[n] {
+            //         let mut s = id.to_string();
+            //         s = s.replace("[]", format!("[{i}]").as_str());
+            //         match s.find('[') {
+            //             None => {}
+            //             Some(v) => match sizes_to_vec(&s[v..]) {
+            //                 Ok((size_vec, _)) => {
+            //                     let node = self.get_node_by_vec(size_vec);
+            //                     ret.push((s, &node.domain));
+            //                 }
+            //                 Err(e) => {
+            //                     return Err(e);
+            //                 }
+            //             },
+            //         }
+            //     }
+            // }
             return Ok(ret);
         }
 
@@ -125,10 +155,8 @@ pub mod xcsp3_core {
                                     let for_strs: Vec<&str> =
                                         domain_for[i].split_whitespace().collect();
                                     for e in for_strs.iter() {
-                                        let mut for_str = e.to_string();
-                                        for_str = for_str.replace(id, "");
-                                        for_str = for_str.replace("[]", "[*]");
-                                        match sizes_to_double_vec(for_str) {
+                                        let for_str = e.to_string().replace(id, "");
+                                        match sizes_to_double_vec(&for_str) {
                                             Ok((lower, upper)) => {
                                                 nodes.push(XVariableTreeNode::new(
                                                     lower,

@@ -19,7 +19,7 @@
             <domain for="others">2 4 6</domain>
         </array>
         <array id="treez" size="[5][5][5]">
-            <domain for="treez[][0..1][] treez[][2][2..4]">0..10</domain>
+            <domain for="treez[][0..1][2..3] treez[][2][2..4]">0..10</domain>
             <domain for="others">0 1</domain>
         </array>
         <var id="bar">0..6</var>
@@ -28,10 +28,10 @@
     </variables>
     <constraints>
         <allDifferent>
-            x[1..4] x[0]
+            x[]
         </allDifferent>
         <allDifferent>
-            v[0][]
+            v[0][1..4]
         </allDifferent>
         <allDifferent>
             <matrix>
@@ -45,11 +45,12 @@
         <allDifferent id="c1">
             <list> v[0][1] v[1][2] v[2][0] </list>
             <list> v[1][1] v[2][2] v[2][0] treez[3][3][3] </list>
+            <list> treez[0..3][1][0..3] </list>
         </allDifferent>
         <allDifferent id="c2">
-            <list> v1 v2 v3 v4 </list>
-            <list> w1 w2 w3 w4 </list>
-            <list> z1 z2 z3 z4 </list>
+            <list> treez[1][0..3][2] </list>
+            <list> treez[1][1][1..4] </list>
+            <list> treez[1][0..1][2] treez[1][1][3..4]</list>
             <except> (0,0,0,0) </except>
         </allDifferent>
         <maximum>
@@ -96,11 +97,11 @@
             <operator>ge</operator>
         </ordered>
         <allEqual>
-            <list>  x1 x2 x3 </list>
-            <list>  y1 y2 y3 </list>
+            <list>  treez[] </list>
+            <list>  v[][2] </list>
         </allEqual>
         <allEqual>
-            x1 x2 x3 x4 x5
+            z[]
         </allEqual>
         <instantiation>
             <list> x y z </list>
