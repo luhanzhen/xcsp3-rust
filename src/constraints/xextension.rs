@@ -44,6 +44,7 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
 
     #[derive(Clone)]
@@ -78,20 +79,33 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XExtension<'_> {
+    impl<'a> XExtension<'a> {
         /// construct the constraint from two strings and a bool
-        pub fn from_str(list: &str, tuple: &str, is_support: bool) -> Result<Self, Xcsp3Error> {
-            let scope = list_to_scope_ids(list);
-            match tuple_to_vector(tuple, scope.len() == 1) {
-                Ok(tuples) => Ok(XExtension::new(scope, tuples, is_support)),
+        pub fn from_str(
+            list: &str,
+            tuple: &str,
+            is_support: bool,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            let scope_vec_str = list_to_scope_ids(list);
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => match tuple_to_vector(tuple, scope.len() == 1) {
+                    Ok(tuples) => Ok(XExtension::new(scope_vec_str, scope, tuples, is_support)),
+                    Err(e) => Err(e),
+                },
                 Err(e) => Err(e),
             }
         }
 
-        pub fn new(scope: Vec<String>, tuples: Vec<Vec<i32>>, is_support: bool) -> Self {
+        pub fn new(
+            scope_vec_str: Vec<String>,
+            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            tuples: Vec<Vec<i32>>,
+            is_support: bool,
+        ) -> Self {
             XExtension {
-                scope_vec_str: scope,
-                scope_vec_var: vec![],
+                scope_vec_str,
+                scope_vec_var,
                 tuples,
                 is_support,
             }

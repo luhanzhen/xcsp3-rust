@@ -27,6 +27,26 @@
 
     </variables>
     <constraints>
+        <instantiation>
+            <list> vv2 bar qux </list>
+            <values> 12 4 30 </values>
+        </instantiation>
+        <instantiation>
+            <list> v[1][]  v[2][2</list>
+            <values> 1 0 2 1 3 1 </values>
+        </instantiation>
+        <extension>
+            <list> treez[4][4][4] </list>
+            <conflicts> 0..2 4 5..7 9 </conflicts>
+        </extension>
+        <extension>
+            <list>treea[7..9]</list>
+            <supports>(0,0,0)(0,1,1)(1,0,1)(1,*,0)</supports>
+        </extension>
+        <extension>
+            <list>v[2][1..3]</list>
+            <supports>(0,0,1)(0,1,0)(1,0,0)(1,1,1)</supports>
+        </extension>
         <allDifferent>
             x[]
         </allDifferent>
@@ -88,11 +108,11 @@
             <final>e d</final>
         </regular>
         <ordered>
-            <list>x1 x2 x3 x4</list>
+            <list>x[1..4]</list>
             <operator>lt</operator>
         </ordered>
         <ordered>
-            <list>y1 y2 y3</list>
+            <list>y[1..3]</list>
             <lengths>5 3</lengths>
             <operator>ge</operator>
         </ordered>
@@ -103,21 +123,14 @@
         <allEqual>
             z[]
         </allEqual>
-        <instantiation>
-            <list> x y z </list>
-            <values> 12 4 30 </values>
-        </instantiation>
-        <instantiation>
-            <list> w[] </list>
-            <values> 1 0 2 1 3 1 </values>
-        </instantiation>
+
 
         <extension>
-            <list> x </list>
+            <list> x[1] x[3] </list>
             <conflicts> 2 6 </conflicts>
         </extension>
         <extension>
-            <list> y1 y2 y3 y4 </list>
+            <list> treez[3][0..1][2..3] </list>
             <conflicts> (1,2,3,4)(3,1,3,4) </conflicts>
         </extension>
         <block class="clues">
@@ -229,7 +242,7 @@
         </count>
 
         <mdd>
-            <list>x1 x2 x3</list>
+            <list>z[1..3]</list>
             <transitions>
                 (r,0,n1)(r,1,n2)(r,2,n3)
                 (n1,2,n4)(n2,2,n4)(n3,0,n5)
@@ -237,10 +250,7 @@
             </transitions>
         </mdd>
 
-        <extension>
-            <list>x[28..29] x[0]</list>
-            <supports>(0,0,1)(0,1,0)(1,0,0)(1,1,1)</supports>
-        </extension>
+
         <group>
             <extension>
                 <list>%0 %1 %2</list>
@@ -287,10 +297,7 @@
             <args>x[26] x[31] x[25]</args>
             <args>x[27] x[30] x[26]</args>
         </group>
-        <extension>
-            <list>x[28] x[29] x[27]</list>
-            <supports>(0,0,0)(0,1,1)(1,0,1)(1,1,0)</supports>
-        </extension>
+
 
     </constraints>
     <objectives>

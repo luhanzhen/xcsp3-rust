@@ -109,7 +109,7 @@ pub mod xcsp3_xml {
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            println!("read the instance named {} by {:?}.", path, now.elapsed());
+            // println!("read the instance named {} by {:?}.", path, now.elapsed());
             r
         }
 

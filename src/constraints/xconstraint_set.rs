@@ -85,7 +85,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_mdd(&mut self, list: &str, transitions_str: &str) {
-            match XMdd::from_str(list, transitions_str) {
+            match XMdd::from_str(list, transitions_str, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XMdd(c));
@@ -95,11 +95,14 @@ pub mod xcsp3_core {
 
         pub fn build_ordered(&mut self, list: &str, lengths_str: &str, operator: &str) {
             if lengths_str.is_empty() {
-                self.constraints.push(XConstraintType::XOrdered(
-                    XOrdered::from_str_without_lengths(list, operator).unwrap(),
-                ));
+                match XOrdered::from_str_without_lengths(list, operator, self.set) {
+                    Ok(c) => {
+                        self.constraints.push(XConstraintType::XOrdered(c));
+                    }
+                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+                }
             } else {
-                match XOrdered::from_str(list, lengths_str, operator) {
+                match XOrdered::from_str(list, lengths_str, operator, self.set) {
                     Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                     Ok(c) => {
                         self.constraints.push(XConstraintType::XOrdered(c));
@@ -109,7 +112,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_instantiation(&mut self, list: &str, values: &str) {
-            match XInstantiation::from_str(list, values) {
+            match XInstantiation::from_str(list, values, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XInstantiation(c));
@@ -118,7 +121,7 @@ pub mod xcsp3_core {
         }
 
         pub fn build_extension(&mut self, list: &str, tuple: &str, is_support: bool) {
-            match XExtension::from_str(list, tuple, is_support) {
+            match XExtension::from_str(list, tuple, is_support, self.set) {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XExtension(c));

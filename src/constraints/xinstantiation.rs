@@ -44,6 +44,7 @@ pub mod xcsp3_core {
 
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_values};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XInstantiation<'a> {
@@ -73,19 +74,31 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XInstantiation<'_> {
-        pub fn from_str(list: &str, values_str: &str) -> Result<Self, Xcsp3Error> {
+    impl<'a> XInstantiation<'a> {
+        pub fn from_str(
+            list: &str,
+            values_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
             let scope_vec_str = list_to_scope_ids(list);
-            match list_to_values(values_str) {
-                Ok(values) => Ok(XInstantiation::new(scope_vec_str, values)),
+
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => match list_to_values(values_str) {
+                    Ok(values) => Ok(XInstantiation::new(scope_vec_str, scope, values)),
+                    Err(e) => Err(e),
+                },
                 Err(e) => Err(e),
             }
         }
 
-        pub fn new(scope_vec_str: Vec<String>, values: Vec<i32>) -> Self {
+        pub fn new(
+            scope_vec_str: Vec<String>,
+            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            values: Vec<i32>,
+        ) -> Self {
             XInstantiation {
                 scope_vec_str,
-                scope_vec_var: vec![],
+                scope_vec_var,
                 values,
             }
         }

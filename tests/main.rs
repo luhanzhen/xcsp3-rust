@@ -20,11 +20,10 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  **/
 
 fn main() {
-    test_single();
-    // test_all();
+    // test_single();
+    test_all();
 }
 
-#[warn(dead_code)]
 fn test_single() {
     let xml_file = ".//instances//my-example.xml";
     // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
@@ -42,8 +41,8 @@ fn test_single() {
 
 fn test_all() {
     let start = Instant::now();
-    // let aa = WalkDir::new("D://XCSP3")
-    let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
+    let aa = WalkDir::new("D://XCSP3")
+        // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
         // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
         // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")

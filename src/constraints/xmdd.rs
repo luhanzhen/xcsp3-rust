@@ -43,12 +43,13 @@ pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::xcsp3utils::xcsp3_core::{list_to_scope_ids, list_to_transitions};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XMdd<'a> {
         scope_vec_str: Vec<String>,
-        transitions: Vec<(String, i32, String)>,
         scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        transitions: Vec<(String, i32, String)>,
     }
 
     impl XConstraintTrait for XMdd<'_> {
@@ -72,11 +73,18 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XMdd<'_> {
-        pub fn from_str(list: &str, transitions_str: &str) -> Result<Self, Xcsp3Error> {
-            let scope = list_to_scope_ids(list);
-            match list_to_transitions(transitions_str) {
-                Ok(transitions) => Ok(XMdd::new(scope, transitions)),
+    impl<'a> XMdd<'a> {
+        pub fn from_str(
+            list: &str,
+            transitions_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            let scope_vec_str = list_to_scope_ids(list);
+            match set.construct_scope(&scope_vec_str) {
+                Ok(scope) => match list_to_transitions(transitions_str) {
+                    Ok(transitions) => Ok(XMdd::new(scope_vec_str, scope, transitions)),
+                    Err(e) => Err(e),
+                },
                 Err(e) => Err(e),
             }
         }
@@ -84,11 +92,15 @@ pub mod xcsp3_core {
         pub fn get_transitions(&self) -> &Vec<(String, i32, String)> {
             &self.transitions
         }
-        pub fn new(scope_vec_str: Vec<String>, transitions: Vec<(String, i32, String)>) -> Self {
+        pub fn new(
+            scope_vec_str: Vec<String>,
+            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            transitions: Vec<(String, i32, String)>,
+        ) -> Self {
             XMdd {
                 scope_vec_str,
                 transitions,
-                scope_vec_var: vec![],
+                scope_vec_var,
             }
         }
     }
