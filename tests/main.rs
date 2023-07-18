@@ -20,8 +20,8 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  **/
 
 fn main() {
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
