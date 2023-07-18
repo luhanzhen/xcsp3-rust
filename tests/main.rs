@@ -25,8 +25,8 @@ fn main() {
 }
 
 fn test_single() {
-    let xml_file = ".//instances//my-example.xml";
-    // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
+    // let xml_file = ".//instances//my-example.xml";
+    let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
     let model = XcspXmlModel::from_path(xml_file).unwrap();
     let variable = model.build_variables();
     println!("variables:");
