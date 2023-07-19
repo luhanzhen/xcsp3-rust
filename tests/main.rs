@@ -20,6 +20,8 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
+
+
 fn main() {
     // let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
     // println!("tree = {}", tree.unwrap().to_string());

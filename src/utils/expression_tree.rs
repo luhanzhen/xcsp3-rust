@@ -255,7 +255,7 @@ pub mod xcsp3_utils {
         type Item = TreeNode;
 
         fn next(&mut self) -> Option<Self::Item> {
-
+            todo!()
         }
     }
 }
