@@ -1,6 +1,7 @@
 use std::time::Instant;
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
+use xcsp3_rust::utils::expression_tree::xcsp3_utils::ExpressionTree;
 
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
@@ -20,25 +21,28 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
-
-
 fn main() {
-    // let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
+    let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
+
+    for e in tree.unwrap().first_order_iter() {
+        print!("{:?}", e.to_string());
+    }
+    print!("\n");
     // println!("tree = {}", tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(add(%0,%1),%2)");
-    // println!("tree = {}",  tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(add(x,y),z)");
-    // println!("tree = {}",  tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(%0,dist(%1, and(1,2,3,x[4])))");
-    //
-    // println!("tree = {}",  tree.unwrap().to_string());
-    // test_single();
-    test_all();
+    let tree = ExpressionTree::from_str("eq(add(%0,%1),%2)");
+    println!("tree = {}", tree.unwrap().to_string());
+    let tree = ExpressionTree::from_str("eq(add(x,y),z)");
+    println!("tree = {}", tree.unwrap().to_string());
+    let tree = ExpressionTree::from_str("eq(%0,dist(%1, and(1,2,3,x[4])))");
+
+    println!("tree = {}", tree.unwrap().to_string());
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
-    // let xml_file = ".//instances//my-example.xml";
-    let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
+    let xml_file = ".//instances//my-example.xml";
+    // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
     let model = XcspXmlModel::from_path(xml_file).unwrap();
     let variable = model.build_variables();
     println!("variables:");

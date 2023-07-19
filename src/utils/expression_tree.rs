@@ -38,9 +38,10 @@
  * </p>
  */
 pub mod xcsp3_utils {
+    use std::str::FromStr;
+
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::expression_tree::xcsp3_utils::Operator::*;
-    use std::str::FromStr;
 
     #[derive(Debug, Clone)]
     pub enum Operator {
@@ -104,9 +105,10 @@ pub mod xcsp3_utils {
         }
     }
 
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub enum TreeNode {
         RightBracket,
+        LeftBracket,
         Constant(i32),
         Argument(i32),
         Variable(String),
@@ -117,22 +119,23 @@ pub mod xcsp3_utils {
         pub fn to_string(&self) -> String {
             match self {
                 TreeNode::Constant(i) => i.to_string(),
+                TreeNode::RightBracket => ")".to_string(),
+                TreeNode::LeftBracket => "(".to_string(),
                 TreeNode::Variable(v) => v.to_string(),
                 TreeNode::Argument(a) => format!("%{}", a),
-                TreeNode::Operator(o, v) => {
-                    let mut ret = format!("{:?}", o);
-                    ret.push_str("(");
-                    for (i, n) in v.iter().enumerate() {
-                        ret.push_str(&n.to_string());
-                        if i != v.len() - 1 {
-                            ret.push_str(", ")
-                        }
-                    }
-                    ret.push_str(")");
-                    ret
-                }
-                // TreeNode::Root => "".to_string(),
-                _ => "".to_string(),
+                TreeNode::Operator(o, _) => {
+                    format!("{:?}", o)
+                    // let mut ret = format!("{:?}", o);
+                    // ret.push_str("(");
+                    // for (i, n) in v.iter().enumerate() {
+                    //     ret.push_str(&n.to_string());
+                    //     if i != v.len() - 1 {
+                    //         ret.push_str(", ")
+                    //     }
+                    // }
+                    // ret.push_str(")");
+                    // ret
+                } // TreeNode::Root => "".to_string(),
             }
         }
     }
@@ -140,22 +143,44 @@ pub mod xcsp3_utils {
     #[derive(Clone)]
     pub struct ExpressionTree {
         root: TreeNode,
-        expression: String,
+        // expression: String,
     }
 
     impl ExpressionTree {
+        pub fn get_scope(&self) -> Vec<String> {
+            let mut scope = vec![];
+            for e in self.first_order_iter() {
+                match e {
+                    TreeNode::Variable(v) => {
+                        scope.push(v.clone());
+                    }
+                    _ => {}
+                }
+            }
+            scope
+        }
+
         pub fn to_string(&self) -> String {
-            format!(
-                " expression = {}, expression_str = {}, ",
-                self.root.to_string(),
-                self.expression,
-            )
+            let mut ret = String::new();
+            for e in self.first_order_iter() {
+                ret += &*e.to_string();
+                match e {
+                    TreeNode::Variable(_) => ret += ",",
+                    _ => {}
+                }
+            }
+            ret
+            // format!(
+            //     " expression = {}, expression_str = {}, ",
+            //     self.root.to_string(),
+            //     self.expression,
+            // )
         }
         pub fn from_str(expression: &str) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::parse(expression) {
                 Ok(e) => Ok(ExpressionTree {
                     root: e,
-                    expression: expression.to_string(),
+                    // expression: expression.to_string(),
                 }),
                 Err(e) => Err(e),
             }
@@ -244,18 +269,74 @@ pub mod xcsp3_utils {
 
             Ok(stack.pop().unwrap())
         }
-        pub fn iter(&self) -> ExpressionIter {
-            ExpressionIter {}
+        pub fn first_order_iter(&self) -> ExpressionFirstOrderIter {
+            ExpressionFirstOrderIter {
+                stack: vec![&self.root],
+            }
         }
+        // pub fn last_order_iter(&self) -> ExpressionLastOrderIter {
+        //     ExpressionLastOrderIter { stack: vec![&self.root] }
+        // }
     }
 
-    pub struct ExpressionIter {}
+    pub struct ExpressionFirstOrderIter<'a> {
+        stack: Vec<&'a TreeNode>,
+    }
 
-    impl Iterator for ExpressionIter {
-        type Item = TreeNode;
-
+    impl<'a> Iterator for ExpressionFirstOrderIter<'a> {
+        type Item = &'a TreeNode;
         fn next(&mut self) -> Option<Self::Item> {
-            todo!()
+            let top;
+            match self.stack.pop() {
+                None => {
+                    return None;
+                }
+                Some(t) => top = t,
+            }
+            match top {
+                TreeNode::Operator(_, vec) => {
+                    self.stack.push(&TreeNode::RightBracket);
+                    (0..vec.len()).rev().for_each(|i| {
+                        self.stack.push(&vec[i]);
+                    });
+                    self.stack.push(&TreeNode::LeftBracket);
+                }
+                _ => {}
+            };
+
+            Some(top)
         }
     }
+
+    // pub struct ExpressionLastOrderIter<'a> {
+    //     stack: Vec<&'a TreeNode>,
+    // }
+    //
+    // impl<'a> Iterator for ExpressionLastOrderIter<'a> {
+    //     type Item = &'a TreeNode;
+    //     fn next(&mut self) -> Option<Self::Item> {
+    //         loop
+    //         {
+    //             match self.stack.last() {
+    //                 None => { return None; }
+    //                 Some(top) => {
+    //                     match top
+    //                     {
+    //                         TreeNode::Operator(_, vec) => {
+    //                             (0..vec.len()).rev().for_each(|i| {
+    //                                 self.stack.push(&vec[i]);
+    //                             })
+    //                         }
+    //                         _ => {break}
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         match self.stack.pop()
+    //         {
+    //             None => { None }
+    //             Some(t) => { Some(t) }
+    //         }
+    //     }
+    // }
 }

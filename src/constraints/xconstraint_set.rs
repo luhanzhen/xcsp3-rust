@@ -70,7 +70,7 @@ pub mod xcsp3_core {
             self.constraints.iter()
         }
         pub fn build_intention(&mut self, function: &str) {
-            match XIntention::from_str("", function, self.set) {
+            match XIntention::from_str_without_scope(function, self.set) {
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XIntention(c));
                 }

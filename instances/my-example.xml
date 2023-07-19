@@ -28,13 +28,13 @@
     </variables>
     <constraints>
         <intension>
-            <function> eq(add(x,y),z) </function>
+            <function> eq(add(bar,qux),v[0][0]) </function>
         </intension>
         <intension>
-            <function> ge(w,z) </function>
+            <function> ge(treea[4],treea[9]) </function>
         </intension>
-        <intension> eq(add(x,y),z) </intension>
-        <intension> ge(w,z) </intension>
+        <intension> eq(add(treez[0][0][0],treez[0][0][4]),treez[0][2][0]) </intension>
+        <intension> ge(treez[1][1][1],v[2][2]) </intension>
         <instantiation>
             <list> vv2 bar qux </list>
             <values> 12 4 30 </values>
