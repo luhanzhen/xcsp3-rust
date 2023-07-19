@@ -39,4 +39,5 @@
  **/
 
 pub mod bitset;
-pub mod xcsp3utils;
+pub mod expression_tree;
+pub mod utils;

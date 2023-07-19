@@ -40,7 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::xcsp3utils::xcsp3_core::{
+    use crate::utils::utils::xcsp3_utils::{
         get_all_variables_between_lower_and_upper, size_to_string, sizes_to_double_vec,
         sizes_to_vec,
     };

@@ -135,7 +135,7 @@ pub mod xcsp3_xml {
          ```xml
 
          ```
-          */
+         */
         #[serde(rename = "circuit")]
         Circuit {
             #[serde(rename = "$value")]
@@ -177,18 +177,34 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <intension>
+          <function> boolExpr </function>
+        </intension>
         ```
-
+        or
+        ```xml
+        <intension> boolExpr </intension>  <!-- Simplified Form -->
+        ```
         eg.
         ```xml
-
+        <intension>
+                   <function> eq(add(x,y),z) </function>
+               </intension>
+               <intension>
+                   <function> ge(w,z) </function>
+               </intension>
+        ```
+        ```xml
+         <intension> eq(add(x,y),z) </intension>
+        <intension> ge(w,z) </intension>
         ```
          */
         #[serde(rename = "intension")]
         Intension {
-            #[serde(rename = "$value")]
+            #[serde(rename = "$value", default)]
             value: String,
+            #[serde(rename = "function", default)]
+            function: String,
         },
         /**
         syntax.

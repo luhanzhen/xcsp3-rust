@@ -43,10 +43,11 @@ pub mod xcsp3_core {
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
+    use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
-    use crate::utils::xcsp3utils::xcsp3_core::list_to_matrix_ids;
+    use crate::utils::utils::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
 
@@ -67,6 +68,14 @@ pub mod xcsp3_core {
         }
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
             self.constraints.iter()
+        }
+        pub fn build_intention(&mut self, function: &str) {
+            match XIntention::from_str("", function, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XIntention(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
         }
 
         pub fn build_regular(

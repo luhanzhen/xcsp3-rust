@@ -36,7 +36,7 @@
  * </p>
  */
 
-pub mod xcsp3_core {
+pub mod xcsp3_utils {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 

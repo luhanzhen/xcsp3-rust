@@ -24,34 +24,18 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:26
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: xcsp3-rust
+ * </p>
+ * <p>@author: luhan zhen
+ * </p>
+ * <p>@date:  2023/7/19 12:20
+ * </p>
+ * <p>@email: zhenlh20@mails.jlu.edu.cn
+ * </p>
+ * <p>@version: 1.0
+ * </p>
+ * <p>@description:
+ * </p>
  */
 
-pub mod xconstraint_set;
-pub mod xconstraint_type;
-
-pub mod xall_different;
-pub mod xall_different_except;
-pub mod xall_equal;
-
-pub mod xextension;
-pub mod xinstantiation;
-pub mod xmdd;
-pub mod xordered;
-pub mod xregular;
-
-pub mod xblocks;
-pub mod xconstraint_trait;
-pub mod xgroup;
-pub mod xintension;
+pub mod xcsp3_core {}

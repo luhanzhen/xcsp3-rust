@@ -52,6 +52,10 @@ pub mod xcsp3_core {
 
     /// error factory
     impl Xcsp3Error {
+        pub fn get_constraint_expression_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_expression_error(s))
+        }
+
         pub fn get_constraint_extension_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_extension_error(s))
         }

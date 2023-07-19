@@ -27,6 +27,14 @@
 
     </variables>
     <constraints>
+        <intension>
+            <function> eq(add(x,y),z) </function>
+        </intension>
+        <intension>
+            <function> ge(w,z) </function>
+        </intension>
+        <intension> eq(add(x,y),z) </intension>
+        <intension> ge(w,z) </intension>
         <instantiation>
             <list> vv2 bar qux </list>
             <values> 12 4 30 </values>

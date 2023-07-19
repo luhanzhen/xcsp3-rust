@@ -78,7 +78,7 @@ pub mod xcsp3_xml {
     use std::time::Instant;
 
     /// the instance of XCSP3
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     pub struct XcspXmlModel {
         #[serde(rename = "@format")]
         format: String,
@@ -87,6 +87,10 @@ pub mod xcsp3_xml {
         variables: Option<Variable>,
         constraints: Constraint,
         objectives: Option<Objective>,
+        // #[serde(skip)]
+        // variables_set: XVariableSet,
+        // #[serde(skip)]
+        // constraints_set: XConstraintSet<'a>,
     }
 
     impl XcspXmlModel {
@@ -136,7 +140,6 @@ pub mod xcsp3_xml {
 
         /// build the variables
         pub fn build_variables(&self) -> XVariableSet {
-            // let mut variables: Vec<XVariableType> = vec![];
             let mut variables: XVariableSet = XVariableSet::new();
 
             for var_type in self.variables.as_ref().unwrap().variables.iter() {
@@ -185,7 +188,10 @@ pub mod xcsp3_xml {
             for con_type in self.constraints.constraints.iter() {
                 match con_type {
                     ConstraintType::Group(_) => {}
-                    ConstraintType::Block(_) => {}
+                    ConstraintType::Block(_) => {
+                        // println!("{:?}",b.constraints)
+                        // println!("Block")
+                    }
                     ConstraintType::AllDifferent {
                         vars,
                         list,
@@ -223,7 +229,13 @@ pub mod xcsp3_xml {
                         operator,
                         lengths,
                     } => constraint.build_ordered(vars, lengths, operator),
-                    ConstraintType::Intension { .. } => {}
+                    ConstraintType::Intension { value, function } => {
+                        if !value.is_empty() {
+                            constraint.build_intention(value);
+                        } else if !function.is_empty() {
+                            constraint.build_intention(function);
+                        }
+                    }
                     ConstraintType::Extension {
                         vars,
                         supports,

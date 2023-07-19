@@ -76,6 +76,15 @@ pub mod xcsp3_core {
             }
         }
 
+        pub(crate) fn get_expression_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/generic/intension/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::IntensionError,
+            }
+        }
+
         pub(crate) fn get_list_of_values_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/constraints";
             ParseConstraintError {
@@ -90,5 +99,6 @@ pub mod xcsp3_core {
         ExtensionError,
         ScopeNotFoundError,
         RegularError,
+        IntensionError,
     }
 }

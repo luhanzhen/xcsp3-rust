@@ -36,7 +36,7 @@
  * </p>
  */
 
-pub mod xcsp3_core {
+pub mod xcsp3_utils {
 
     #[derive(Clone)]
     pub struct Bitset {

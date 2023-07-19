@@ -39,8 +39,16 @@
 #[cfg(test)]
 mod test_xcsp3domain {
     // use bitmaps::Bitmap;
-    use xcsp3_rust::utils::bitset::xcsp3_core::Bitset;
-    use xcsp3_rust::utils::xcsp3utils::xcsp3_core::{get_nth_square_of_name, list_to_scope_ids};
+    use xcsp3_rust::utils::bitset::xcsp3_utils::Bitset;
+    use xcsp3_rust::utils::expression_tree::xcsp3_utils::ExpressionTree;
+    use xcsp3_rust::utils::utils::xcsp3_utils::{get_nth_square_of_name, list_to_scope_ids};
+
+    #[test]
+    fn test_expression_tree() {
+        let tree = ExpressionTree::from_str("eq( add(%0 ,mul(%1, %2,%3), %4 ), %5 )");
+
+        println!("tree = {}", tree.to_string());
+    }
 
     #[test]
     fn test_bitset() {

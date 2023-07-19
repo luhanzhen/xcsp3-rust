@@ -41,7 +41,7 @@
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::xcsp3utils::xcsp3_core::list_to_scope_ids;
+    use crate::utils::utils::xcsp3_utils::list_to_scope_ids;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
