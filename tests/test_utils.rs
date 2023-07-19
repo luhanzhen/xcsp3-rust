@@ -45,9 +45,20 @@ mod test_xcsp3domain {
 
     #[test]
     fn test_expression_tree() {
-        let tree = ExpressionTree::from_str("eq( add(%0 ,mul(%1, %2,%3), %4 ), %5 )");
-
-        println!("tree = {}", tree.to_string());
+        let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
+        assert_eq!(
+            "Eq(Add(%0,Mul(1,%2,x[3][4][2],)%4,)%5,)",
+            tree.unwrap().to_string()
+        );
+        let tree = ExpressionTree::from_str("eq(add(%0,%1),%2)");
+        assert_eq!("Eq(Add(%0,%1,)%2,)", tree.unwrap().to_string());
+        let tree = ExpressionTree::from_str("eq(add(x,y),z)");
+        assert_eq!("Eq(Add(x,y,)z,)", tree.unwrap().to_string());
+        let tree = ExpressionTree::from_str("eq(%0,dist(%1, and(1,2,3,x[4])))");
+        assert_eq!(
+            "Eq(%0,Dist(%1,And(1,2,3,x[4],)))",
+            tree.unwrap().to_string()
+        );
     }
 
     #[test]

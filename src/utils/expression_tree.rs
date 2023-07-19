@@ -166,6 +166,8 @@ pub mod xcsp3_utils {
                 ret += &*e.to_string();
                 match e {
                     TreeNode::Variable(_) => ret += ",",
+                    TreeNode::Argument(_) => ret += ",",
+                    TreeNode::Constant(_) => ret += ",",
                     _ => {}
                 }
             }

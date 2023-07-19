@@ -51,6 +51,7 @@ pub mod xcsp3_core {
     pub struct XExtension<'a> {
         scope_vec_str: Vec<String>,
         scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        ///if the  value in tuples is i32::MAX, then it is the star
         tuples: Vec<Vec<i32>>,
         is_support: bool,
     }
@@ -110,7 +111,7 @@ pub mod xcsp3_core {
                 is_support,
             }
         }
-        ///return the iter of the supports tuples
+        ///return the iter of the supports tuples, if the value is i32::MAX, then it is the star
         pub fn supports_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
             if self.is_support {
                 Some(self.tuples.iter())
@@ -119,7 +120,7 @@ pub mod xcsp3_core {
             }
         }
 
-        ///return the iter of the conflict tuples
+        ///return the iter of the conflict tuples, if the value is i32::MAX, then it is the star
         pub fn conflicts_iter(&self) -> Option<Iter<'_, Vec<i32>>> {
             if !self.is_support {
                 Some(self.tuples.iter())
