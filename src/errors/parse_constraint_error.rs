@@ -76,6 +76,14 @@ pub mod xcsp3_core {
             }
         }
 
+        pub(crate) fn get_group_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/groups/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::GroupError,
+            }
+        }
         pub(crate) fn get_expression_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/generic/intension/";
@@ -100,5 +108,6 @@ pub mod xcsp3_core {
         ScopeNotFoundError,
         RegularError,
         IntensionError,
+        GroupError,
     }
 }

@@ -45,8 +45,69 @@ pub mod xcsp3_xml {
 
     #[derive(Deserialize, Debug)]
     pub enum ConstraintType {
+        /**
+                  syntax.
+                  ```xml
+                  <group  [ id="identifier" ]>
+          <constraint.../>  <!-- constraint template -->
+          (<args> (intExpr wspace)+ </args>)2+
+        </group>
+                  ```
+
+                  eg.
+                  ```xml
+               <group id="g">
+                  <intension> eq(add(%0,%1),%2) </intension>
+                  <args> x0 x1 x2 </args>
+                  <args> x3 x4 x5 </args>
+                  <args> x6 x7 x8 </args>
+                </group>
+                  ```
+                or
+
+                 ```xml
+               <group id="g">
+                <group id="h">
+                  <extension>
+                    <list> %0 %1 </list>
+                    <supports> (1,2)(2,1)(2,3)(3,1)(3,2)(3,3) </supports>
+                  </extension>
+                  <args> w x </args>
+                  <args> w z </args>
+                  <args> x y </args>
+                </group>
+                </group>
+                  ```
+        */
         #[serde(rename = "group")]
         Group(ConstraintGroup),
+
+        /**
+        syntax.
+        ```xml
+        <block  [ id="identifier" ]  [ class="(identifier wspace)+" ]>
+          (<constraint.../> | <metaConstraint.../> | <group.../> | <block... />)+
+        </block>
+        ```
+
+        eg.
+        ```xml
+        <block class="clues">
+            <intension> ... </intension>
+            <intension> ... </intension>
+            ...
+          </block>
+          <block class="symmetryBreaking">
+            <lex> ... </lex>
+            <lex> ... </lex>
+            ...
+          </block>
+          <block class="redundantConstraints"> ... </block>
+          <block note="Management of first week"> ... </block>
+          <block note="Management of second week"> ... </block>
+        ```
+         */
+
         #[serde(rename = "block")]
         Block(ConstraintBlock),
 
@@ -85,7 +146,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "$value", default)]
             vars: String,
             #[serde(rename = "list", default)]
-            list: Vec<String>,
+            list: Box<[String]>,
             #[serde(rename = "except", default)]
             except: String,
             #[serde(rename = "matrix", default)]
@@ -121,7 +182,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "$value", default)]
             vars: String,
             #[serde(rename = "list", default)]
-            list: Vec<String>,
+            list: Box<[String]>,
         },
 
         /**
@@ -209,12 +270,22 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <extension>
+          <list> intVar </list>
+          <supports>  ((intVal | intIntvl) wspace)\* </supports>
+        </extension>
         ```
 
         eg.
         ```xml
-
+        <extension id="c1">
+          <list> x </list>
+          <supports> 1 2 4 8..10 </supports>
+        </extension>
+        <extension id="c2">
+          <list> y1 y2 y3 </list>
+          <supports> (0,1,0)(1,0,0)(1,1,0)(1,1,1) </supports>
+        </extension>
         ```
          */
         #[serde(rename = "extension")]
@@ -294,12 +365,20 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        sum>
+           <list> (intVar wspace)2+ </list>
+           [ <coeffs> (intVal wspace)2+ | (intVar wspace)2+ </coeffs> ]
+           <condition> "(" operator "," operand ")" </condition>
+        </sum>
         ```
 
         eg.
         ```xml
-
+        <sum>
+          <list> x1 x2 x3 </list>
+          <coeffs> 1 2 3 </coeffs>
+          <condition> (gt,y) </condition>
+        </sum>
         ```
          */
         #[serde(rename = "sum")]
@@ -572,7 +651,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "list", default)]
             vars: String,
             #[serde(rename = "$value", default)]
-            constraints: Vec<ConstraintType>,
+            constraints: Box<[ConstraintType]>,
         },
 
         /**
@@ -589,7 +668,7 @@ pub mod xcsp3_xml {
         #[serde(rename = "channel")]
         Channel {
             #[serde(rename = "list", default)]
-            vars: Vec<String>,
+            vars: Box<[String]>,
             #[serde(rename = "value", default)]
             value: String,
         },
@@ -750,7 +829,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "$value", default)]
             vars: String,
             #[serde(rename = "list", default)]
-            list: Vec<String>,
+            list: Box<[String]>,
         },
     }
 }

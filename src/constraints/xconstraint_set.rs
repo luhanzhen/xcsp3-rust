@@ -40,13 +40,16 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
+    use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
@@ -66,6 +69,30 @@ pub mod xcsp3_core {
                 set,
             }
         }
+
+        pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &Box<[String]>) {
+            match &cc {
+                XConstraintType::XGroup(c) => {
+                    // println!("group is in {}",c.to_string());
+                    self.constraints.push(XConstraintType::XConstraintNone(
+                        Xcsp3Error::get_constraint_group_error("the group is in group"),
+                    ))
+                }
+                _ => {}
+            }
+            match XGroup::from_str(cc, args, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XGroup(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
+        /// this function is designed for XGroup, parse the template for XGroup
+        pub fn get_last_constraint(&mut self) -> Option<XConstraintType<'a>> {
+            self.constraints.pop()
+        }
+
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
             self.constraints.iter()
         }

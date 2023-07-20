@@ -48,7 +48,6 @@ pub mod xcsp3_core {
         fn get_scope_string(&self) -> &Vec<String>;
 
         ///get the scope string of constraint
-
         fn get_scope(&self) -> &Vec<(String, &XDomainInteger)>;
     }
 }

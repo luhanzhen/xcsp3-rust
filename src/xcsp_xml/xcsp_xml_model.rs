@@ -107,7 +107,7 @@ pub mod xcsp3_xml {
 
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<XcspXmlModel, DeError> {
-            let now = Instant::now();
+            // let now = Instant::now();
             if !path.ends_with(".xml") {
                 return Err(DeError::UnexpectedEof);
             }
@@ -183,108 +183,125 @@ pub mod xcsp3_xml {
             variables
         }
 
+        fn parse_constraint(con_type: &ConstraintType, set: &mut XConstraintSet) {
+            match con_type {
+                ConstraintType::Group(group) => {
+                    // println!("{:?}", group.constraints);
+                    XcspXmlModel::parse_constraint(&group.constraints[0], set);
+
+                    match set.get_last_constraint() {
+                        None => {}
+                        Some(cc) => {
+                            // println!("{}",cc.to_string())
+                            set.build_group(cc, &group.args);
+                        }
+                    }
+                }
+                ConstraintType::Block(block) => {
+                    for e in block.constraints.iter() {
+                        // println!("{:?}", e);
+                        XcspXmlModel::parse_constraint(e, set);
+                    }
+                }
+                ConstraintType::AllDifferent {
+                    vars,
+                    list,
+                    except,
+                    matrix,
+                } => {
+                    if !vars.is_empty() {
+                        set.build_all_different(vars)
+                    } else if matrix.is_empty() {
+                        if !except.is_empty() {
+                            for e in list.iter() {
+                                set.build_all_different_except(e, except);
+                            }
+                        } else {
+                            for e in list.iter() {
+                                set.build_all_different(e);
+                            }
+                        }
+                    } else {
+                        set.build_all_different_matrix(matrix);
+                    }
+                }
+                ConstraintType::AllEqual { vars, list } => {
+                    if !vars.is_empty() {
+                        set.build_all_equal(vars);
+                    } else {
+                        for e in list.iter() {
+                            set.build_all_equal(e);
+                        }
+                    }
+                }
+                ConstraintType::Circuit { .. } => {}
+                ConstraintType::Ordered {
+                    vars,
+                    operator,
+                    lengths,
+                } => set.build_ordered(vars, lengths, operator),
+                ConstraintType::Intension { value, function } => {
+                    if !value.is_empty() {
+                        set.build_intention(value);
+                    } else if !function.is_empty() {
+                        set.build_intention(function);
+                    }
+                }
+                ConstraintType::Extension {
+                    vars,
+                    supports,
+                    conflicts,
+                } => {
+                    if supports.is_empty() {
+                        set.build_extension(vars, conflicts, false)
+                    } else if conflicts.is_empty() {
+                        set.build_extension(vars, supports, true)
+                    } else {
+                        eprintln!("can't build extension, conflicts or supports must be non empty.")
+                    }
+                }
+                ConstraintType::Regular {
+                    vars,
+                    transitions,
+                    start,
+                    r#final,
+                } => set.build_regular(vars, transitions, start, r#final),
+                ConstraintType::Mdd { vars, transitions } => set.build_mdd(vars, transitions),
+                ConstraintType::Sum {
+                    vars,
+                    condition,
+                    coeffs,
+                } => {}
+                ConstraintType::Count { .. } => {}
+                ConstraintType::NValues { .. } => {}
+                ConstraintType::Cardinality { .. } => {}
+                ConstraintType::Minimum { .. } => {}
+                ConstraintType::Maximum { .. } => {}
+                ConstraintType::Element { .. } => {}
+                ConstraintType::Stretch { .. } => {}
+                ConstraintType::NoOverlap { .. } => {}
+                ConstraintType::Cumulative { .. } => {}
+                ConstraintType::Instantiation { vars, values } => {
+                    // println!("{}{:?}", vars, values);
+                    set.build_instantiation(vars, values);
+                }
+                ConstraintType::Slide { .. } => {}
+                ConstraintType::Channel { .. } => {}
+                ConstraintType::AllDistant { .. } => {}
+                ConstraintType::Precedence { .. } => {}
+                ConstraintType::Balance { .. } => {}
+                ConstraintType::Spread { .. } => {}
+                ConstraintType::Deviation { .. } => {}
+                ConstraintType::BinPacking { .. } => {}
+                ConstraintType::Lex { .. } => {}
+                ConstraintType::Clause { .. } => {}
+            }
+        }
+
         pub fn build_constraints<'a>(&'a self, set: &'a XVariableSet) -> XConstraintSet {
             let mut constraint: XConstraintSet = XConstraintSet::new(set);
             for con_type in self.constraints.constraints.iter() {
-                match con_type {
-                    ConstraintType::Group(_) => {}
-                    ConstraintType::Block(_) => {
-                        // println!("{:?}",b.constraints)
-                        // println!("Block")
-                    }
-                    ConstraintType::AllDifferent {
-                        vars,
-                        list,
-                        except,
-                        matrix,
-                    } => {
-                        if !vars.is_empty() {
-                            constraint.build_all_different(vars)
-                        } else if matrix.is_empty() {
-                            if !except.is_empty() {
-                                for e in list.iter() {
-                                    constraint.build_all_different_except(e, except);
-                                }
-                            } else {
-                                for e in list.iter() {
-                                    constraint.build_all_different(e);
-                                }
-                            }
-                        } else {
-                            constraint.build_all_different_matrix(matrix);
-                        }
-                    }
-                    ConstraintType::AllEqual { vars, list } => {
-                        if !vars.is_empty() {
-                            constraint.build_all_equal(vars);
-                        } else {
-                            for e in list.iter() {
-                                constraint.build_all_equal(e);
-                            }
-                        }
-                    }
-                    ConstraintType::Circuit { .. } => {}
-                    ConstraintType::Ordered {
-                        vars,
-                        operator,
-                        lengths,
-                    } => constraint.build_ordered(vars, lengths, operator),
-                    ConstraintType::Intension { value, function } => {
-                        if !value.is_empty() {
-                            constraint.build_intention(value);
-                        } else if !function.is_empty() {
-                            constraint.build_intention(function);
-                        }
-                    }
-                    ConstraintType::Extension {
-                        vars,
-                        supports,
-                        conflicts,
-                    } => {
-                        if supports.is_empty() {
-                            constraint.build_extension(vars, conflicts, false)
-                        } else if conflicts.is_empty() {
-                            constraint.build_extension(vars, supports, true)
-                        } else {
-                            eprintln!(
-                                "can't build extension, conflicts or supports must be non empty."
-                            )
-                        }
-                    }
-                    ConstraintType::Regular {
-                        vars,
-                        transitions,
-                        start,
-                        r#final,
-                    } => constraint.build_regular(vars, transitions, start, r#final),
-                    ConstraintType::Mdd { vars, transitions } => {
-                        constraint.build_mdd(vars, transitions)
-                    }
-                    ConstraintType::Sum { .. } => {}
-                    ConstraintType::Count { .. } => {}
-                    ConstraintType::NValues { .. } => {}
-                    ConstraintType::Cardinality { .. } => {}
-                    ConstraintType::Minimum { .. } => {}
-                    ConstraintType::Maximum { .. } => {}
-                    ConstraintType::Element { .. } => {}
-                    ConstraintType::Stretch { .. } => {}
-                    ConstraintType::NoOverlap { .. } => {}
-                    ConstraintType::Cumulative { .. } => {}
-                    ConstraintType::Instantiation { vars, values } => {
-                        // println!("{}{:?}", vars, values);
-                        constraint.build_instantiation(vars, values);
-                    }
-                    ConstraintType::Slide { .. } => {}
-                    ConstraintType::Channel { .. } => {}
-                    ConstraintType::AllDistant { .. } => {}
-                    ConstraintType::Precedence { .. } => {}
-                    ConstraintType::Balance { .. } => {}
-                    ConstraintType::Spread { .. } => {}
-                    ConstraintType::Deviation { .. } => {}
-                    ConstraintType::BinPacking { .. } => {}
-                    ConstraintType::Lex { .. } => {}
-                    ConstraintType::Clause { .. } => {}
-                }
+                XcspXmlModel::parse_constraint(con_type, &mut constraint);
             }
             constraint
         }

@@ -37,21 +37,22 @@
  */
 
 pub mod xcsp3_core {
-
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
     use std::collections::HashMap;
 
+    use regex::Regex;
     use std::slice::Iter;
-
     /**
     the XVariableSet is a container that store all variables.
      */
     pub struct XVariableSet {
         variables: Vec<XVariableType>,
         id_to_index: HashMap<String, usize>, //store the id and the index of the variable
+        empty_domain: XDomainInteger,
     }
+
     impl Default for XVariableSet {
         fn default() -> Self {
             Self::new()
@@ -74,6 +75,7 @@ pub mod xcsp3_core {
             XVariableSet {
                 variables: vec![],
                 id_to_index: HashMap::default(),
+                empty_domain: XDomainInteger::new(),
             }
         }
 
@@ -169,44 +171,50 @@ pub mod xcsp3_core {
             }
         }
 
-        ///construct the scope from XVariableSet
+        ///construct the scope from XVariableSet, when scope is equal to %x, where x is an i32 number, return empty tuple
         pub fn construct_scope(
             &self,
             scope_str: &Vec<String>,
         ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
             let mut ret: Vec<(String, &XDomainInteger)> = vec![];
-            // println!("{:?}", scope_str);
+            let reg = Regex::new(r"%(0|[1-9][0-9]*)").unwrap();
+            let reg1 = Regex::new(r"%([.]*)").unwrap();
             for e in scope_str.iter() {
-                let r = self.find_variable(&e);
-                match r {
-                    Ok(var_type) => match var_type {
-                        XVariableType::XVariableArray(a) => match a.find_variable(e) {
-                            Ok(mut vec) => {
-                                for (e1, e2) in vec.iter_mut() {
-                                    ret.push((e1.to_string(), e2));
+                if reg.is_match(e) || reg1.is_match(e) {
+                    // println!("{}",e);
+                    ret.push((e.clone(), &self.empty_domain))
+                } else {
+                    let r = self.find_variable(&e);
+                    match r {
+                        Ok(var_type) => match var_type {
+                            XVariableType::XVariableArray(a) => match a.find_variable(e) {
+                                Ok(mut vec) => {
+                                    for (e1, e2) in vec.iter_mut() {
+                                        ret.push((e1.to_string(), e2));
+                                    }
                                 }
-                            }
-                            Err(e) => {
-                                return Err(e);
-                            }
-                        },
-                        XVariableType::XVariableInt(i) => ret.push((i.id.clone(), &i.domain)),
-                        XVariableType::XVariableTree(t) => match t.find_variable(e) {
-                            Ok(mut vec) => {
-                                for (e1, e2) in vec.iter_mut() {
-                                    ret.push((e1.to_string(), e2));
+                                Err(e) => {
+                                    return Err(e);
                                 }
-                            }
-                            Err(e) => {
-                                return Err(e);
-                            }
+                            },
+                            XVariableType::XVariableInt(i) => ret.push((i.id.clone(), &i.domain)),
+                            XVariableType::XVariableTree(t) => match t.find_variable(e) {
+                                Ok(mut vec) => {
+                                    for (e1, e2) in vec.iter_mut() {
+                                        ret.push((e1.to_string(), e2));
+                                    }
+                                }
+                                Err(e) => {
+                                    return Err(e);
+                                }
+                            },
+                            _ => {}
                         },
-                        _ => {}
-                    },
-                    Err(_) => {
-                        return Err(Xcsp3Error::get_variable_not_found_error(
-                            "the scope not found, ",
-                        ));
+                        Err(_) => {
+                            return Err(Xcsp3Error::get_variable_not_found_error(
+                                "the scope not found, ",
+                            ));
+                        }
                     }
                 }
             }

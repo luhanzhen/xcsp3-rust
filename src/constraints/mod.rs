@@ -55,3 +55,4 @@ pub mod xblocks;
 pub mod xconstraint_trait;
 pub mod xgroup;
 pub mod xintension;
+pub mod xsum;

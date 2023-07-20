@@ -73,8 +73,8 @@ pub mod xcsp3_xml {
         #[serde(rename = "@note", default)]
         pub note: String,
         #[serde(rename = "@class", default)]
-        pub r#type: Option<String>,
+        pub r#type: String,
         #[serde(rename = "$value", default)]
-        pub constraints: Vec<ConstraintType>,
+        pub constraints: Box<[ConstraintType]>,
     }
 }

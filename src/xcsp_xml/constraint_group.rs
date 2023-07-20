@@ -62,13 +62,13 @@ pub mod xcsp3_xml {
      */
     #[derive(Deserialize, Debug)]
     pub struct ConstraintGroup {
-        #[serde(rename = "@class")]
-        pub class: Option<String>,
-        #[serde(rename = "@id")]
-        pub id: Option<String>,
+        #[serde(rename = "@class", default)]
+        pub class: String,
+        #[serde(rename = "@id", default)]
+        pub id: String,
         #[serde(rename = "$value", default)]
-        pub constraints: Vec<ConstraintType>,
+        pub constraints: Box<[ConstraintType]>,
         #[serde(rename = "args", default)]
-        pub args: Vec<String>,
+        pub args: Box<[String]>,
     }
 }

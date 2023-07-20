@@ -89,11 +89,14 @@ pub mod xcsp3_core {
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
             let scope_vec_str = list_to_scope_ids(list);
+            // println!("{:?}",&scope_vec_str);
             match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => match tuple_to_vector(tuple, scope.len() == 1) {
-                    Ok(tuples) => Ok(XExtension::new(scope_vec_str, scope, tuples, is_support)),
-                    Err(e) => Err(e),
-                },
+                Ok(scope) => {
+                    match tuple_to_vector(tuple, !list.contains("%...") && scope.len() == 1) {
+                        Ok(tuples) => Ok(XExtension::new(scope_vec_str, scope, tuples, is_support)),
+                        Err(e) => Err(e),
+                    }
+                }
                 Err(e) => Err(e),
             }
         }

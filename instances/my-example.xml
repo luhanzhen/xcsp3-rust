@@ -1,6 +1,6 @@
 <instance format="XCSP3" type="CSP">
     <variables>
-        <array id="x" size="[6]">0 2 4..10 61..65 77</array>
+        <array id="x" size="[60]">0 2 4..10 61..65 77</array>
         <array id="y" size="[6]">0 2</array>
         <array id="z" size="[6]">0..10 14 22..24</array>
         <array id="yy" note="x[i] is the ith value of the series" size="[9]">0..8</array>
@@ -27,6 +27,26 @@
 
     </variables>
     <constraints>
+        <block class="clues">
+            <block class="clues">
+                <extension>
+                    <list> treez[3][3][3] </list>
+                    <conflicts> 0..2 4 5..7 9 </conflicts>
+                </extension>
+                <extension>
+                    <list>treea[1..3]</list>
+                    <supports>(0,0,0)(0,1,1)(1,0,1)(1,*,0)</supports>
+                </extension>
+            </block>
+
+        </block>
+        <block class="symmetryBreaking">
+            <block class="clues">
+                <intension>
+                    <function> ge(treea[6],x[3]) </function>
+                </intension>
+            </block>
+        </block>
         <intension>
             <function> eq(add(bar,qux),v[0][0]) </function>
         </intension>
@@ -141,16 +161,7 @@
             <list> treez[3][0..1][2..3] </list>
             <conflicts> (1,2,3,4)(3,1,3,4) </conflicts>
         </extension>
-        <block class="clues">
-            <intension> ... </intension>
-            <intension> ... </intension>
-        </block>
-        <block class="symmetryBreaking">
-            <block class="clues">
-                <intension> ... </intension>
-                <intension> ... </intension>
-            </block>
-        </block>
+
         <channel>
             <list> z1 z2 z3 z4 z5 </list>
             <value> v </value>
@@ -261,7 +272,7 @@
 
         <group>
             <extension>
-                <list>%0 %1 %2</list>
+                <list>%...</list>
                 <supports>(0,0,1)(0,1,0)(1,0,0)(1,1,1)</supports>
             </extension>
             <args>x[0] x[30] x[1]</args>
@@ -287,10 +298,9 @@
             <args>x[14] x[43..44]</args>
         </group>
         <group>
-            <extension>
-                <list>%0 %1 %2</list>
-                <supports>(0,0,1)(0,1,0)(1,0,0)(1,1,1)</supports>
-            </extension>
+            <intension>
+                <function>eq(add(%0,%1),%2)</function>
+            </intension>
             <args>x[15] x[42] x[14]</args>
             <args>x[16] x[41] x[15]</args>
             <args>x[17] x[40] x[16]</args>

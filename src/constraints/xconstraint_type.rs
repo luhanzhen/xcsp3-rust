@@ -44,6 +44,7 @@ pub mod xcsp3_core {
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xextension::xcsp3_core::XExtension;
+    use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
@@ -63,6 +64,7 @@ pub mod xcsp3_core {
         XRegular(XRegular<'a>),
         XMdd(XMdd<'a>),
         XIntention(XIntention<'a>),
+        XGroup(XGroup<'a>),
     }
 
     impl XConstraintType<'_> {
@@ -80,6 +82,7 @@ pub mod xcsp3_core {
                 XConstraintType::XRegular(c) => c.to_string(),
                 XConstraintType::XMdd(c) => c.to_string(),
                 XConstraintType::XIntention(c) => c.to_string(),
+                XConstraintType::XGroup(c) => c.to_string(),
 
             }
         }
