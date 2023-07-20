@@ -52,6 +52,9 @@ pub mod xcsp3_core {
 
     /// error factory
     impl Xcsp3Error {
+        pub fn get_constraint_sum_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_sum_error(s))
+        }
         pub fn get_constraint_group_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_group_error(s))
         }

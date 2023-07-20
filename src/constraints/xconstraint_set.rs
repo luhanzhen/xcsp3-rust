@@ -40,7 +40,6 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
-    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
@@ -49,6 +48,7 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
@@ -72,7 +72,7 @@ pub mod xcsp3_core {
 
         pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &Box<[String]>) {
             match &cc {
-                XConstraintType::XGroup(c) => {
+                XConstraintType::XGroup(_) => {
                     // println!("group is in {}",c.to_string());
                     self.constraints.push(XConstraintType::XConstraintNone(
                         Xcsp3Error::get_constraint_group_error("the group is in group"),
@@ -96,6 +96,16 @@ pub mod xcsp3_core {
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
             self.constraints.iter()
         }
+
+        pub fn build_sum(&mut self, vars: &str, condition: &str, coeffs: &str) {
+            match XSum::from_str(vars, condition, coeffs, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XSum(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
         pub fn build_intention(&mut self, function: &str) {
             match XIntention::from_str_without_scope(function, self.set) {
                 Ok(c) => {

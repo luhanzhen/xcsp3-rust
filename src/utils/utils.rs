@@ -169,10 +169,11 @@ pub mod xcsp3_utils {
     /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],
     pub fn list_with_bracket_comma_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
         let mut ret: Vec<i32> = Vec::new();
-        let mut list = list.to_string();
-        list = list.replace('(', " ");
-        list = list.replace(')', " ");
-        list = list.replace(',', " ");
+        let list = list
+            .to_string()
+            .replace('(', " ")
+            .replace(')', " ")
+            .replace(',', " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
 
         for e in lists.iter() {

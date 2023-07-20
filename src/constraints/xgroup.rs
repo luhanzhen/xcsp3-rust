@@ -93,6 +93,7 @@ pub mod xcsp3_core {
         pub fn get_template(&self) -> &Box<XConstraintType<'a>> {
             &self.template
         }
+
         pub fn from_str(
             cc: XConstraintType<'a>,
             arg_str: &Box<[String]>,

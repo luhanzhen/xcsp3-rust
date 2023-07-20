@@ -73,7 +73,7 @@ pub mod xcsp3_utils {
     }
 
     impl Operator {
-        pub fn string_is_operator(op: &str) -> Option<Self> {
+        pub fn get_operator_by_str(op: &str) -> Option<Self> {
             return match op {
                 "add" => Some(Add),
                 "neg" => Some(Neg),
@@ -191,7 +191,7 @@ pub mod xcsp3_utils {
         fn operator(exp: &str, stack: &mut Vec<TreeNode>) -> Option<Xcsp3Error> {
             let expression: String = exp.chars().rev().collect();
             // expression = expression.replace("(", "").replace(")", "");
-            match Operator::string_is_operator(&expression) {
+            match Operator::get_operator_by_str(&expression) {
                 None => {
                     if expression.contains("%") {
                         match i32::from_str(&expression[1..]) {

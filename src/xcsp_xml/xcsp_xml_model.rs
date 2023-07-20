@@ -271,7 +271,7 @@ pub mod xcsp3_xml {
                     vars,
                     condition,
                     coeffs,
-                } => {}
+                } => set.build_sum(vars, condition, coeffs),
                 ConstraintType::Count { .. } => {}
                 ConstraintType::NValues { .. } => {}
                 ConstraintType::Cardinality { .. } => {}

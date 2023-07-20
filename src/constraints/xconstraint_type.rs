@@ -50,6 +50,7 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     #[derive(Clone)]
@@ -65,6 +66,7 @@ pub mod xcsp3_core {
         XMdd(XMdd<'a>),
         XIntention(XIntention<'a>),
         XGroup(XGroup<'a>),
+        XSum(XSum<'a>),
     }
 
     impl XConstraintType<'_> {
@@ -83,6 +85,7 @@ pub mod xcsp3_core {
                 XConstraintType::XMdd(c) => c.to_string(),
                 XConstraintType::XIntention(c) => c.to_string(),
                 XConstraintType::XGroup(c) => c.to_string(),
+                XConstraintType::XSum(c) => c.to_string(),
 
             }
         }
