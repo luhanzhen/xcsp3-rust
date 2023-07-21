@@ -83,7 +83,7 @@ pub mod xcsp3_core {
             expression: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            match ExpressionTree::from_str(expression) {
+            match ExpressionTree::from_string(expression) {
                 Ok(tree) => {
                     let scope_vec_str = tree.get_scope();
                     match set.construct_scope(&scope_vec_str) {
@@ -91,7 +91,7 @@ pub mod xcsp3_core {
                         Err(e) => Err(e),
                     }
                 }
-                Err(e) => return Err(e),
+                Err(e) => Err(e),
             }
         }
 

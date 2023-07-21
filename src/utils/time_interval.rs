@@ -13,12 +13,11 @@
  * </p>
  */
 pub mod xcsp3_utils {
-
     use std::time::{Duration, Instant};
 
     pub struct TimeInterval
     {
-        start:Instant,
+        start: Instant,
     }
 
     impl TimeInterval {
@@ -32,7 +31,13 @@ pub mod xcsp3_utils {
 
         pub fn get(&self) -> Duration
         {
-            return self.start.elapsed()
+            self.start.elapsed()
+        }
+    }
+
+    impl Default for TimeInterval {
+        fn default() -> Self {
+            Self::new()
         }
     }
 }

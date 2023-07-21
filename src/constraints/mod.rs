@@ -59,3 +59,4 @@ pub mod xmax_min;
 mod xrelational_operand;
 mod xrelational_operator;
 pub mod xsum;
+pub mod xint_val_var;

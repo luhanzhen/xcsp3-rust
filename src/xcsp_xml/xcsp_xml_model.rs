@@ -118,7 +118,7 @@ pub mod xcsp3_xml {
         }
 
         /// read the instance from string
-        pub fn from_str(string: &str) -> Result<XcspXmlModel, DeError> {
+        pub fn from_string(string: &str) -> Result<XcspXmlModel, DeError> {
             let now = Instant::now();
             let r = from_str(string);
             println!(

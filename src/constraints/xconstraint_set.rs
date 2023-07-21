@@ -51,7 +51,7 @@ pub mod xcsp3_core {
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils::xcsp3_utils::list_to_matrix_ids;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
 

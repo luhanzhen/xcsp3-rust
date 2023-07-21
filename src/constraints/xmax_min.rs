@@ -43,7 +43,7 @@ pub mod xcsp3_core {
     use crate::constraints::xrelational_operand::xcsp3_core::Operand;
     use crate::constraints::xrelational_operator::xcsp3_core::Operator;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils::xcsp3_utils::list_to_scope_ids;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_scope_ids;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 

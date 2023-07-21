@@ -74,7 +74,7 @@ pub mod xcsp3_utils {
 
     impl Operator {
         pub fn get_operator_by_str(op: &str) -> Option<Self> {
-            return match op {
+            match op {
                 "add" => Some(Add),
                 "neg" => Some(Neg),
                 "abs" => Some(Abs),
@@ -101,7 +101,7 @@ pub mod xcsp3_utils {
                 "imp" => Some(Imp),
                 "if" => Some(If),
                 _ => None,
-            };
+            }
         }
     }
 
@@ -150,12 +150,12 @@ pub mod xcsp3_utils {
         pub fn get_scope(&self) -> Vec<String> {
             let mut scope = vec![];
             for e in self.first_order_iter() {
-                match e {
-                    TreeNode::Variable(v) => {
+                if let TreeNode::Variable(v) = e
+                   {
                         scope.push(v.clone());
                     }
-                    _ => {}
-                }
+
+
             }
             scope
         }
@@ -178,7 +178,7 @@ pub mod xcsp3_utils {
             //     self.expression,
             // )
         }
-        pub fn from_str(expression: &str) -> Result<Self, Xcsp3Error> {
+        pub fn from_string(expression: &str) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::parse(expression) {
                 Ok(e) => Ok(ExpressionTree {
                     root: e,
@@ -193,7 +193,7 @@ pub mod xcsp3_utils {
             // expression = expression.replace("(", "").replace(")", "");
             match Operator::get_operator_by_str(&expression) {
                 None => {
-                    if expression.contains("%") {
+                    if expression.contains('%') {
                         match i32::from_str(&expression[1..]) {
                             Ok(n) => stack.push(TreeNode::Argument(n)),
                             Err(_) => {
@@ -249,19 +249,13 @@ pub mod xcsp3_utils {
                     stack.push(TreeNode::RightBracket);
                     last = i;
                 } else if &rev_exp[i..i + 1] == "," || &rev_exp[i..i + 1] == "(" {
-                    match ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack) {
-                        Some(e) => {
+                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack)  {
                             return Err(e);
-                        }
-                        _ => {}
                     }
                     last = i;
                 } else if i == rev_exp.len() - 1 {
-                    match ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack) {
-                        Some(e) => {
+                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack){
                             return Err(e);
-                        }
-                        _ => {}
                     }
                 }
 
@@ -293,15 +287,14 @@ pub mod xcsp3_utils {
                 }
                 Some(t) => t,
             };
-            match top {
-                TreeNode::Operator(_, vec) => {
+            if let TreeNode::Operator(_, vec) = top
+            {
                     self.stack.push(&TreeNode::RightBracket);
                     (0..vec.len()).rev().for_each(|i| {
                         self.stack.push(&vec[i]);
                     });
                     self.stack.push(&TreeNode::LeftBracket);
-                }
-                _ => {}
+
             };
 
             Some(top)

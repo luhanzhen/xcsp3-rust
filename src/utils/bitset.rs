@@ -74,7 +74,7 @@ pub mod xcsp3_utils {
         pub fn iter(&self) -> IterBitSet {
             IterBitSet {
                 current: 0usize,
-                bitset: &self,
+                bitset: self,
             }
         }
         pub fn next_set_bit(&self, from: usize) -> Option<usize> {

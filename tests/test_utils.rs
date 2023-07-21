@@ -41,20 +41,20 @@ mod test_xcsp3domain {
     // use bitmaps::Bitmap;
     use xcsp3_rust::utils::bitset::xcsp3_utils::Bitset;
     use xcsp3_rust::utils::expression_tree::xcsp3_utils::ExpressionTree;
-    use xcsp3_rust::utils::utils::xcsp3_utils::{get_nth_square_of_name, list_to_scope_ids};
+    use xcsp3_rust::utils::utils_functions::xcsp3_utils::{get_nth_square_of_name, list_to_scope_ids};
 
     #[test]
     fn test_expression_tree() {
-        let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
+        let tree = ExpressionTree::from_string("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
         assert_eq!(
             "Eq(Add(%0,Mul(1,%2,x[3][4][2],)%4,)%5,)",
             tree.unwrap().to_string()
         );
-        let tree = ExpressionTree::from_str("eq(add(%0,%1),%2)");
+        let tree = ExpressionTree::from_string("eq(add(%0,%1),%2)");
         assert_eq!("Eq(Add(%0,%1,)%2,)", tree.unwrap().to_string());
-        let tree = ExpressionTree::from_str("eq(add(x,y),z)");
+        let tree = ExpressionTree::from_string("eq(add(x,y),z)");
         assert_eq!("Eq(Add(x,y,)z,)", tree.unwrap().to_string());
-        let tree = ExpressionTree::from_str("eq(%0,dist(%1, and(1,2,3,x[4])))");
+        let tree = ExpressionTree::from_string("eq(%0,dist(%1, and(1,2,3,x[4])))");
         assert_eq!(
             "Eq(%0,Dist(%1,And(1,2,3,x[4],)))",
             tree.unwrap().to_string()

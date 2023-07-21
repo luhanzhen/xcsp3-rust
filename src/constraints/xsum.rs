@@ -43,7 +43,7 @@ pub mod xcsp3_core {
     use crate::constraints::xrelational_operand::xcsp3_core::Operand;
     use crate::constraints::xrelational_operator::xcsp3_core::Operator;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils::xcsp3_utils::{list_to_scope_ids, list_to_values};
+    use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, list_to_values};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
@@ -92,21 +92,21 @@ pub mod xcsp3_core {
             match set.construct_scope(&scope_vec_str) {
                 Ok(scope) => {
                     let mut coe: Vec<i32>;
-                    if coeffs.is_empty() {
+                    if coeffs.is_empty() || coeffs.contains("%...") {
                         coe = vec![];
                         for _ in 0..scope_vec_str.len() {
                             coe.push(1)
                         }
                     } else {
+                        println!("e{}",coeffs);
                         match list_to_values(coeffs) {
+
                             Ok(v) => coe = v,
                             Err(e) => return Err(e),
                         }
                     }
                     let condition = condition
-                        .replace('(', " ")
-                        .replace(')', " ")
-                        .replace(',', " ");
+                        .replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
                     let ope: Operator;
                     match Operator::get_operator_by_str(spilt[0]) {

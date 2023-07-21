@@ -41,7 +41,7 @@ pub mod xcsp3_utils {
     use std::str::FromStr;
 
 
-    pub fn size_to_string(id: &str, size: &Vec<usize>) -> String {
+    pub fn size_to_string(id: &str, size: &[usize]) -> String {
         let mut ret = id.to_string();
 
         for e in size.iter() {
@@ -172,9 +172,7 @@ pub mod xcsp3_utils {
         let mut ret: Vec<i32> = Vec::new();
         let list = list
             .to_string()
-            .replace('(', " ")
-            .replace(')', " ")
-            .replace(',', " ");
+            .replace(['(', ')', ','], " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
 
         for e in lists.iter() {
@@ -292,8 +290,7 @@ pub mod xcsp3_utils {
         let mut upper: Vec<usize> = vec![];
         let sizes = sizes
             .replace("[]", "[*]")
-            .replace('[', " ")
-            .replace(']', " ");
+            .replace(['[', ']'], " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             if n.find('*').is_some() {

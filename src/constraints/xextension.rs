@@ -40,7 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
-    use crate::utils::utils::xcsp3_utils::{list_to_scope_ids, tuple_to_vector};
+    use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, tuple_to_vector};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;

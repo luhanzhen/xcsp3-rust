@@ -40,7 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils::xcsp3_utils::{
+    use crate::utils::utils_functions::xcsp3_utils::{
         get_all_variables_between_lower_and_upper, size_to_string, sizes_to_double_vec,
         sizes_to_vec,
     };
@@ -58,10 +58,10 @@ pub mod xcsp3_core {
 
     impl XVariableTree {
         /// return which node the variable belongs to
-        fn get_node_by_vec(&self, v: &Vec<usize>) -> &XVariableTreeNode {
+        fn get_node_by_vec(&self, v: &[usize]) -> &XVariableTreeNode {
             for e in self.nodes.iter() {
-                if e.belongs_to_this_node(&v) {
-                    return &e;
+                if e.belongs_to_this_node(v) {
+                    return e;
                 }
             }
             &self.others
@@ -98,7 +98,7 @@ pub mod xcsp3_core {
                     }
                 },
             }
-            return Ok(ret);
+            Ok(ret)
         }
 
         pub fn new(
@@ -164,9 +164,9 @@ pub mod xcsp3_core {
     }
 
     impl XVariableTreeNode {
-        pub fn belongs_to_this_node(&self, v: &Vec<usize>) -> bool {
+        pub fn belongs_to_this_node(&self, v: &[usize]) -> bool {
             for (i, v) in v.iter().enumerate() {
-                if !(self.lower[i] == usize::MAX && self.upper[i] == usize::MAX) && !(self.lower[i] <= *v && self.upper[i] >= *v) {
+                if !(self.lower[i] == usize::MAX && self.upper[i] == usize::MAX || self.lower[i] <= *v && self.upper[i] >= *v) {
                     return false;
                 }
             }
