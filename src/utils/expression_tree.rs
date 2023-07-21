@@ -248,24 +248,23 @@ pub mod xcsp3_utils {
                 if &rev_exp[i..i + 1] == ")" {
                     stack.push(TreeNode::RightBracket);
                     last = i;
-                } else {
-                    if &rev_exp[i..i + 1] == "," || &rev_exp[i..i + 1] == "(" {
-                        match ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack) {
-                            Some(e) => {
-                                return Err(e);
-                            }
-                            _ => {}
+                } else if &rev_exp[i..i + 1] == "," || &rev_exp[i..i + 1] == "(" {
+                    match ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack) {
+                        Some(e) => {
+                            return Err(e);
                         }
-                        last = i;
-                    } else if i == rev_exp.len() - 1 {
-                        match ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack) {
-                            Some(e) => {
-                                return Err(e);
-                            }
-                            _ => {}
+                        _ => {}
+                    }
+                    last = i;
+                } else if i == rev_exp.len() - 1 {
+                    match ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack) {
+                        Some(e) => {
+                            return Err(e);
                         }
+                        _ => {}
                     }
                 }
+
                 i += 1
             }
 
@@ -288,13 +287,12 @@ pub mod xcsp3_utils {
     impl<'a> Iterator for ExpressionFirstOrderIter<'a> {
         type Item = &'a TreeNode;
         fn next(&mut self) -> Option<Self::Item> {
-            let top;
-            match self.stack.pop() {
+            let top= match self.stack.pop() {
                 None => {
                     return None;
                 }
-                Some(t) => top = t,
-            }
+                Some(t) => t,
+            };
             match top {
                 TreeNode::Operator(_, vec) => {
                     self.stack.push(&TreeNode::RightBracket);

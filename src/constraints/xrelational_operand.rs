@@ -72,35 +72,31 @@ pub mod xcsp3_core {
                     }
                 }
                 Some(Operand::SetInteger(ret))
-            } else {
-                if s.len() != 1 {
-                    None
-                } else {
-                    if s[0].contains("..") {
-                        let interval: Vec<&str> = s[0].split("..").collect();
-                        if interval.len() == 2 {
-                            match i32::from_str(interval[0]) {
-                                Ok(l) => match i32::from_str(interval[1]) {
-                                    Ok(r) => {
-                                        if l <= r {
-                                            Some(Operand::Interval(l, r))
-                                        } else {
-                                            None
-                                        }
-                                    }
-                                    Err(_) => None,
-                                },
-                                Err(_) => None,
+            } else if s.len() != 1 {
+                None
+            } else if s[0].contains("..") {
+                let interval: Vec<&str> = s[0].split("..").collect();
+                if interval.len() == 2 {
+                    match i32::from_str(interval[0]) {
+                        Ok(l) => match i32::from_str(interval[1]) {
+                            Ok(r) => {
+                                if l <= r {
+                                    Some(Operand::Interval(l, r))
+                                } else {
+                                    None
+                                }
                             }
-                        } else {
-                            None
-                        }
-                    } else {
-                        match i32::from_str(s[0]) {
-                            Ok(n) => Some(Operand::Integer(n)),
-                            Err(_) => Some(Operand::Variable(s[0].to_string())),
-                        }
+                            Err(_) => None,
+                        },
+                        Err(_) => None,
                     }
+                } else {
+                    None
+                }
+            } else {
+                match i32::from_str(s[0]) {
+                    Ok(n) => Some(Operand::Integer(n)),
+                    Err(_) => Some(Operand::Variable(s[0].to_string())),
                 }
             };
         }

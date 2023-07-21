@@ -107,13 +107,13 @@ pub mod xcsp3_xml {
 
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<XcspXmlModel, DeError> {
-            // let now = Instant::now();
+            let now = Instant::now();
             if !path.ends_with(".xml") {
                 return Err(DeError::UnexpectedEof);
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            // println!("read the instance named {} by {:?}.", path, now.elapsed());
+            println!("read the instance named {} by {:?}.", path, now.elapsed());
             r
         }
 
@@ -252,6 +252,7 @@ pub mod xcsp3_xml {
                     supports,
                     conflicts,
                 } => {
+
                     if supports.is_empty() {
                         set.build_extension(vars, conflicts, false)
                     } else if conflicts.is_empty() {
@@ -259,6 +260,7 @@ pub mod xcsp3_xml {
                     } else {
                         eprintln!("can't build extension, conflicts or supports must be non empty.")
                     }
+
                 }
                 ConstraintType::Regular {
                     vars,

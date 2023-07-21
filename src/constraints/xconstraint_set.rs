@@ -71,15 +71,13 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &Box<[String]>) {
-            match &cc {
-                XConstraintType::XGroup(_) => {
+        pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &[String]) {
+            if let XConstraintType::XGroup(_) =  &cc {
                     // println!("group is in {}",c.to_string());
                     self.constraints.push(XConstraintType::XConstraintNone(
                         Xcsp3Error::get_constraint_group_error("the group is in group"),
                     ))
-                }
-                _ => {}
+
             }
             match XGroup::from_str(cc, args, self.set) {
                 Ok(c) => {

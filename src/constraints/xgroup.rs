@@ -59,20 +59,20 @@ pub mod xcsp3_core {
 
     impl XConstraintTrait for XGroup<'_> {
         fn to_string(&self) -> String {
-            let mut ret = format!("XGroup: [constraint =  [",);
+            let mut ret = "XGroup: [constraint =  [".to_string();
             ret.push_str(&self.template.to_string());
             ret.push_str("]] [args = ");
             for a in self.args.iter() {
-                ret.push_str("[");
+                ret.push('[');
                 for e in a.iter() {
                     ret.push_str(e.0.as_str());
-                    ret.push_str("(");
+                    ret.push('(');
                     ret.push_str(e.1.to_string().as_str());
                     ret.push_str("), ")
                 }
-                ret.push_str("]");
+                ret.push(']');
             }
-            ret.push_str("]");
+            ret.push(']');
             ret
         }
 
@@ -90,13 +90,13 @@ pub mod xcsp3_core {
             &self.args
         }
 
-        pub fn get_template(&self) -> &Box<XConstraintType<'a>> {
+        pub fn get_template(&self) -> &XConstraintType<'a> {
             &self.template
         }
 
         pub fn from_str(
             cc: XConstraintType<'a>,
-            arg_str: &Box<[String]>,
+            arg_str: &[String],
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
             let mut args: Vec<Vec<(String, &'a XDomainInteger)>> = vec![];

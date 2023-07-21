@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,7 +36,7 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseVariableError {

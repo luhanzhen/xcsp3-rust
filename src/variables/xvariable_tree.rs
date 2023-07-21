@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -98,40 +98,6 @@ pub mod xcsp3_core {
                     }
                 },
             }
-
-            //
-            // if !id.contains("[]") {
-            //     match id.find('[') {
-            //         None => {}
-            //         Some(v) => match sizes_to_vec(&id[v..]) {
-            //             Ok((size_vec, _)) => {
-            //                 let node = self.get_node_by_vec(size_vec);
-            //                 ret.push((id.to_string(), &node.domain));
-            //             }
-            //             Err(e) => {
-            //                 return Err(e);
-            //             }
-            //         },
-            //     }
-            // } else {
-            //     let n = get_nth_square_of_name(id);
-            //     for i in 0..self.sizes[n] {
-            //         let mut s = id.to_string();
-            //         s = s.replace("[]", format!("[{i}]").as_str());
-            //         match s.find('[') {
-            //             None => {}
-            //             Some(v) => match sizes_to_vec(&s[v..]) {
-            //                 Ok((size_vec, _)) => {
-            //                     let node = self.get_node_by_vec(size_vec);
-            //                     ret.push((s, &node.domain));
-            //                 }
-            //                 Err(e) => {
-            //                     return Err(e);
-            //                 }
-            //             },
-            //         }
-            //     }
-            // }
             return Ok(ret);
         }
 
@@ -200,11 +166,7 @@ pub mod xcsp3_core {
     impl XVariableTreeNode {
         pub fn belongs_to_this_node(&self, v: &Vec<usize>) -> bool {
             for (i, v) in v.iter().enumerate() {
-                if self.lower[i] == usize::MAX && self.upper[i] == usize::MAX {
-                    continue;
-                } else if self.lower[i] <= *v && self.upper[i] >= *v {
-                    continue;
-                } else {
+                if !(self.lower[i] == usize::MAX && self.upper[i] == usize::MAX) && !(self.lower[i] <= *v && self.upper[i] >= *v) {
                     return false;
                 }
             }

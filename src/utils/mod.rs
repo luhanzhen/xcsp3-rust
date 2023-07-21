@@ -41,3 +41,4 @@
 pub mod bitset;
 pub mod expression_tree;
 pub mod utils;
+pub mod time_interval;

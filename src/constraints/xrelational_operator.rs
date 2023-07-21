@@ -53,7 +53,7 @@ pub mod xcsp3_core {
 
     impl Operator {
         pub fn get_operator_by_str(op: &str) -> Option<Self> {
-            return match op {
+             match op {
                 "lt" => Some(Self::Lt),
                 "le" => Some(Self::Le),
                 "ge" => Some(Self::Ge),
@@ -63,7 +63,7 @@ pub mod xcsp3_core {
                 "in" => Some(Self::In),
                 "notin" => Some(Self::Notin),
                 _ => None,
-            };
+            }
         }
     }
 }

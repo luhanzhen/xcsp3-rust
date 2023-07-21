@@ -171,6 +171,32 @@ pub mod xcsp3_core {
             }
         }
 
+        pub fn exist_variables( &self,
+                                scope_str: &Vec<String>,) -> bool
+        {
+            for e in scope_str.iter() {
+                if e.contains("%")
+                {
+                    continue
+                }else {
+                    match self.find_variable(&e) {
+                        Ok(v) => {
+                            match v {
+                                XVariableType::XVariableNone(_) => {return false}
+                                XVariableType::XVariableArray(_) => {}
+                                XVariableType::XVariableInt(_) => {continue}
+                                XVariableType::XVariableTree(_) => {}
+                            }
+                        }
+                        Err(_) => {
+                            return false
+                        }
+                    }
+                }
+            }
+            true
+        }
+
         ///construct the scope from XVariableSet, when scope is equal to %x, where x is an i32 number, return empty tuple
         pub fn construct_scope(
             &self,
@@ -184,8 +210,7 @@ pub mod xcsp3_core {
                     // println!("{}",e);
                     ret.push((e.clone(), &self.empty_domain))
                 } else {
-                    let r = self.find_variable(&e);
-                    match r {
+                    match self.find_variable(&e) {
                         Ok(var_type) => match var_type {
                             XVariableType::XVariableArray(a) => match a.find_variable(e) {
                                 Ok(mut vec) => {

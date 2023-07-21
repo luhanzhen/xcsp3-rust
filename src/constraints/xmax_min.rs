@@ -60,13 +60,13 @@ pub mod xcsp3_core {
         fn to_string(&self) -> String {
             let mut ret: String;
             if self.is_maximum() {
-                ret = format!("XMaximum: scope =  ",);
+                ret = "XMaximum: scope =  ".to_string();
             } else {
-                ret = format!("XMinimum: scope =  ",);
+                ret = "XMinimum: scope =  ".to_string();
             }
             for e in self.scope_vec_var.iter() {
                 ret.push_str(e.0.as_str());
-                ret.push_str("(");
+                ret.push('(');
                 ret.push_str(e.1.to_string().as_str());
                 ret.push_str("), ")
             }
@@ -96,10 +96,7 @@ pub mod xcsp3_core {
             let scope_vec_str = list_to_scope_ids(list);
             match set.construct_scope(&scope_vec_str) {
                 Ok(scope) => {
-                    let condition = condition
-                        .replace('(', " ")
-                        .replace(')', " ")
-                        .replace(',', " ");
+                    let condition = condition.replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
                     let ope: Operator;
                     match Operator::get_operator_by_str(spilt[0]) {
@@ -147,11 +144,11 @@ pub mod xcsp3_core {
             }
         }
         pub fn is_maximum(&self) -> bool {
-            return self.is_maximum_or_minimum;
+             self.is_maximum_or_minimum
         }
 
         pub fn is_minimum(&self) -> bool {
-            return !self.is_maximum_or_minimum;
+             !self.is_maximum_or_minimum
         }
 
         pub fn get_operand(&self) -> &Operand {

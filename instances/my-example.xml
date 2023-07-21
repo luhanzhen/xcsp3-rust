@@ -154,7 +154,7 @@
 
 
         <extension>
-            <list> x[1] x[3] </list>
+            <list> x[1] </list>
             <conflicts> 2 6 </conflicts>
         </extension>
         <extension>

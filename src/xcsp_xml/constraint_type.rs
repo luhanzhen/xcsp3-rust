@@ -23,7 +23,7 @@
 *=============================================================================
 */
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -36,7 +36,7 @@
 * </p>
  * <p>@description: 1.0
 * </p>
- **/
+ */
 
 pub mod xcsp3_xml {
     use crate::xcsp_xml::constraint_block::xcsp3_xml::ConstraintBlock;

@@ -53,10 +53,10 @@ pub mod xcsp3_core {
     }
     impl XConstraintTrait for XIntention<'_> {
         fn to_string(&self) -> String {
-            let mut ret = format!("XIntention: scope =  ",);
+            let mut ret = "XIntention: scope =  ".to_string();
             for e in self.scope_vec_var.iter() {
                 ret.push_str(e.0.as_str());
-                ret.push_str("(");
+                ret.push('(');
                 ret.push_str(e.1.to_string().as_str());
                 ret.push_str("), ")
             }
@@ -83,7 +83,7 @@ pub mod xcsp3_core {
             expression: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            match ExpressionTree::from_str(&expression) {
+            match ExpressionTree::from_str(expression) {
                 Ok(tree) => {
                     let scope_vec_str = tree.get_scope();
                     match set.construct_scope(&scope_vec_str) {
