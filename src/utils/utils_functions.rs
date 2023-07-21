@@ -232,6 +232,14 @@ pub mod xcsp3_utils {
             let chars = tuple_str.chars();
             let mut last = 0;
             let mut tt: Vec<i32> = vec![];
+            if let Some(left) = tuple_str.find('(')
+            {
+                if let Some(right) = tuple_str.find(')')
+                {
+                    ret.reserve(tuple_str.len()/(right-left));
+                }
+            }
+
             for (i, x) in chars.enumerate() {
                 if x == '(' {
                     tt.clear();
