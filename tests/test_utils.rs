@@ -41,7 +41,9 @@ mod test_xcsp3domain {
     // use bitmaps::Bitmap;
     use xcsp3_rust::utils::bitset::xcsp3_utils::Bitset;
     use xcsp3_rust::utils::expression_tree::xcsp3_utils::ExpressionTree;
-    use xcsp3_rust::utils::utils_functions::xcsp3_utils::{get_nth_square_of_name, list_to_scope_ids};
+    use xcsp3_rust::utils::utils_functions::xcsp3_utils::{
+        get_nth_square_of_name, list_to_scope_ids,
+    };
 
     #[test]
     fn test_expression_tree() {

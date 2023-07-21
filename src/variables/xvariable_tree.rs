@@ -166,7 +166,9 @@ pub mod xcsp3_core {
     impl XVariableTreeNode {
         pub fn belongs_to_this_node(&self, v: &[usize]) -> bool {
             for (i, v) in v.iter().enumerate() {
-                if !(self.lower[i] == usize::MAX && self.upper[i] == usize::MAX || self.lower[i] <= *v && self.upper[i] >= *v) {
+                if !(self.lower[i] == usize::MAX && self.upper[i] == usize::MAX
+                    || self.lower[i] <= *v && self.upper[i] >= *v)
+                {
                     return false;
                 }
             }

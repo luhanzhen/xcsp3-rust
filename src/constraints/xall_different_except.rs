@@ -41,8 +41,11 @@
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::fmt::{Display, Formatter};
 
-    use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, list_with_bracket_comma_to_values};
+    use crate::utils::utils_functions::xcsp3_utils::{
+        list_to_scope_ids, list_with_bracket_comma_to_values,
+    };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
@@ -53,18 +56,31 @@ pub mod xcsp3_core {
         except: Vec<i32>,
     }
 
-    impl XConstraintTrait for XAllDifferentExcept<'_> {
-        fn to_string(&self) -> String {
-            let mut ret = "XAllDifferentExcept: scope =  ".to_string();
+    impl Display for XAllDifferentExcept<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
             for e in self.scope_vec_var.iter() {
                 ret.push_str(e.0.as_str());
                 ret.push('(');
                 ret.push_str(e.1.to_string().as_str());
                 ret.push_str("), ")
             }
-            ret.push_str(&format!("except = {:?}", self.except));
-            ret
+            write!(f, "XAllDifferentExcept: scope =  {}", ret)
         }
+    }
+
+    impl XConstraintTrait for XAllDifferentExcept<'_> {
+        // fn to_string(&self) -> String {
+        //     let mut ret = "XAllDifferentExcept: scope =  ".to_string();
+        //     for e in self.scope_vec_var.iter() {
+        //         ret.push_str(e.0.as_str());
+        //         ret.push('(');
+        //         ret.push_str(e.1.to_string().as_str());
+        //         ret.push_str("), ")
+        //     }
+        //     ret.push_str(&format!("except = {:?}", self.except));
+        //     ret
+        // }
 
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str

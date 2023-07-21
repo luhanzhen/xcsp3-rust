@@ -252,7 +252,6 @@ pub mod xcsp3_xml {
                     supports,
                     conflicts,
                 } => {
-
                     if supports.is_empty() {
                         set.build_extension(vars, conflicts, false)
                     } else if conflicts.is_empty() {
@@ -260,7 +259,6 @@ pub mod xcsp3_xml {
                     } else {
                         eprintln!("can't build extension, conflicts or supports must be non empty.")
                     }
-
                 }
                 ConstraintType::Regular {
                     vars,

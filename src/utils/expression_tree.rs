@@ -150,12 +150,9 @@ pub mod xcsp3_utils {
         pub fn get_scope(&self) -> Vec<String> {
             let mut scope = vec![];
             for e in self.first_order_iter() {
-                if let TreeNode::Variable(v) = e
-                   {
-                        scope.push(v.clone());
-                    }
-
-
+                if let TreeNode::Variable(v) = e {
+                    scope.push(v.clone());
+                }
             }
             scope
         }
@@ -249,13 +246,14 @@ pub mod xcsp3_utils {
                     stack.push(TreeNode::RightBracket);
                     last = i;
                 } else if &rev_exp[i..i + 1] == "," || &rev_exp[i..i + 1] == "(" {
-                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack)  {
-                            return Err(e);
+                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i], &mut stack) {
+                        return Err(e);
                     }
                     last = i;
                 } else if i == rev_exp.len() - 1 {
-                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack){
-                            return Err(e);
+                    if let Some(e) = ExpressionTree::operator(&rev_exp[last + 1..i + 1], &mut stack)
+                    {
+                        return Err(e);
                     }
                 }
 
@@ -281,20 +279,18 @@ pub mod xcsp3_utils {
     impl<'a> Iterator for ExpressionFirstOrderIter<'a> {
         type Item = &'a TreeNode;
         fn next(&mut self) -> Option<Self::Item> {
-            let top= match self.stack.pop() {
+            let top = match self.stack.pop() {
                 None => {
                     return None;
                 }
                 Some(t) => t,
             };
-            if let TreeNode::Operator(_, vec) = top
-            {
-                    self.stack.push(&TreeNode::RightBracket);
-                    (0..vec.len()).rev().for_each(|i| {
-                        self.stack.push(&vec[i]);
-                    });
-                    self.stack.push(&TreeNode::LeftBracket);
-
+            if let TreeNode::Operator(_, vec) = top {
+                self.stack.push(&TreeNode::RightBracket);
+                (0..vec.len()).rev().for_each(|i| {
+                    self.stack.push(&vec[i]);
+                });
+                self.stack.push(&TreeNode::LeftBracket);
             };
 
             Some(top)

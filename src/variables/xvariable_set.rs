@@ -171,26 +171,19 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn exist_variables( &self,
-                                scope_str: &[String],) -> bool
-        {
+        pub fn exist_variables(&self, scope_str: &[String]) -> bool {
             for e in scope_str.iter() {
-                if e.contains('%')
-                {
-                    continue
-                }else {
+                if e.contains('%') {
+                    continue;
+                } else {
                     match self.find_variable(e) {
-                        Ok(v) => {
-                            match v {
-                                XVariableType::XVariableNone(_) => {return false}
-                                XVariableType::XVariableArray(_) => {}
-                                XVariableType::XVariableInt(_) => {continue}
-                                XVariableType::XVariableTree(_) => {}
-                            }
-                        }
-                        Err(_) => {
-                            return false
-                        }
+                        Ok(v) => match v {
+                            XVariableType::XVariableNone(_) => return false,
+                            XVariableType::XVariableArray(_) => {}
+                            XVariableType::XVariableInt(_) => continue,
+                            XVariableType::XVariableTree(_) => {}
+                        },
+                        Err(_) => return false,
                     }
                 }
             }

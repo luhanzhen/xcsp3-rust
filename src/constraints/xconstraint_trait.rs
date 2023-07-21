@@ -40,9 +40,10 @@
 
 pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use std::fmt::Display;
 
-    pub trait XConstraintTrait {
-        fn to_string(&self) -> String;
+    pub trait XConstraintTrait: Display {
+        // fn to_string(&self) -> String;
 
         ///get the scope string of constraint
         fn get_scope_string(&self) -> &Vec<String>;

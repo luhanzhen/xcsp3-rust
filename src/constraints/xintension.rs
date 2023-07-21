@@ -44,6 +44,7 @@ pub mod xcsp3_core {
     use crate::utils::expression_tree::xcsp3_utils::ExpressionTree;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XIntention<'a> {
@@ -51,19 +52,26 @@ pub mod xcsp3_core {
         scope_vec_var: Vec<(String, &'a XDomainInteger)>,
         tree: ExpressionTree,
     }
-    impl XConstraintTrait for XIntention<'_> {
-        fn to_string(&self) -> String {
-            let mut ret = "XIntention: scope =  ".to_string();
-            for e in self.scope_vec_var.iter() {
-                ret.push_str(e.0.as_str());
-                ret.push('(');
-                ret.push_str(e.1.to_string().as_str());
-                ret.push_str("), ")
-            }
 
-            ret.push_str(&format!("expression = {:?}", self.tree.to_string(),));
-            ret
+    impl Display for XIntention<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            todo!()
         }
+    }
+
+    impl XConstraintTrait for XIntention<'_> {
+        // fn to_string(&self) -> String {
+        //     let mut ret = "XIntention: scope =  ".to_string();
+        //     for e in self.scope_vec_var.iter() {
+        //         ret.push_str(e.0.as_str());
+        //         ret.push('(');
+        //         ret.push_str(e.1.to_string().as_str());
+        //         ret.push_str("), ")
+        //     }
+        //
+        //     ret.push_str(&format!("expression = {:?}", self.tree.to_string(),));
+        //     ret
+        // }
 
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str

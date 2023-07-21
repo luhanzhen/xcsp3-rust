@@ -42,7 +42,6 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
-    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
@@ -53,6 +52,7 @@ pub mod xcsp3_core {
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub enum XConstraintType<'a> {
@@ -72,27 +72,53 @@ pub mod xcsp3_core {
         XMinimum(XMaxMin<'a>),
     }
 
-    impl XConstraintType<'_> {
-        pub fn to_string(&self) -> String {
-            match self {
-                XConstraintType::XConstraintNone(e) => format!(
-                    "XConstraintNone: there must be an error when parse this constraint. Error is {}",e.to_string()
-                ),
-                XConstraintType::XExtension(c) => c.to_string(),
-                XConstraintType::XAllEqual(c) => c.to_string(),
-                XConstraintType::XAllDifferent(c) => c.to_string(),
-                XConstraintType::XAllDifferentExcept(c) => c.to_string(),
-                XConstraintType::XInstantiation(c) => c.to_string(),
-                XConstraintType::XOrdered(c) => c.to_string(),
-                XConstraintType::XRegular(c) => c.to_string(),
-                XConstraintType::XMdd(c) => c.to_string(),
-                XConstraintType::XIntention(c) => c.to_string(),
-                XConstraintType::XGroup(c) => c.to_string(),
-                XConstraintType::XSum(c) => c.to_string(),
-                XConstraintType::XMinimum(c) => c.to_string(),
-                XConstraintType::XMaximum(c) => c.to_string(),
+    impl Display for XConstraintType<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f,"{}",
+                    match self {
+                        XConstraintType::XConstraintNone(e) => format!(
+                            "XConstraintNone: there must be an error when parse this constraint. Error is {}",e.to_string()
+                        ),
+                        XConstraintType::XExtension(c) => c.to_string(),
+                        XConstraintType::XAllEqual(c) => c.to_string(),
+                        XConstraintType::XAllDifferent(c) => c.to_string(),
+                        XConstraintType::XAllDifferentExcept(c) => c.to_string(),
+                        XConstraintType::XInstantiation(c) => c.to_string(),
+                        XConstraintType::XOrdered(c) => c.to_string(),
+                        XConstraintType::XRegular(c) => c.to_string(),
+                        XConstraintType::XMdd(c) => c.to_string(),
+                        XConstraintType::XIntention(c) => c.to_string(),
+                        XConstraintType::XGroup(c) => c.to_string(),
+                        XConstraintType::XSum(c) => c.to_string(),
+                        XConstraintType::XMinimum(c) => c.to_string(),
+                        XConstraintType::XMaximum(c) => c.to_string(),
 
-            }
+                    }
+             )
         }
     }
+
+    // impl XConstraintType<'_> {
+    //     pub fn to_string(&self) -> String {
+    //         match self {
+    //             XConstraintType::XConstraintNone(e) => format!(
+    //                 "XConstraintNone: there must be an error when parse this constraint. Error is {}",e.to_string()
+    //             ),
+    //             XConstraintType::XExtension(c) => c.to_string(),
+    //             XConstraintType::XAllEqual(c) => c.to_string(),
+    //             XConstraintType::XAllDifferent(c) => c.to_string(),
+    //             XConstraintType::XAllDifferentExcept(c) => c.to_string(),
+    //             XConstraintType::XInstantiation(c) => c.to_string(),
+    //             XConstraintType::XOrdered(c) => c.to_string(),
+    //             XConstraintType::XRegular(c) => c.to_string(),
+    //             XConstraintType::XMdd(c) => c.to_string(),
+    //             XConstraintType::XIntention(c) => c.to_string(),
+    //             XConstraintType::XGroup(c) => c.to_string(),
+    //             XConstraintType::XSum(c) => c.to_string(),
+    //             XConstraintType::XMinimum(c) => c.to_string(),
+    //             XConstraintType::XMaximum(c) => c.to_string(),
+    //
+    //         }
+    //     }
+    // }
 }

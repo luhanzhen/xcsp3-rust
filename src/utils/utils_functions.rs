@@ -40,7 +40,6 @@ pub mod xcsp3_utils {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
 
-
     pub fn size_to_string(id: &str, size: &[usize]) -> String {
         let mut ret = id.to_string();
 
@@ -170,9 +169,7 @@ pub mod xcsp3_utils {
     /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],
     pub fn list_with_bracket_comma_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
         let mut ret: Vec<i32> = Vec::new();
-        let list = list
-            .to_string()
-            .replace(['(', ')', ','], " ");
+        let list = list.to_string().replace(['(', ')', ','], " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
 
         for e in lists.iter() {
@@ -232,52 +229,49 @@ pub mod xcsp3_utils {
                 }
             }
         } else {
-                let chars = tuple_str.chars();
-                let mut last = 0;
-                let mut tt: Vec<i32> = vec![];
-                for (i, x) in chars.enumerate() {
-                    if x == '('
-                    {
-                        tt.clear();
-                        last = i;
-                    } else if x == ')' {
-                        // println!("{}",&tuple_str[last+1..i]);
-                        match i32::from_str(&tuple_str[last + 1..i])
-                        {
-                            Ok(num) => {
-                                tt.push(num);
-                            }
-                            Err(_) => {
-                                if &tuple_str[last + 1..i] == "*" {
-                                    tt.push(2_147_483_647i32);
-                                } else {
-                                    return Err(Xcsp3Error::get_constraint_extension_error(
-                                        "parse the tuple of extension error",
-                                    ));
-                                }
+            let chars = tuple_str.chars();
+            let mut last = 0;
+            let mut tt: Vec<i32> = vec![];
+            for (i, x) in chars.enumerate() {
+                if x == '(' {
+                    tt.clear();
+                    last = i;
+                } else if x == ')' {
+                    // println!("{}",&tuple_str[last+1..i]);
+                    match i32::from_str(&tuple_str[last + 1..i]) {
+                        Ok(num) => {
+                            tt.push(num);
+                        }
+                        Err(_) => {
+                            if &tuple_str[last + 1..i] == "*" {
+                                tt.push(2_147_483_647i32);
+                            } else {
+                                return Err(Xcsp3Error::get_constraint_extension_error(
+                                    "parse the tuple of extension error",
+                                ));
                             }
                         }
-                        ret.push(tt.clone())
-                    } else if x == ',' {
-                        // println!("{}",&tuple_str[last+1..i]);
-                        match i32::from_str(&tuple_str[last + 1..i])
-                        {
-                            Ok(num) => {
-                                tt.push(num);
-                            }
-                            Err(_) => {
-                                if &tuple_str[last + 1..i] == "*"  {
-                                    tt.push(2_147_483_647i32);
-                                } else {
-                                    return Err(Xcsp3Error::get_constraint_extension_error(
-                                        "parse the tuple of extension error",
-                                    ));
-                                }
-                            }
-                        }
-                        last = i;
                     }
+                    ret.push(tt.clone())
+                } else if x == ',' {
+                    // println!("{}",&tuple_str[last+1..i]);
+                    match i32::from_str(&tuple_str[last + 1..i]) {
+                        Ok(num) => {
+                            tt.push(num);
+                        }
+                        Err(_) => {
+                            if &tuple_str[last + 1..i] == "*" {
+                                tt.push(2_147_483_647i32);
+                            } else {
+                                return Err(Xcsp3Error::get_constraint_extension_error(
+                                    "parse the tuple of extension error",
+                                ));
+                            }
+                        }
+                    }
+                    last = i;
                 }
+            }
         }
         // println!("parse Extension {:?}",ti.get());
         Ok(ret)
@@ -288,9 +282,7 @@ pub mod xcsp3_utils {
     pub fn sizes_to_double_vec(sizes: &str) -> Result<(Vec<usize>, Vec<usize>), Xcsp3Error> {
         let mut lower: Vec<usize> = vec![];
         let mut upper: Vec<usize> = vec![];
-        let sizes = sizes
-            .replace("[]", "[*]")
-            .replace(['[', ']'], " ");
+        let sizes = sizes.replace("[]", "[*]").replace(['[', ']'], " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
             if n.find('*').is_some() {

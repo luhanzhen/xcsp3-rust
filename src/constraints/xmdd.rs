@@ -44,6 +44,7 @@ pub mod xcsp3_core {
     use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, list_to_transitions};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XMdd<'a> {
@@ -52,18 +53,24 @@ pub mod xcsp3_core {
         transitions: Vec<(String, i32, String)>,
     }
 
-    impl XConstraintTrait for XMdd<'_> {
-        fn to_string(&self) -> String {
-            let mut ret = "XMdd: scope =  ".to_string();
-            for e in self.scope_vec_var.iter() {
-                ret.push_str(e.0.as_str());
-                ret.push('(');
-                ret.push_str(e.1.to_string().as_str());
-                ret.push_str("), ")
-            }
-            ret.push_str(&format!("transitions = {:?}", self.transitions));
-            ret
+    impl Display for XMdd<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            todo!()
         }
+    }
+
+    impl XConstraintTrait for XMdd<'_> {
+        // fn to_string(&self) -> String {
+        //     let mut ret = "XMdd: scope =  ".to_string();
+        //     for e in self.scope_vec_var.iter() {
+        //         ret.push_str(e.0.as_str());
+        //         ret.push('(');
+        //         ret.push_str(e.1.to_string().as_str());
+        //         ret.push_str("), ")
+        //     }
+        //     ret.push_str(&format!("transitions = {:?}", self.transitions));
+        //     ret
+        // }
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
         }

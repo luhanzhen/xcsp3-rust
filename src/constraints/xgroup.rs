@@ -39,13 +39,13 @@
  */
 
 pub mod xcsp3_core {
-
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils_functions::xcsp3_utils::list_to_scope_ids;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XGroup<'a> {
@@ -57,24 +57,30 @@ pub mod xcsp3_core {
         scope_vec_var: Vec<(String, &'a XDomainInteger)>,
     }
 
-    impl XConstraintTrait for XGroup<'_> {
-        fn to_string(&self) -> String {
-            let mut ret = "XGroup: [constraint =  [".to_string();
-            ret.push_str(&self.template.to_string());
-            ret.push_str("]] [args = ");
-            for a in self.args.iter() {
-                ret.push('[');
-                for e in a.iter() {
-                    ret.push_str(e.0.as_str());
-                    ret.push('(');
-                    ret.push_str(e.1.to_string().as_str());
-                    ret.push_str("), ")
-                }
-                ret.push(']');
-            }
-            ret.push(']');
-            ret
+    impl Display for XGroup<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            todo!()
         }
+    }
+
+    impl XConstraintTrait for XGroup<'_> {
+        // fn to_string(&self) -> String {
+        //     let mut ret = "XGroup: [constraint =  [".to_string();
+        //     ret.push_str(&self.template.to_string());
+        //     ret.push_str("]] [args = ");
+        //     for a in self.args.iter() {
+        //         ret.push('[');
+        //         for e in a.iter() {
+        //             ret.push_str(e.0.as_str());
+        //             ret.push('(');
+        //             ret.push_str(e.1.to_string().as_str());
+        //             ret.push_str("), ")
+        //         }
+        //         ret.push(']');
+        //     }
+        //     ret.push(']');
+        //     ret
+        // }
 
         fn get_scope_string(&self) -> &Vec<String> {
             &self.scope_vec_str
