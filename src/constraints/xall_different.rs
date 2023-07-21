@@ -45,20 +45,20 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::fmt::{Display, Formatter};
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
 
     #[derive(Clone)]
     pub struct XAllDifferent<'a> {
-        scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope: Vec<XVarVal<'a>>,
+        // scope_vec_var: Vec<(String, &'a XDomainInteger)>,
     }
 
     impl Display for XAllDifferent<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret = String::default();
-            for e in self.scope_vec_var.iter() {
-                ret.push_str(e.0.as_str());
+            for e in self.scope.iter() {
                 ret.push('(');
-                ret.push_str(e.1.to_string().as_str());
+                ret.push_str(&e.1.to_string());
                 ret.push_str("), ")
             }
             write!(f, "XAllDifferent: scope =  {}", ret)

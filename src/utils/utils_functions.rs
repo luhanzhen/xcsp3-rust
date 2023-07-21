@@ -185,21 +185,17 @@ pub mod xcsp3_utils {
         Ok(ret)
     }
 
-    fn string_to_i32(s:&str) -> Option<i32>
-    {
+    fn string_to_i32(s: &str) -> Option<i32> {
         let char = s.chars().rev();
-        let mut n:i32 = 0;
-        for (i,c) in char.enumerate()
-        {
-            if !c.is_numeric()
-            {
+        let mut n: i32 = 0;
+        for (i, c) in char.enumerate() {
+            if !c.is_numeric() {
                 return None;
-            }else {
+            } else {
                 n += 10i32.pow((i as i32).try_into().unwrap()) * c as i32
             }
         }
         Some(n)
-
     }
     ///return the tuples by given string,
     /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
@@ -248,13 +244,11 @@ pub mod xcsp3_utils {
             let chars = tuple_str.chars();
             let mut last = 0;
             let mut tt: Vec<i32> = vec![];
-            let mut n:usize = 0;
-            if let Some(left) = tuple_str.find('(')
-            {
-                if let Some(right) = tuple_str.find(')')
-                {
-                    ret.reserve(tuple_str.len()/(right-left));
-                    n = (right-left-1)/2;
+            let mut n: usize = 0;
+            if let Some(left) = tuple_str.find('(') {
+                if let Some(right) = tuple_str.find(')') {
+                    ret.reserve(tuple_str.len() / (right - left));
+                    n = (right - left - 1) / 2;
                 }
             }
 

@@ -39,6 +39,7 @@
 
 pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::fmt::{Display, Formatter};
     use std::str::FromStr;
 
     #[derive(Clone)]
@@ -49,6 +50,22 @@ pub mod xcsp3_core {
         XIntegerSymbolic(XIntegerSymbolic),
     }
 
+    impl Display for XIntegerType {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    XIntegerType::IntegerValue(iv) => iv.to_string(),
+                    XIntegerType::IntegerInterval(ii) => ii.to_string(),
+                    XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
+                    XIntegerType::XIntegerNone => {
+                        "XIntegerNone: there must be an error when parse this domain.".to_string()
+                    }
+                }
+            )
+        }
+    }
     impl XIntegerType {
         pub fn equals(&self, arg: &XIntegerType) -> bool {
             match self {
@@ -68,16 +85,16 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn to_string(&self) -> String {
-            match self {
-                XIntegerType::IntegerValue(iv) => iv.to_string(),
-                XIntegerType::IntegerInterval(ii) => ii.to_string(),
-                XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
-                XIntegerType::XIntegerNone => {
-                    "XIntegerNone: there must be an error when parse this domain.".to_string()
-                }
-            }
-        }
+        // pub fn to_string(&self) -> String {
+        //     match self {
+        //         XIntegerType::IntegerValue(iv) => iv.to_string(),
+        //         XIntegerType::IntegerInterval(ii) => ii.to_string(),
+        //         XIntegerType::XIntegerSymbolic(ii) => ii.to_string(),
+        //         XIntegerType::XIntegerNone => {
+        //             "XIntegerNone: there must be an error when parse this domain.".to_string()
+        //         }
+        //     }
+        // }
         pub fn maximum(&self) -> i32 {
             match self {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
@@ -98,16 +115,12 @@ pub mod xcsp3_core {
         }
     }
 
-    pub trait XIntegerEntity {
+    pub trait XIntegerEntity: Display {
         fn width(&self) -> usize;
 
         fn minimum(&self) -> i32;
 
         fn maximum(&self) -> i32;
-
-        fn print(&self);
-
-        fn to_string(&self) -> String;
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool;
     }
@@ -123,6 +136,12 @@ pub mod xcsp3_core {
         }
     }
 
+    impl Display for XIntegerValue {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{}", self.value.to_string())
+        }
+    }
+
     impl XIntegerEntity for XIntegerValue {
         fn width(&self) -> usize {
             1
@@ -134,14 +153,6 @@ pub mod xcsp3_core {
 
         fn maximum(&self) -> i32 {
             self.value
-        }
-
-        fn print(&self) {
-            print!("{}", self.value);
-        }
-
-        fn to_string(&self) -> String {
-            self.value.to_string()
         }
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
@@ -168,6 +179,16 @@ pub mod xcsp3_core {
         }
     }
 
+    impl Display for XIntegerSymbolic {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
+            for i in 0..self.symbolic.len() {
+                ret.push_str(&format!("{}({}), ", self.values[i], self.symbolic[i]));
+            }
+            write!(f, "{}", ret)
+        }
+    }
+
     impl XIntegerEntity for XIntegerSymbolic {
         fn width(&self) -> usize {
             self.values.len()
@@ -179,20 +200,6 @@ pub mod xcsp3_core {
 
         fn maximum(&self) -> i32 {
             self.values[self.values.len() - 1]
-        }
-
-        fn print(&self) {
-            todo!()
-        }
-
-        fn to_string(&self) -> String {
-            // format!("{}..{}", self.minimum(), self.maximum())
-            let mut ret = String::default();
-            for i in 0..self.symbolic.len() {
-                let s = format!("{}({}), ", self.values[i], self.symbolic[i]);
-                ret.push_str(&s);
-            }
-            ret
         }
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
@@ -212,6 +219,12 @@ pub mod xcsp3_core {
         }
     }
 
+    impl Display for XIntegerInterval {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{}..{}", self.minimum(), self.maximum())
+        }
+    }
+
     impl XIntegerEntity for XIntegerInterval {
         fn width(&self) -> usize {
             (self.max - self.min + 1) as usize
@@ -223,14 +236,6 @@ pub mod xcsp3_core {
 
         fn maximum(&self) -> i32 {
             self.max
-        }
-
-        fn print(&self) {
-            print!("{}", self.to_string());
-        }
-
-        fn to_string(&self) -> String {
-            format!("{}..{}", self.minimum(), self.maximum())
         }
 
         fn equals(&self, arg: &dyn XIntegerEntity) -> bool {
@@ -248,6 +253,16 @@ pub mod xcsp3_core {
     impl Default for XDomainInteger {
         fn default() -> Self {
             Self::new()
+        }
+    }
+
+    impl Display for XDomainInteger {
+        fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+            let mut s = String::new();
+            for e in self.values.iter() {
+                s = format!("{} {}", s, e);
+            }
+            write!(f, "{}", s)
         }
     }
 
@@ -378,17 +393,6 @@ pub mod xcsp3_core {
 
         pub fn is_interval(&self) -> bool {
             self.size == (self.maximum() - self.minimum() + 1) as usize
-        }
-
-        pub fn to_string(&self) -> String {
-            let mut s = String::new();
-            for e in self.values.iter() {
-                s = format!("{} {}", s, e.to_string());
-            }
-            // for e in self.iter() {
-            //     s = format!("{} {}", s, e.to_string());
-            // }
-            s
         }
 
         pub fn iter(&self) -> XDomainIter {
