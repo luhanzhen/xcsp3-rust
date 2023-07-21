@@ -45,6 +45,7 @@ pub mod xcsp3_core {
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
     use crate::constraints::xintension::xcsp3_core::XIntention;
+    use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
@@ -95,6 +96,23 @@ pub mod xcsp3_core {
 
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
             self.constraints.iter()
+        }
+
+        pub fn build_minimum(&mut self, vars: &str, condition: &str) {
+            match XMaxMin::from_str(vars, condition, true, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XMinimum(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+        pub fn build_maximum(&mut self, vars: &str, condition: &str) {
+            match XMaxMin::from_str(vars, condition, false, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XMaximum(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
         }
 
         pub fn build_sum(&mut self, vars: &str, condition: &str, coeffs: &str) {

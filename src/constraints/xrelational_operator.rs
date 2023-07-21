@@ -24,38 +24,46 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:26
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: xcsp3-rust
+ * </p>
+ * <p>@author: luhan zhen
+ * </p>
+ * <p>@date:  2023/7/21 10:38
+ * </p>
+ * <p>@email: zhenlh20@mails.jlu.edu.cn
+ * </p>
+ * <p>@version: 1.0
+ * </p>
+ * <p>@description:
+ * </p>
  */
 
-pub mod xconstraint_set;
-pub mod xconstraint_type;
+pub mod xcsp3_core {
+    #[derive(Clone, Debug)]
+    pub enum Operator {
+        Lt,
+        Le,
+        Ge,
+        Gt,
+        Eq,
+        Ne,
+        In,
+        Notin,
+    }
 
-pub mod xall_different;
-pub mod xall_different_except;
-pub mod xall_equal;
-
-pub mod xextension;
-pub mod xinstantiation;
-pub mod xmdd;
-pub mod xordered;
-pub mod xregular;
-
-pub mod xblocks;
-pub mod xconstraint_trait;
-pub mod xgroup;
-pub mod xintension;
-pub mod xmax_min;
-mod xrelational_operand;
-mod xrelational_operator;
-pub mod xsum;
+    impl Operator {
+        pub fn get_operator_by_str(op: &str) -> Option<Self> {
+            return match op {
+                "lt" => Some(Self::Lt),
+                "le" => Some(Self::Le),
+                "ge" => Some(Self::Ge),
+                "gt" => Some(Self::Gt),
+                "ne" => Some(Self::Ne),
+                "eq" => Some(Self::Eq),
+                "in" => Some(Self::In),
+                "notin" => Some(Self::Notin),
+                _ => None,
+            };
+        }
+    }
+}

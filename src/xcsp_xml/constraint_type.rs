@@ -480,7 +480,7 @@ pub mod xcsp3_xml {
         #[serde(rename = "minimum")]
         Minimum {
             #[serde(rename = "list", default)]
-            vars: String,
+            list: String,
             #[serde(rename = "condition", default)]
             condition: String,
         },

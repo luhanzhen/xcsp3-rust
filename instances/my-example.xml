@@ -102,19 +102,19 @@
             <except> (0,0,0,0) </except>
         </allDifferent>
         <maximum>
-            <list>x1 x2 x3 x4</list>
+            <list>x[1] x[2] x[3] x[4]</list>
             <condition>(eq,y)</condition>
         </maximum>
         <maximum>
-            <list>z1 z2 z3 z4 z5</list>
+            <list>x[10] x[20] x[30] x[40]</list>
             <condition>(lt,w)</condition>
         </maximum>
         <minimum>
-            <list>x1 x2 x3 x4</list>
+            <list>x[11] x[22] x[33] x[44]</list>
             <condition>(eq,y)</condition>
         </minimum>
         <minimum>
-            <list>z1 z2 z3 z4 z5</list>
+            <list>x[32] x[22] x[34] x[47]</list>
             <condition>(ne,w)</condition>
         </minimum>
         <sum>

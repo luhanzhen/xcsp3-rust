@@ -78,6 +78,7 @@ pub mod xcsp3_core {
         pub fn get_expression(&self) -> &ExpressionTree {
             &self.tree
         }
+
         pub fn from_str_without_scope(
             expression: &str,
             set: &'a XVariableSet,

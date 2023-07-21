@@ -275,8 +275,8 @@ pub mod xcsp3_xml {
                 ConstraintType::Count { .. } => {}
                 ConstraintType::NValues { .. } => {}
                 ConstraintType::Cardinality { .. } => {}
-                ConstraintType::Minimum { .. } => {}
-                ConstraintType::Maximum { .. } => {}
+                ConstraintType::Minimum { list, condition } => set.build_minimum(list, condition),
+                ConstraintType::Maximum { list, condition } => set.build_maximum(list, condition),
                 ConstraintType::Element { .. } => {}
                 ConstraintType::Stretch { .. } => {}
                 ConstraintType::NoOverlap { .. } => {}

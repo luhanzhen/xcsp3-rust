@@ -47,6 +47,7 @@ pub mod xcsp3_core {
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
     use crate::constraints::xintension::xcsp3_core::XIntention;
+    use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
@@ -67,6 +68,8 @@ pub mod xcsp3_core {
         XIntention(XIntention<'a>),
         XGroup(XGroup<'a>),
         XSum(XSum<'a>),
+        XMaximum(XMaxMin<'a>),
+        XMinimum(XMaxMin<'a>),
     }
 
     impl XConstraintType<'_> {
@@ -86,6 +89,8 @@ pub mod xcsp3_core {
                 XConstraintType::XIntention(c) => c.to_string(),
                 XConstraintType::XGroup(c) => c.to_string(),
                 XConstraintType::XSum(c) => c.to_string(),
+                XConstraintType::XMinimum(c) => c.to_string(),
+                XConstraintType::XMaximum(c) => c.to_string(),
 
             }
         }
