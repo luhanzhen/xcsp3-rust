@@ -185,6 +185,22 @@ pub mod xcsp3_utils {
         Ok(ret)
     }
 
+    fn string_to_i32(s:&str) -> Option<i32>
+    {
+        let char = s.chars().rev();
+        let mut n:i32 = 0;
+        for (i,c) in char.enumerate()
+        {
+            if !c.is_numeric()
+            {
+                return None;
+            }else {
+                n += 10i32.pow((i as i32).try_into().unwrap()) * c as i32
+            }
+        }
+        Some(n)
+
+    }
     ///return the tuples by given string,
     /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
     pub fn tuple_to_vector(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
@@ -232,17 +248,20 @@ pub mod xcsp3_utils {
             let chars = tuple_str.chars();
             let mut last = 0;
             let mut tt: Vec<i32> = vec![];
+            let mut n:usize = 0;
             if let Some(left) = tuple_str.find('(')
             {
                 if let Some(right) = tuple_str.find(')')
                 {
                     ret.reserve(tuple_str.len()/(right-left));
+                    n = (right-left-1)/2;
                 }
             }
 
             for (i, x) in chars.enumerate() {
                 if x == '(' {
                     tt.clear();
+                    // tt.reserve(n);
                     last = i;
                 } else if x == ')' {
                     // println!("{}",&tuple_str[last+1..i]);
@@ -280,6 +299,69 @@ pub mod xcsp3_utils {
                     last = i;
                 }
             }
+            // let chars = tuple_str.chars();
+            // let mut last = 0;
+            //
+            // if let Some(left) = tuple_str.find('(')
+            // {
+            //     if let Some(right) = tuple_str.find(')')
+            //     {
+            //         ret.reserve(tuple_str.len()/(right-left));
+            //         let mut tt: Vec<i32> = vec![];
+            //         tt.resize((right-left)/2,0);
+            //         ret.resize(tuple_str.len()/(right-left),tt);
+            //     }
+            // }
+            // let mut tuple_index = 0;
+            // let mut tuple_in_index = 0;
+            // for (i, x) in chars.enumerate() {
+            //     if x == '(' {
+            //         // tt.clear();
+            //         tuple_in_index = 0;
+            //         last = i;
+            //     } else if x == ')' {
+            //         // println!("{}",&tuple_str[last+1..i]);
+            //         match i32::from_str(&tuple_str[last + 1..i]) {
+            //             Ok(num) => {
+            //                 // tt.push(num);
+            //                 ret[tuple_index][tuple_in_index] = num;
+            //                 tuple_in_index+=1;
+            //             }
+            //             Err(_) => {
+            //                 if &tuple_str[last + 1..i] == "*" {
+            //                     // tt.push(2_147_483_647i32);
+            //                     ret[tuple_index][tuple_in_index] = 2_147_483_647i32;
+            //                     tuple_in_index+=1;
+            //                 } else {
+            //                     return Err(Xcsp3Error::get_constraint_extension_error(
+            //                         "parse the tuple of extension error",
+            //                     ));
+            //                 }
+            //             }
+            //         }
+            //         tuple_index += 1;
+            //         // ret.push(tt.clone())
+            //     } else if x == ',' {
+            //         // println!("{}",&tuple_str[last+1..i]);
+            //         match i32::from_str(&tuple_str[last + 1..i]) {
+            //             Ok(num) => {
+            //                 ret[tuple_index][tuple_in_index] = num;
+            //                 tuple_in_index+=1;
+            //             }
+            //             Err(_) => {
+            //                 if &tuple_str[last + 1..i] == "*" {
+            //                     ret[tuple_index][tuple_in_index] = 2_147_483_647i32;
+            //                     tuple_in_index+=1;
+            //                 } else {
+            //                     return Err(Xcsp3Error::get_constraint_extension_error(
+            //                         "parse the tuple of extension error",
+            //                     ));
+            //                 }
+            //             }
+            //         }
+            //         last = i;
+            //     }
+            // }
         }
         // println!("parse Extension {:?}",ti.get());
         Ok(ret)

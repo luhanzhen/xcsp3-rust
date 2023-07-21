@@ -45,8 +45,8 @@ fn main() {
     // // }
     // // print!("\n");
     // println!("tree = {}", tree.unwrap().to_string());
-    test_single();
-    // test_all();
+    // test_single();
+    test_all();
 }
 
 fn test_single() {
@@ -69,10 +69,10 @@ fn test_single() {
 fn test_all() {
     let start = TimeInterval::new();
     // let aa = WalkDir::new("D://XCSP3")
-    // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
+    let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
     // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
     // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
-    let aa = WalkDir::new("D:\\XCSP3\\Bibd")
+    // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
         // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
         .into_iter()
         .filter_map(|file| file.ok());
