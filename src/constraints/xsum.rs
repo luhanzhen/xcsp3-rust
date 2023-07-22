@@ -40,51 +40,70 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::constraints::xrelational_operand::xcsp3_core::Operand;
     use crate::constraints::xrelational_operator::xcsp3_core::Operator;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, list_to_values};
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XSum<'a> {
-        scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
         operator: Operator,
         operand: Operand,
-        coeffs: Vec<i32>,
+        coeffs: Vec<XVarVal>,
     }
 
     impl Display for XSum<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            todo!()
+            let mut ret = String::default();
+            for e in self.scope.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
+            ret.push_str("coeffs = (");
+            for e in self.coeffs.iter() {
+                ret.push_str(&e.to_string());
+                ret.push_str(", ")
+            }
+            ret.push_str("), ");
+            write!(
+                f,
+                "XSum: scope =  {}, Operator = {:?}, Operand = {:?}",
+                ret, self.operator, self.operand
+            )
         }
     }
 
     impl XConstraintTrait for XSum<'_> {
-        // fn to_string(&self) -> String {
-        //     let mut ret = "XSum: scope =  ".to_string();
-        //     for e in self.scope_vec_var.iter() {
-        //         ret.push_str(e.0.as_str());
-        //         ret.push('(');
-        //         ret.push_str(e.1.to_string().as_str());
-        //         ret.push_str("), ")
-        //     }
-        //     ret.push_str(&format!(
-        //         "coeffs = {:?}, Operator = {:?}, Operand = {:?}",
-        //         self.coeffs, self.operator, self.operand
-        //     ));
-        //     ret
-        // }
-
-        fn get_scope_string(&self) -> &Vec<String> {
-            &self.scope_vec_str
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            &self.scope_vec_var
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
         }
     }
 
@@ -95,19 +114,17 @@ pub mod xcsp3_core {
             coeffs: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope_vec_str = list_to_scope_ids(list);
-            match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => {
-                    let mut coe: Vec<i32>;
-                    if coeffs.is_empty() || coeffs.contains("%...") {
+            match list_to_vec_var_val(list) {
+                Ok(scope_vec_str) => {
+                    let mut coe: Vec<XVarVal>;
+                    if coeffs.is_empty() {
                         coe = vec![];
                         for _ in 0..scope_vec_str.len() {
-                            coe.push(1)
+                            coe.push(XVarVal::IntVal(1))
                         }
                     } else {
-                        println!("e{}", coeffs);
-                        match list_to_values(coeffs) {
-                            Ok(v) => coe = v,
+                        coe = match list_to_vec_var_val(coeffs) {
+                            Ok(coe_vec) => coe_vec,
                             Err(e) => return Err(e),
                         }
                     }
@@ -118,43 +135,84 @@ pub mod xcsp3_core {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
-                            ))
+                            ));
                         }
                         Some(o) => ope = o,
                     }
                     let rand: Operand;
-
                     match Operand::get_operand_by_str(&spilt[1..], &ope) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
-                            ))
+                            ));
                         }
                         Some(r) => rand = r,
                     }
-                    Ok(Self::new(scope_vec_str, scope, ope, rand, coe))
+                    Ok(Self::new(scope_vec_str, set, ope, rand, coe))
                 }
                 Err(e) => Err(e),
             }
+
+            // let scope_vec_str = list_to_scope_ids(list);
+            // match set.construct_scope(&scope_vec_str) {
+            //     Ok(scope) => {
+            //         let mut coe: Vec<i32>;
+            //         if coeffs.is_empty() || coeffs.contains("%...") {
+            //             coe = vec![];
+            //             for _ in 0..scope_vec_str.len() {
+            //                 coe.push(1)
+            //             }
+            //         } else {
+            //             // println!("e{}", coeffs);
+            //             match list_to_values(coeffs) {
+            //                 Ok(v) => coe = v,
+            //                 Err(e) => return Err(e),
+            //             }
+            //         }
+            //         let condition = condition.replace(['(', ')', ','], " ");
+            //         let spilt: Vec<&str> = condition.split_whitespace().collect();
+            //         let ope: Operator;
+            //         match Operator::get_operator_by_str(spilt[0]) {
+            //             None => {
+            //                 return Err(Xcsp3Error::get_constraint_sum_error(
+            //                     "parse sum constraint error, ",
+            //                 ));
+            //             }
+            //             Some(o) => ope = o,
+            //         }
+            //         let rand: Operand;
+            //         match Operand::get_operand_by_str(&spilt[1..], &ope) {
+            //             None => {
+            //                 return Err(Xcsp3Error::get_constraint_sum_error(
+            //                     "parse sum constraint error, ",
+            //                 ));
+            //             }
+            //             Some(r) => rand = r,
+            //         }
+            //         Ok(Self::new(scope_vec_str, scope, ope, rand, coe))
+            //     }
+            //     Err(e) => Err(e),
+            // }
         }
 
         pub fn new(
-            scope_vec_str: Vec<String>,
-            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            scope: Vec<XVarVal>,
+            set: &'a XVariableSet,
             operator: Operator,
             operand: Operand,
-            coeffs: Vec<i32>,
+            coeffs: Vec<XVarVal>,
         ) -> Self {
             Self {
-                scope_vec_str,
-                scope_vec_var,
+                scope,
+                map: Default::default(),
+                set,
                 operator,
                 operand,
                 coeffs,
             }
         }
 
-        pub fn get_coeffs(&self) -> &Vec<i32> {
+        pub fn get_coeffs(&self) -> &Vec<XVarVal> {
             &self.coeffs
         }
         pub fn get_operand(&self) -> &Operand {

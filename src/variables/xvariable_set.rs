@@ -42,7 +42,7 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
     use std::collections::HashMap;
 
-    use regex::Regex;
+    // use regex::Regex;
     use std::slice::Iter;
     /**
     the XVariableSet is a container that store all variables.
@@ -50,7 +50,7 @@ pub mod xcsp3_core {
     pub struct XVariableSet {
         variables: Vec<XVariableType>,
         id_to_index: HashMap<String, usize>, //store the id and the index of the variable
-        empty_domain: XDomainInteger,
+                                             // empty_domain: XDomainInteger,
     }
 
     impl Default for XVariableSet {
@@ -75,7 +75,7 @@ pub mod xcsp3_core {
             XVariableSet {
                 variables: vec![],
                 id_to_index: HashMap::default(),
-                empty_domain: XDomainInteger::new(),
+                // empty_domain: XDomainInteger::new(),
             }
         }
 
@@ -171,38 +171,33 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn exist_variables(&self, scope_str: &[String]) -> bool {
-            for e in scope_str.iter() {
-                if e.contains('%') {
-                    continue;
-                } else {
-                    match self.find_variable(e) {
-                        Ok(v) => match v {
-                            XVariableType::XVariableNone(_) => return false,
-                            XVariableType::XVariableArray(_) => {}
-                            XVariableType::XVariableInt(_) => continue,
-                            XVariableType::XVariableTree(_) => {}
-                        },
-                        Err(_) => return false,
-                    }
-                }
-            }
-            true
-        }
+        // pub fn exist_variables(&self, scope_str: &[String]) -> bool {
+        //     for e in scope_str.iter() {
+        //         if e.contains('%') {
+        //             continue;
+        //         } else {
+        //             match self.find_variable(e) {
+        //                 Ok(v) => match v {
+        //                     XVariableType::XVariableNone(_) => return false,
+        //                     XVariableType::XVariableArray(_) => {}
+        //                     XVariableType::XVariableInt(_) => continue,
+        //                     XVariableType::XVariableTree(_) => {}
+        //                 },
+        //                 Err(_) => return false,
+        //             }
+        //         }
+        //     }
+        //     true
+        // }
 
         ///construct the scope from XVariableSet, when scope is equal to %x, where x is an i32 number, return empty tuple
         pub fn construct_scope(
             &self,
-            scope_str: &[String],
+            scope_str: &[&String],
         ) -> Result<Vec<(String, &XDomainInteger)>, Xcsp3Error> {
             let mut ret: Vec<(String, &XDomainInteger)> = vec![];
-            let reg = Regex::new(r"%(0|[1-9][0-9]*)").unwrap();
-            let reg1 = Regex::new(r"%([.]*)").unwrap();
             for e in scope_str.iter() {
-                if reg.is_match(e) || reg1.is_match(e) {
-                    // println!("{}",e);
-                    ret.push((e.clone(), &self.empty_domain))
-                } else {
+                {
                     match self.find_variable(e) {
                         Ok(var_type) => match var_type {
                             XVariableType::XVariableArray(a) => match a.find_variable(e) {

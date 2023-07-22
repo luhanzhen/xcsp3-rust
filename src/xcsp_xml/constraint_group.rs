@@ -67,8 +67,8 @@ pub mod xcsp3_xml {
         #[serde(rename = "@id", default)]
         pub id: String,
         #[serde(rename = "$value", default)]
-        pub constraints: Box<[ConstraintType]>,
+        pub constraints: Box<ConstraintType>,
         #[serde(rename = "args", default)]
-        pub args: Box<[String]>,
+        pub args: Vec<String>,
     }
 }

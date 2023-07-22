@@ -38,6 +38,7 @@
  * </p>
  */
 pub mod xcsp3_utils {
+    use std::fmt::{Display, Formatter};
     use std::str::FromStr;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
@@ -146,18 +147,8 @@ pub mod xcsp3_utils {
         // expression: String,
     }
 
-    impl ExpressionTree {
-        pub fn get_scope(&self) -> Vec<String> {
-            let mut scope = vec![];
-            for e in self.first_order_iter() {
-                if let TreeNode::Variable(v) = e {
-                    scope.push(v.clone());
-                }
-            }
-            scope
-        }
-
-        pub fn to_string(&self) -> String {
+    impl Display for ExpressionTree {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret = String::new();
             for e in self.first_order_iter() {
                 ret += &*e.to_string();
@@ -168,13 +159,38 @@ pub mod xcsp3_utils {
                     _ => {}
                 }
             }
-            ret
-            // format!(
-            //     " expression = {}, expression_str = {}, ",
-            //     self.root.to_string(),
-            //     self.expression,
-            // )
+            write!(f, "{}", ret)
         }
+    }
+    impl ExpressionTree {
+        pub fn get_scope(&self) -> Vec<String> {
+            let mut scope = vec![];
+            for e in self.first_order_iter() {
+                if let TreeNode::Variable(v) = e {
+                    scope.push(v.clone());
+                }
+            }
+            scope
+        }
+        //
+        // pub fn to_string(&self) -> String {
+        //     let mut ret = String::new();
+        //     for e in self.first_order_iter() {
+        //         ret += &*e.to_string();
+        //         match e {
+        //             TreeNode::Variable(_) => ret += ",",
+        //             TreeNode::Argument(_) => ret += ",",
+        //             TreeNode::Constant(_) => ret += ",",
+        //             _ => {}
+        //         }
+        //     }
+        //     ret
+        //     // format!(
+        //     //     " expression = {}, expression_str = {}, ",
+        //     //     self.root.to_string(),
+        //     //     self.expression,
+        //     // )
+        // }
         pub fn from_string(expression: &str) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::parse(expression) {
                 Ok(e) => Ok(ExpressionTree {

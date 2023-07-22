@@ -187,7 +187,7 @@ pub mod xcsp3_xml {
             match con_type {
                 ConstraintType::Group(group) => {
                     // println!("{:?}", group.constraints);
-                    XcspXmlModel::parse_constraint(&group.constraints[0], set);
+                    XcspXmlModel::parse_constraint(&group.constraints, set);
 
                     match set.get_last_constraint() {
                         None => {}
@@ -295,6 +295,7 @@ pub mod xcsp3_xml {
                 ConstraintType::BinPacking { .. } => {}
                 ConstraintType::Lex { .. } => {}
                 ConstraintType::Clause { .. } => {}
+                _ => {}
             }
         }
 

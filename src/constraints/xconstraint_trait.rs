@@ -39,6 +39,8 @@
  */
 
 pub mod xcsp3_core {
+
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use std::fmt::Display;
 
@@ -46,9 +48,9 @@ pub mod xcsp3_core {
         // fn to_string(&self) -> String;
 
         ///get the scope string of constraint
-        fn get_scope_string(&self) -> &Vec<String>;
+        fn get_scope_string(&self) -> &Vec<XVarVal>;
 
         ///get the scope string of constraint
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)>;
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)>;
     }
 }

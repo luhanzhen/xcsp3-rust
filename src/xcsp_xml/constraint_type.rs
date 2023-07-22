@@ -831,5 +831,12 @@ pub mod xcsp3_xml {
             #[serde(rename = "list", default)]
             list: Box<[String]>,
         },
+        ConstraintNone,
+    }
+
+    impl Default for ConstraintType {
+        fn default() -> Self {
+            ConstraintType::ConstraintNone
+        }
     }
 }

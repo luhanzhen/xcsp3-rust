@@ -40,18 +40,21 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::constraints::xrelational_operand::xcsp3_core::Operand;
     use crate::constraints::xrelational_operator::xcsp3_core::Operator;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils_functions::xcsp3_utils::list_to_scope_ids;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XMaxMin<'a> {
-        scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+        scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
         operator: Operator,
         operand: Operand,
         is_maximum_or_minimum: bool, // true if maximum, false if minimum
@@ -59,7 +62,22 @@ pub mod xcsp3_core {
 
     impl Display for XMaxMin<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            todo!()
+            let mut ret: String;
+            if self.is_maximum() {
+                ret = "XMaximum: scope =  ".to_string();
+            } else {
+                ret = "XMinimum: scope =  ".to_string();
+            }
+            for e in self.scope.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
+            ret.push_str(&format!(
+                " Operator = {:?}, Operand = {:?}",
+                self.operator, self.operand
+            ));
+            write!(f, "{}", ret)
         }
     }
 
@@ -84,12 +102,27 @@ pub mod xcsp3_core {
         //     ret
         // }
 
-        fn get_scope_string(&self) -> &Vec<String> {
-            &self.scope_vec_str
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            &self.scope_vec_var
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
         }
     }
 
@@ -100,8 +133,7 @@ pub mod xcsp3_core {
             is_maximum_or_minimum: bool,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope_vec_str = list_to_scope_ids(list);
-            match set.construct_scope(&scope_vec_str) {
+            match list_to_vec_var_val(list) {
                 Ok(scope) => {
                     let condition = condition.replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
@@ -124,27 +156,22 @@ pub mod xcsp3_core {
                         }
                         Some(r) => rand = r,
                     }
-                    Ok(Self::new(
-                        scope_vec_str,
-                        scope,
-                        ope,
-                        rand,
-                        is_maximum_or_minimum,
-                    ))
+                    Ok(Self::new(scope, set, ope, rand, is_maximum_or_minimum))
                 }
                 Err(e) => Err(e),
             }
         }
         pub fn new(
-            scope_vec_str: Vec<String>,
-            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
+            scope: Vec<XVarVal>,
+            set: &'a XVariableSet,
             operator: Operator,
             operand: Operand,
             is_maximum_or_minimum: bool,
         ) -> Self {
             Self {
-                scope_vec_str,
-                scope_vec_var,
+                scope,
+                map: Default::default(),
+                set,
                 operator,
                 operand,
                 is_maximum_or_minimum,

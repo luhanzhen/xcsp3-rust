@@ -40,16 +40,19 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils_functions::xcsp3_utils::list_to_scope_ids;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
-    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
 
     #[derive(Clone)]
     pub struct XAllDifferent<'a> {
-        scope: Vec<XVarVal<'a>>,
+        scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
         // scope_vec_var: Vec<(String, &'a XDomainInteger)>,
     }
 
@@ -58,7 +61,7 @@ pub mod xcsp3_core {
             let mut ret = String::default();
             for e in self.scope.iter() {
                 ret.push('(');
-                ret.push_str(&e.1.to_string());
+                ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
             write!(f, "XAllDifferent: scope =  {}", ret)
@@ -66,50 +69,46 @@ pub mod xcsp3_core {
     }
 
     impl XConstraintTrait for XAllDifferent<'_> {
-        // fn to_string(&self) -> String {
-        //     let mut ret = "XAllDifferent: scope =  ".to_string();
-        //     for e in self.scope_vec_var.iter() {
-        //         ret.push_str(e.0.as_str());
-        //         ret.push('(');
-        //         ret.push_str(e.1.to_string().as_str());
-        //         ret.push_str("), ")
-        //     }
-        //     ret
-        // }
-
-        fn get_scope_string(&self) -> &Vec<String> {
-            &self.scope_vec_str
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            &self.scope_vec_var
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !&self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
         }
     }
 
     impl<'a> XAllDifferent<'a> {
-        pub fn from_str_vec(
-            scope_vec_str: Vec<String>,
-            set: &'a XVariableSet,
-        ) -> Result<Self, Xcsp3Error> {
-            match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => Ok(XAllDifferent::new(scope_vec_str, scope)),
-                Err(e) => Err(e),
-            }
+        pub fn from_str_vec(scope_vec_str: Vec<XVarVal>, set: &'a XVariableSet) -> Self {
+            XAllDifferent::new(scope_vec_str, set)
         }
+
         pub fn from_str(list: &str, set: &'a XVariableSet) -> Result<Self, Xcsp3Error> {
-            let scope_vec_str = list_to_scope_ids(list);
-            match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => Ok(XAllDifferent::new(scope_vec_str, scope)),
+            match list_to_vec_var_val(list) {
+                Ok(scope_vec_str) => Ok(XAllDifferent::new(scope_vec_str, set)),
                 Err(e) => Err(e),
             }
         }
-        pub fn new(
-            scope_vec_str: Vec<String>,
-            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
-        ) -> Self {
+        pub fn new(scope: Vec<XVarVal>, set: &'a XVariableSet) -> Self {
             XAllDifferent {
-                scope_vec_str,
-                scope_vec_var,
+                scope,
+                map: Default::default(),
+                set,
             }
         }
     }

@@ -37,8 +37,27 @@
  */
 
 pub mod xcsp3_utils {
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::str::FromStr;
+
+    pub fn list_to_vec_var_val(list: &str) -> Result<Vec<XVarVal>, Xcsp3Error> {
+        let mut ret: Vec<XVarVal> = vec![];
+        let lists: Vec<&str> = list.split_whitespace().collect();
+        for e in lists.iter() {
+            match XVarVal::from_string(e) {
+                None => {
+                    return Err(Xcsp3Error::get_constraint_list_of_values_error(
+                        "parse the list of values error. ",
+                    ))
+                }
+                Some(vv) => {
+                    ret.push(vv);
+                }
+            }
+        }
+        Ok(ret)
+    }
 
     pub fn size_to_string(id: &str, size: &[usize]) -> String {
         let mut ret = id.to_string();
@@ -171,7 +190,6 @@ pub mod xcsp3_utils {
         let mut ret: Vec<i32> = Vec::new();
         let list = list.to_string().replace(['(', ')', ','], " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
-
         for e in lists.iter() {
             match i32::from_str(e) {
                 Ok(n) => ret.push(n),
@@ -244,11 +262,11 @@ pub mod xcsp3_utils {
             let chars = tuple_str.chars();
             let mut last = 0;
             let mut tt: Vec<i32> = vec![];
-            let mut n: usize = 0;
+            // let mut n: usize = 0;
             if let Some(left) = tuple_str.find('(') {
                 if let Some(right) = tuple_str.find(')') {
                     ret.reserve(tuple_str.len() / (right - left));
-                    n = (right - left - 1) / 2;
+                    // n = (right - left - 1) / 2;
                 }
             }
 
@@ -267,9 +285,7 @@ pub mod xcsp3_utils {
                             if &tuple_str[last + 1..i] == "*" {
                                 tt.push(2_147_483_647i32);
                             } else {
-                                return Err(Xcsp3Error::get_constraint_extension_error(
-                                    "parse the tuple of extension error",
-                                ));
+                                return Err(err);
                             }
                         }
                     }
@@ -284,9 +300,7 @@ pub mod xcsp3_utils {
                             if &tuple_str[last + 1..i] == "*" {
                                 tt.push(2_147_483_647i32);
                             } else {
-                                return Err(Xcsp3Error::get_constraint_extension_error(
-                                    "parse the tuple of extension error",
-                                ));
+                                return Err(err);
                             }
                         }
                     }

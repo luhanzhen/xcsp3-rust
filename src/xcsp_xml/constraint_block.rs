@@ -75,6 +75,6 @@ pub mod xcsp3_xml {
         #[serde(rename = "@class", default)]
         pub r#type: String,
         #[serde(rename = "$value", default)]
-        pub constraints: Box<[ConstraintType]>,
+        pub constraints: Vec<ConstraintType>,
     }
 }

@@ -40,48 +40,71 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
+    use crate::constraints::xrelational_operator::xcsp3_core::Operator;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
-    use crate::utils::utils_functions::xcsp3_utils::{list_to_scope_ids, list_to_values};
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Clone)]
     pub struct XOrdered<'a> {
-        scope_vec_str: Vec<String>,
-        scope_vec_var: Vec<(String, &'a XDomainInteger)>,
-        lengths: Vec<i32>,
-        operator: String,
+        scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
+        lengths: Vec<XVarVal>,
+        operator: Operator,
     }
 
     impl Display for XOrdered<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            todo!()
+            let mut ret = String::default();
+            for e in self.scope.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
+            if !self.lengths.is_empty() {
+                ret.push_str("lengths = [");
+                for e in self.lengths.iter() {
+                    ret.push_str(&e.to_string());
+                    ret.push_str(", ")
+                }
+                ret.push_str("], ")
+            }
+            write!(
+                f,
+                "XOrdered: scope =  {} operator = {:?}",
+                ret, self.operator
+            )
         }
     }
 
     impl XConstraintTrait for XOrdered<'_> {
-        // fn to_string(&self) -> String {
-        //     let mut ret = "XOrdered: scope =  ".to_string();
-        //     for e in self.scope_vec_var.iter() {
-        //         ret.push_str(e.0.as_str());
-        //         ret.push('(');
-        //         ret.push_str(e.1.to_string().as_str());
-        //         ret.push_str("), ")
-        //     }
-        //     ret.push_str(&format!(
-        //         " lengths = {:?}, operator = {}",
-        //         self.lengths, self.operator
-        //     ));
-        //     ret
-        // }
-        fn get_scope_string(&self) -> &Vec<String> {
-            &self.scope_vec_str
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
         }
 
-        fn get_scope(&self) -> &Vec<(String, &XDomainInteger)> {
-            &self.scope_vec_var
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
         }
     }
 
@@ -92,15 +115,14 @@ pub mod xcsp3_core {
             operator: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope_vec_str = list_to_scope_ids(list);
-            match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => match list_to_values(lengths_str) {
-                    Ok(lengths) => Ok(XOrdered::new(
-                        scope_vec_str,
-                        scope,
-                        lengths,
-                        operator.to_string(),
-                    )),
+            match list_to_vec_var_val(list) {
+                Ok(scope_vec_str) => match list_to_vec_var_val(lengths_str) {
+                    Ok(length_vec_str) => match Operator::get_operator_by_str(operator) {
+                        None => Err(Xcsp3Error::get_constraint_list_of_values_error(
+                            "parse the list of values error. ",
+                        )),
+                        Some(ope) => Ok(XOrdered::new(scope_vec_str, set, length_vec_str, ope)),
+                    },
                     Err(e) => Err(e),
                 },
                 Err(e) => Err(e),
@@ -112,35 +134,35 @@ pub mod xcsp3_core {
             operator: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope_vec_str = list_to_scope_ids(list);
-            match set.construct_scope(&scope_vec_str) {
-                Ok(scope) => Ok(XOrdered::new(
-                    scope_vec_str,
-                    scope,
-                    vec![],
-                    operator.to_string(),
-                )),
+            match list_to_vec_var_val(list) {
+                Ok(scope_vec_str) => match Operator::get_operator_by_str(operator) {
+                    None => Err(Xcsp3Error::get_constraint_list_of_values_error(
+                        "parse the list of values error. ",
+                    )),
+                    Some(ope) => Ok(XOrdered::new(scope_vec_str, set, vec![], ope)),
+                },
                 Err(e) => Err(e),
             }
         }
 
         pub fn new(
-            scope_vec_str: Vec<String>,
-            scope_vec_var: Vec<(String, &'a XDomainInteger)>,
-            lengths: Vec<i32>,
-            operator: String,
+            scope: Vec<XVarVal>,
+            set: &'a XVariableSet,
+            lengths: Vec<XVarVal>,
+            operator: Operator,
         ) -> Self {
             XOrdered {
-                scope_vec_str,
-                scope_vec_var,
+                scope,
+                map: Default::default(),
+                set,
                 lengths,
                 operator,
             }
         }
-        pub fn get_lengths(&self) -> &Vec<i32> {
+        pub fn get_lengths(&self) -> &Vec<XVarVal> {
             &self.lengths
         }
-        pub fn get_operator(&self) -> &str {
+        pub fn get_operator(&self) -> &Operator {
             &self.operator
         }
     }

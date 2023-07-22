@@ -44,6 +44,7 @@ pub mod xcsp3_core {
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
+    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
@@ -72,12 +73,12 @@ pub mod xcsp3_core {
         }
 
         pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &[String]) {
-            if let XConstraintType::XGroup(_) = &cc {
-                // println!("group is in {}",c.to_string());
-                self.constraints.push(XConstraintType::XConstraintNone(
-                    Xcsp3Error::get_constraint_group_error("the group is in group"),
-                ))
-            }
+            // if let XConstraintType::XGroup(_) = &cc {
+            //     // println!("group is in {}",c.to_string());
+            //     self.constraints.push(XConstraintType::XConstraintNone(
+            //         Xcsp3Error::get_constraint_group_error("the group is in group"),
+            //     ))
+            // }
             match XGroup::from_str(cc, args, self.set) {
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XGroup(c));
@@ -220,20 +221,24 @@ pub mod xcsp3_core {
         pub fn build_all_different_matrix(&mut self, list: &str) {
             let mat = list_to_matrix_ids(list);
             for line in mat.iter() {
-                match XAllDifferent::from_str_vec(line.clone(), self.set) {
-                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
-                    Ok(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
+                let mut scope: Vec<XVarVal> = vec![];
+                for e in line {
+                    scope.push(XVarVal::IntVar(e.clone()))
                 }
+                self.constraints
+                    .push(XConstraintType::XAllDifferent(XAllDifferent::from_str_vec(
+                        scope, self.set,
+                    )))
             }
             for i in 0..mat[0].len() {
-                let mut column: Vec<String> = vec![];
+                let mut scope: Vec<XVarVal> = vec![];
                 for m in mat.iter() {
-                    column.push(m[i].clone());
+                    scope.push(XVarVal::IntVar(m[i].clone()))
                 }
-                match XAllDifferent::from_str_vec(column, self.set) {
-                    Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
-                    Ok(c) => self.constraints.push(XConstraintType::XAllDifferent(c)),
-                }
+                self.constraints
+                    .push(XConstraintType::XAllDifferent(XAllDifferent::from_str_vec(
+                        scope, self.set,
+                    )))
             }
         }
     }
