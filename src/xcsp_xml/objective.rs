@@ -93,11 +93,5 @@ pub mod xcsp3_xml {
         pub maximize: Vec<MaximizeMinimize>,
     }
 
-    #[derive(Deserialize, Debug)]
-    pub enum InstanceType {
-        #[serde(rename = "CSP")]
-        Csp,
-        #[serde(rename = "COP")]
-        Cop,
-    }
+
 }
