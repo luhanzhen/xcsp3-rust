@@ -277,7 +277,10 @@ pub mod xcsp3_xml {
                 ConstraintType::Cardinality { .. } => {}
                 ConstraintType::Minimum { list, condition } => set.build_minimum(list, condition),
                 ConstraintType::Maximum { list, condition } => set.build_maximum(list, condition),
-                ConstraintType::Element { .. } => {}
+                ConstraintType::Element { vars, value, index } => {
+                    set.build_element(vars, value, index)
+                }
+
                 ConstraintType::Stretch { .. } => {}
                 ConstraintType::NoOverlap { .. } => {}
                 ConstraintType::Cumulative { .. } => {}

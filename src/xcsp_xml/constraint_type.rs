@@ -517,19 +517,31 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <element>
+          <list  [ startIndex="integer" ]> (intVal wspace)2+ | (intVar wspace)2+ </list>
+          [ <index  [ rank="rankType" ]> intVar </index> ]
+          <value> intVal | intVar </value>
+        </element>
         ```
 
         eg.
         ```xml
-
+        <element>
+          <list startIndex="1"> x1 x2 x3 x4 </list>
+          <index> i </index>
+          <value> v </value>
+        </element>
+        <element>
+          <list> y[] </list>
+          <value> z </value>
+        </element>
         ```
          */
         #[serde(rename = "element")]
         Element {
             #[serde(rename = "list", default)]
             vars: String,
-            #[serde(rename = "condition", default)]
+            #[serde(rename = "value", default)]
             value: String,
             #[serde(rename = "index", default)]
             index: String,
@@ -651,7 +663,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "list", default)]
             vars: String,
             #[serde(rename = "$value", default)]
-            constraints: Box<[ConstraintType]>,
+            constraints: Box<ConstraintType>,
         },
 
         /**

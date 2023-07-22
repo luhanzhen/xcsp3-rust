@@ -41,6 +41,7 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
+    use crate::constraints::xelement::xcsp3_core::XElement;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
@@ -68,6 +69,15 @@ pub mod xcsp3_core {
             XConstraintSet {
                 constraints: vec![],
                 set,
+            }
+        }
+
+        pub fn build_element(&mut self, vars: &str, values_str: &str, index_str: &str) {
+            match XElement::from_str(vars, values_str, index_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XElement(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
             }
         }
 

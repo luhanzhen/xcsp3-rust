@@ -42,6 +42,7 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
+    use crate::constraints::xelement::xcsp3_core::XElement;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
@@ -70,6 +71,7 @@ pub mod xcsp3_core {
         XSum(XSum<'a>),
         XMaximum(XMaxMin<'a>),
         XMinimum(XMaxMin<'a>),
+        XElement(XElement<'a>),
     }
 
     impl Display for XConstraintType<'_> {
@@ -92,6 +94,7 @@ pub mod xcsp3_core {
                         XConstraintType::XSum(c) => c.to_string(),
                         XConstraintType::XMinimum(c) => c.to_string(),
                         XConstraintType::XMaximum(c) => c.to_string(),
+                        XConstraintType::XElement(c) => c.to_string(),
 
                     }
              )

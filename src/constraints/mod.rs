@@ -53,6 +53,7 @@ pub mod xregular;
 
 pub mod xblocks;
 pub mod xconstraint_trait;
+pub mod xelement;
 pub mod xgroup;
 pub mod xint_val_var;
 pub mod xintension;

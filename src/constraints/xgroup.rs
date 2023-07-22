@@ -42,7 +42,6 @@ pub mod xcsp3_core {
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::time_interval::xcsp3_utils::TimeInterval;
     use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
@@ -63,16 +62,16 @@ pub mod xcsp3_core {
             for a in self.args.iter() {
                 ret.push('[');
                 for e in a.iter() {
-                    ret.push('(');
+                    // ret.push('(');
                     ret.push_str(e.to_string().as_str());
-                    ret.push_str("), ")
+                    ret.push_str(", ")
                 }
                 ret.push(']');
             }
-            ret.push(']');
+            // ret.push(']');
             write!(
                 f,
-                "XGroup: [constraint = {} [  {} ]] [args = ",
+                "XGroup: [constraint = {} [ args =  {}]]",
                 &self.template.to_string(),
                 ret
             )
@@ -148,7 +147,7 @@ pub mod xcsp3_core {
             arg_str: &[String],
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let tt = TimeInterval::new();
+            // let tt = TimeInterval::new();
             let mut args: Vec<Vec<XVarVal>> = vec![];
             args.reserve(arg_str.len());
             for a in arg_str.iter() {
@@ -160,7 +159,7 @@ pub mod xcsp3_core {
                     Err(e) => return Err(e),
                 }
             }
-            println!("this group cost {:?}", tt.get());
+            // println!("this group cost {:?}", tt.get());
             Ok(XGroup::new(args, set, Box::new(cc)))
         }
 
