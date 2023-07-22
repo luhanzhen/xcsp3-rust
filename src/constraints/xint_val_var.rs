@@ -19,7 +19,7 @@ pub mod xcsp3_core {
     use std::fmt::{Display, Formatter};
     use std::str::FromStr;
 
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub enum XVarVal {
         // IntVar(Variable<'a>),
         IntVar(String),
@@ -33,73 +33,75 @@ pub mod xcsp3_core {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(
                 f,
-                "{}",
-                match self {
-                    XVarVal::IntVar(v) => {
-                        v.clone()
-                    }
-                    XVarVal::IntVal(v) => {
-                        v.to_string()
-                    }
-                    XVarVal::IntInterval(l, r) => {
-                        format!("{}..{}", l, r)
-                    }
-                    XVarVal::IntArgument(e) => {
-                        format!("%{}", e)
-                    }
-                    XVarVal::IntStart => {
-                        "%...".to_string()
-                    }
-                }
+                "{:?}",
+                self // match self {
+                     //     XVarVal::IntVar(v) => {
+                     //         v.clone()
+                     //     }
+                     //     XVarVal::IntVal(v) => {
+                     //         v.to_string()
+                     //     }
+                     //     XVarVal::IntInterval(l, r) => {
+                     //         format!("{}..{}", l, r)
+                     //     }
+                     //     XVarVal::IntArgument(e) => {
+                     //         format!("%{}", e)
+                     //     }
+                     //     XVarVal::IntStart => {
+                     //         "%...".to_string()
+                     //     }
+                     // }
             )
         }
     }
 
     impl XVarVal {
         pub fn from_string(s: &str) -> Option<Self> {
-            match i32::from_str(s) {
-                Ok(e) => Some(XVarVal::IntVal(e)),
-                Err(_) => {
-                    if Regex::new(r"%(0|[1-9][0-9]*)").unwrap().is_match(s)
-                    //%num
-                    {
-                        match i32::from_str(&s[1..]) {
-                            Ok(e) => Some(XVarVal::IntArgument(e)),
-                            Err(_) => None,
-                        }
-                    } else {
-                        if Regex::new(r"%([.]*)").unwrap().is_match(s)
-                        //%...
-                        {
-                            Some(XVarVal::IntStart)
-                        } else {
-                            // if s.contains("..") //n1..n2
-                            // {
-                            //     let interval: Vec<&str> = s.split("..").collect();
-                            //     match i32::from_str(interval[0]) {
-                            //         Ok(l) => match i32::from_str(interval[1]) {
-                            //             Ok(r) => {
-                            //                 if l <= r {
-                            //                     Some(XVarVal::IntInterval(l, r))
-                            //                 } else {
-                            //                     None
-                            //                 }
-                            //             }
-                            //             Err(_) => {
-                            //                 None
-                            //             }
-                            //         },
-                            //         Err(_) => {
-                            //             None
-                            //         }
-                            //     }
-                            // }else {
-                            Some(XVarVal::IntVar(String::from(s)))
-
-                            // }
-                        }
+            if s.contains('[') {
+                Some(XVarVal::IntVar(String::from(s)))
+            } else if s.contains('%') {
+                if Regex::new(r"%(0|[1-9][0-9]*)").unwrap().is_match(s)
+                //%num
+                {
+                    match i32::from_str(&s[1..]) {
+                        Ok(e) => Some(XVarVal::IntArgument(e)),
+                        Err(_) => None,
                     }
+                } else if Regex::new(r"%([.]*)").unwrap().is_match(s)
+                //%...
+                {
+                    Some(XVarVal::IntStart)
+                } else {
+                    None
                 }
+            } else {
+                match i32::from_str(s) {
+                    Ok(e) => Some(XVarVal::IntVal(e)),
+                    Err(_) => Some(XVarVal::IntVar(String::from(s))),
+                }
+                // match i32::from_str(s) {
+                //     Ok(e) => Some(XVarVal::IntVal(e)),
+                //     Err(_) => {
+                //         if Regex::new(r"%(0|[1-9][0-9]*)").unwrap().is_match(s)
+                //         //%num
+                //         {
+                //             match i32::from_str(&s[1..]) {
+                //                 Ok(e) => Some(XVarVal::IntArgument(e)),
+                //                 Err(_) => None,
+                //             }
+                //         } else {
+                //             if Regex::new(r"%([.]*)").unwrap().is_match(s)
+                //             //%...
+                //             {
+                //                 Some(XVarVal::IntStart)
+                //             } else {
+                //                 Some(XVarVal::IntVar(String::from(s)))
+                //
+                //                 // }
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
     }

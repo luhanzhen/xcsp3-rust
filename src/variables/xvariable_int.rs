@@ -40,7 +40,8 @@
 
 pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
-    use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
+    use std::fmt::{Display, Formatter};
+    // use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
 
     #[derive(Clone)]
     pub struct XVariableInt {
@@ -58,13 +59,23 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XVariableInt {
-        fn to_string(&self) -> String {
-            format!(
+    impl Display for XVariableInt {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
                 "XVariableInt: id = {}, domain = {}",
-                self.id,
-                self.domain.to_string()
+                self.id, self.domain
             )
         }
     }
+
+    // impl XVariableTrait for XVariableInt {
+    //     fn to_string(&self) -> String {
+    //         format!(
+    //             "XVariableInt: id = {}, domain = {}",
+    //             self.id,
+    //             self.domain.to_string()
+    //         )
+    //     }
+    // }
 }

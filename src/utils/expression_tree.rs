@@ -116,29 +116,48 @@ pub mod xcsp3_utils {
         Operator(Operator, Vec<TreeNode>),
     }
 
-    impl TreeNode {
-        pub fn to_string(&self) -> String {
-            match self {
-                TreeNode::Constant(i) => i.to_string(),
-                TreeNode::RightBracket => ")".to_string(),
-                TreeNode::LeftBracket => "(".to_string(),
-                TreeNode::Variable(v) => v.to_string(),
-                TreeNode::Argument(a) => format!("%{}", a),
-                TreeNode::Operator(o, _) => {
-                    format!("{:?}", o)
-                    // let mut ret = format!("{:?}", o);
-                    // ret.push_str("(");
-                    // for (i, n) in v.iter().enumerate() {
-                    //     ret.push_str(&n.to_string());
-                    //     if i != v.len() - 1 {
-                    //         ret.push_str(", ")
-                    //     }
-                    // }
-                    // ret.push_str(")");
-                    // ret
-                } // TreeNode::Root => "".to_string(),
-            }
+    impl Display for TreeNode {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    TreeNode::Constant(i) => i.to_string(),
+                    TreeNode::RightBracket => ")".to_string(),
+                    TreeNode::LeftBracket => "(".to_string(),
+                    TreeNode::Variable(v) => v.to_string(),
+                    TreeNode::Argument(a) => format!("%{}", a),
+                    TreeNode::Operator(o, _) => {
+                        format!("{:?}", o)
+                    }
+                }
+            )
         }
+    }
+
+    impl TreeNode {
+        // pub fn to_string(&self) -> String {
+        //     match self {
+        //         TreeNode::Constant(i) => i.to_string(),
+        //         TreeNode::RightBracket => ")".to_string(),
+        //         TreeNode::LeftBracket => "(".to_string(),
+        //         TreeNode::Variable(v) => v.to_string(),
+        //         TreeNode::Argument(a) => format!("%{}", a),
+        //         TreeNode::Operator(o, _) => {
+        //             format!("{:?}", o)
+        //             // let mut ret = format!("{:?}", o);
+        //             // ret.push_str("(");
+        //             // for (i, n) in v.iter().enumerate() {
+        //             //     ret.push_str(&n.to_string());
+        //             //     if i != v.len() - 1 {
+        //             //         ret.push_str(", ")
+        //             //     }
+        //             // }
+        //             // ret.push_str(")");
+        //             // ret
+        //         } // TreeNode::Root => "".to_string(),
+        //     }
+        // }
     }
 
     #[derive(Clone)]

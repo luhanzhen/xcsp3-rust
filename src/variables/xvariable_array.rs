@@ -45,8 +45,9 @@ pub mod xcsp3_core {
         sizes_to_vec,
     };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use std::fmt::{Display, Formatter};
 
-    use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
+    // use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
 
     #[derive(Clone)]
     pub struct XVariableArray {
@@ -55,21 +56,43 @@ pub mod xcsp3_core {
         domain: XDomainInteger,
     }
 
-    impl XVariableTrait for XVariableArray {
-        fn to_string(&self) -> String {
-            let mut ret: String = String::from("XVariableArray: id = ");
-            ret.push_str(self.id.as_str());
-            ret.push_str("  size = ");
+    impl Display for XVariableArray {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret: String = String::default();
+            // ret.push_str(self.id.as_str());
+            // ret.push_str("  size = ");
             for e in self.sizes.iter() {
                 ret.push('[');
                 ret.push_str(e.to_string().as_str());
                 ret.push(']');
             }
-            ret.push_str(" domain = ");
-            ret.push_str(self.domain.to_string().as_str());
-            ret
+            // ret.push_str("");
+            // ret.push_str(self.domain.to_string().as_str());
+            write!(
+                f,
+                "XVariableArray: id = {},   size =  {} domain = {}",
+                self.id,
+                ret,
+                self.domain.to_string().as_str()
+            )
         }
     }
+
+    // impl XVariableTrait for XVariableArray {
+    //     fn to_string(&self) -> String {
+    //         let mut ret: String = String::from("XVariableArray: id = ");
+    //         ret.push_str(self.id.as_str());
+    //         ret.push_str("  size = ");
+    //         for e in self.sizes.iter() {
+    //             ret.push('[');
+    //             ret.push_str(e.to_string().as_str());
+    //             ret.push(']');
+    //         }
+    //         ret.push_str(" domain = ");
+    //         ret.push_str(self.domain.to_string().as_str());
+    //         ret
+    //     }
+    // }
 
     impl XVariableArray {
         pub fn find_variable(

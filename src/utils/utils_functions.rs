@@ -59,6 +59,16 @@ pub mod xcsp3_utils {
         Ok(ret)
     }
 
+    // pub fn list_to_vec_var(list: &str) -> Vec<XVarVal> {
+    //     let mut ret: Vec<XVarVal> = vec![];
+    //     let lists: Vec<&str> = list.split_whitespace().collect();
+    //     for e in lists.into_iter() {
+    //         ret.push(XVarVal::IntVar(e.to_owned()));
+    //
+    //     }
+    //     ret
+    // }
+
     pub fn size_to_string(id: &str, size: &[usize]) -> String {
         let mut ret = id.to_string();
 
@@ -203,18 +213,18 @@ pub mod xcsp3_utils {
         Ok(ret)
     }
 
-    fn string_to_i32(s: &str) -> Option<i32> {
-        let char = s.chars().rev();
-        let mut n: i32 = 0;
-        for (i, c) in char.enumerate() {
-            if !c.is_numeric() {
-                return None;
-            } else {
-                n += 10i32.pow((i as i32).try_into().unwrap()) * c as i32
-            }
-        }
-        Some(n)
-    }
+    // fn string_to_i32(s: &str) -> Option<i32> {
+    //     let char = s.chars().rev();
+    //     let mut n: i32 = 0;
+    //     for (i, c) in char.enumerate() {
+    //         if !c.is_numeric() {
+    //             return None;
+    //         } else {
+    //             n += 10i32.pow((i as i32).try_into().unwrap()) * c as i32
+    //         }
+    //     }
+    //     Some(n)
+    // }
     ///return the tuples by given string,
     /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
     pub fn tuple_to_vector(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {

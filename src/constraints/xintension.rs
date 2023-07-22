@@ -96,7 +96,7 @@ pub mod xcsp3_core {
             for e in &self.scope {
                 if let XVarVal::IntVar(s) = e {
                     if !self.map.contains_key(s) {
-                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
                             for (vs, vv) in vec.into_iter() {
                                 self.map.insert(vs, vv);
                             }
@@ -125,6 +125,15 @@ pub mod xcsp3_core {
                 Ok(tree) => {
                     let mut scope: Vec<XVarVal> = vec![];
                     for e in tree.get_scope() {
+                        let r = set.find_variable(&e);
+                        match r {
+                            Ok(r) => {
+                                println!("{}", r);
+                            }
+                            Err(err) => {
+                                println!("{}, {}", e, err)
+                            }
+                        }
                         scope.push(XVarVal::IntVar(e))
                     }
                     Ok(Self::new(scope, set, tree))

@@ -42,12 +42,27 @@ pub mod xcsp3_core {
     use crate::errors::parse_constraint_error::xcsp3_core::ParseConstraintError;
     use crate::errors::parse_domain_error::xcsp3_core::ParseDomainError;
     use crate::errors::parse_variable_error::ParseVariableError;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Debug, Clone, PartialEq, Eq)]
     pub enum Xcsp3Error {
         ParseDomainError(ParseDomainError),
         ParseVariableError(ParseVariableError),
         ParseConstraintError(ParseConstraintError),
+    }
+
+    impl Display for Xcsp3Error {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    Xcsp3Error::ParseDomainError(e) => e.to_string(),
+                    Xcsp3Error::ParseVariableError(e) => e.to_string(),
+                    Xcsp3Error::ParseConstraintError(e) => e.to_string(),
+                }
+            )
+        }
     }
 
     /// error factory
@@ -95,14 +110,6 @@ pub mod xcsp3_core {
 
         pub fn get_variable_size_invalid_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseVariableError(ParseVariableError::get_size_invalid_error(s))
-        }
-
-        pub fn to_string(&self) -> String {
-            match self {
-                Xcsp3Error::ParseDomainError(e) => e.to_string(),
-                Xcsp3Error::ParseVariableError(e) => e.to_string(),
-                Xcsp3Error::ParseConstraintError(e) => e.to_string(),
-            }
         }
     }
 }

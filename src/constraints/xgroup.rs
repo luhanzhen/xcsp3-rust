@@ -46,13 +46,13 @@ pub mod xcsp3_core {
     use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
-    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub struct XGroup<'a> {
         args: Vec<Vec<XVarVal>>,
-        map: Vec<HashMap<String, &'a XDomainInteger>>,
+        // map: Vec<HashMap<String, &'a XDomainInteger>>,
+        map: Vec<Vec<(String, &'a XDomainInteger)>>,
         set: &'a XVariableSet,
         template: Box<XConstraintType<'a>>,
     }
@@ -114,6 +114,27 @@ pub mod xcsp3_core {
     // }
 
     impl<'a> XGroup<'a> {
+        pub fn get_scope(&mut self) -> &Vec<Vec<(String, &XDomainInteger)>> {
+            if self.map.is_empty() {
+                self.map.reserve(self.args.len());
+                for arg in self.args.iter() {
+                    for v in arg.iter() {
+                        if let XVarVal::IntVar(s) = v {
+                            let mut ar: Vec<(String, &XDomainInteger)> = vec![];
+                            if let Ok(vec) = self.set.construct_scope(&[s]) {
+                                for (vs, vv) in vec.into_iter() {
+                                    ar.push((vs, vv))
+                                }
+                            }
+                            self.map.push(ar);
+                        }
+                    }
+                }
+            }
+
+            &self.map
+        }
+
         pub fn get_args(&self) -> &Vec<Vec<XVarVal>> {
             &self.args
         }
@@ -129,31 +150,28 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             let tt = TimeInterval::new();
             let mut args: Vec<Vec<XVarVal>> = vec![];
-            let mut map: Vec<HashMap<String, &'a XDomainInteger>> = vec![];
             args.reserve(arg_str.len());
-            map.reserve(arg_str.len());
             for a in arg_str.iter() {
+                // args.push(list_to_vec_var(a));
                 match list_to_vec_var_val(a) {
                     Ok(scope_vec_str) => {
                         args.push(scope_vec_str);
-                        // map.push(HashMap::default())
                     }
                     Err(e) => return Err(e),
                 }
             }
             println!("this group cost {:?}", tt.get());
-            Ok(XGroup::new(args, map, set, Box::new(cc)))
+            Ok(XGroup::new(args, set, Box::new(cc)))
         }
 
         pub fn new(
             args: Vec<Vec<XVarVal>>,
-            map: Vec<HashMap<String, &'a XDomainInteger>>,
             set: &'a XVariableSet,
             template: Box<XConstraintType<'a>>,
         ) -> Self {
             Self {
                 args,
-                map,
+                map: vec![],
                 set,
                 template,
             }

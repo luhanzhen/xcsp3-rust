@@ -38,16 +38,24 @@
 * </p>
  */
 
+use std::fmt::{Display, Formatter};
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseVariableError {
     pub msg: String,
     pub r#type: VariableError,
 }
 
-impl ParseVariableError {
-    pub(crate) fn to_string(&self) -> String {
-        format!("{:?}: {}", self.r#type, self.msg)
+impl Display for ParseVariableError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}: {}", self.r#type, self.msg)
     }
+}
+
+impl ParseVariableError {
+    // pub(crate) fn to_string(&self) -> String {
+    //     format!("{:?}: {}", self.r#type, self.msg)
+    // }
 
     pub(crate) fn get_not_found_error(s: &str) -> ParseVariableError {
         const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";

@@ -41,6 +41,7 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_type::xcsp3_core::XVariableType;
     use std::collections::HashMap;
+    use std::fmt::{Display, Formatter};
 
     // use regex::Regex;
     use std::slice::Iter;
@@ -59,18 +60,28 @@ pub mod xcsp3_core {
         }
     }
 
+    impl Display for XVariableSet {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
+            for e in self.variables.iter() {
+                ret = format!("{} \t{}\n", ret, e);
+            }
+            write!(f, "XVariableSet: \n{}", ret)
+        }
+    }
+
     impl XVariableSet {
         pub fn iter(&self) -> Iter<'_, XVariableType> {
             return self.variables.iter();
         }
 
-        pub fn to_string(&self) -> String {
-            let mut ret = String::from("XVariableSet: \n");
-            for e in self.variables.iter() {
-                ret = format!("{} \t{}\n", ret, e.to_string());
-            }
-            ret
-        }
+        // pub fn to_string(&self) -> String {
+        //     let mut ret = String::from("XVariableSet: \n");
+        //     for e in self.variables.iter() {
+        //         ret = format!("{} \t{}\n", ret, e);
+        //     }
+        //     ret
+        // }
         pub fn new() -> XVariableSet {
             XVariableSet {
                 variables: vec![],
@@ -158,7 +169,7 @@ pub mod xcsp3_core {
             }
         }
 
-        fn find_variable(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
+        pub fn find_variable(&self, id: &str) -> Result<&XVariableType, Xcsp3Error> {
             let name = match id.find('[') {
                 None => id,
                 Some(n) => &id[..n],

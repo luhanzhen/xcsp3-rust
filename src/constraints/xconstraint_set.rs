@@ -51,10 +51,9 @@ pub mod xcsp3_core {
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xsum::xcsp3_core::XSum;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
-    use std::slice::Iter;
+    use std::slice::{Iter, IterMut};
 
     /**
     the XConstraintSet is a container that stores all constraints.
@@ -94,6 +93,10 @@ pub mod xcsp3_core {
 
         pub fn iter(&self) -> Iter<'_, XConstraintType> {
             self.constraints.iter()
+        }
+
+        pub fn iter_mut(&mut self) -> IterMut<'_, XConstraintType<'a>> {
+            self.constraints.iter_mut()
         }
 
         pub fn build_minimum(&mut self, vars: &str, condition: &str) {

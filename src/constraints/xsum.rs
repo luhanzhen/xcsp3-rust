@@ -91,7 +91,7 @@ pub mod xcsp3_core {
             for e in &self.scope {
                 if let XVarVal::IntVar(s) = e {
                     if !self.map.contains_key(s) {
-                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
                             for (vs, vv) in vec.into_iter() {
                                 self.map.insert(vs, vv);
                             }
@@ -130,24 +130,24 @@ pub mod xcsp3_core {
                     }
                     let condition = condition.replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
-                    let ope: Operator;
-                    match Operator::get_operator_by_str(spilt[0]) {
+
+                    let ope: Operator = match Operator::get_operator_by_str(spilt[0]) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
                             ));
                         }
-                        Some(o) => ope = o,
-                    }
-                    let rand: Operand;
-                    match Operand::get_operand_by_str(&spilt[1..], &ope) {
+                        Some(o) => o,
+                    };
+
+                    let rand: Operand = match Operand::get_operand_by_str(&spilt[1..], &ope) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
                             ));
                         }
-                        Some(r) => rand = r,
-                    }
+                        Some(r) => r,
+                    };
                     Ok(Self::new(scope_vec_str, set, ope, rand, coe))
                 }
                 Err(e) => Err(e),

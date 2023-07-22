@@ -39,7 +39,9 @@
  */
 
 pub mod xcsp3_core {
-    pub trait XVariableTrait {
-        fn to_string(&self) -> String;
-    }
+    // use std::fmt::Display;
+
+    // pub trait XVariableTrait :Display{
+    //     fn to_string(&self) -> String;
+    // }
 }

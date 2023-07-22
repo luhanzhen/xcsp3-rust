@@ -85,7 +85,7 @@ pub mod xcsp3_core {
             for e in &self.scope {
                 if let XVarVal::IntVar(s) = e {
                     if !self.map.contains_key(s) {
-                        if let Ok(vec) = self.set.construct_scope(&vec![s]) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
                             for (vs, vv) in vec.into_iter() {
                                 self.map.insert(vs, vv);
                             }

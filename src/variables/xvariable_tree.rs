@@ -39,6 +39,8 @@
  **/
 
 pub mod xcsp3_core {
+    use std::fmt::{Display, Formatter};
+
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils_functions::xcsp3_utils::{
         get_all_variables_between_lower_and_upper, size_to_string, sizes_to_double_vec,
@@ -46,7 +48,7 @@ pub mod xcsp3_core {
     };
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
 
-    use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
+    // use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
 
     #[derive(Clone)]
     pub struct XVariableTree {
@@ -131,7 +133,7 @@ pub mod xcsp3_core {
                                                 ));
                                             }
                                             Err(e) => {
-                                                eprintln!("{}", e.to_string());
+                                                eprintln!("{}", e);
                                                 return Err(e);
                                             }
                                         }
@@ -225,9 +227,9 @@ pub mod xcsp3_core {
         }
     }
 
-    impl XVariableTrait for XVariableTree {
-        fn to_string(&self) -> String {
-            let mut ret = format!("XVariableTree:  id = {}, sizes = ", self.id);
+    impl Display for XVariableTree {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
             for e in self.sizes.iter() {
                 ret.push('[');
                 ret.push_str(e.to_string().as_str());
@@ -238,7 +240,25 @@ pub mod xcsp3_core {
                 ret += &e.to_string(&self.id);
                 ret += "]  ";
             }
-            ret
+
+            write!(f, "XVariableTree:  id = {}, sizes = {}", self.id, ret)
         }
     }
+
+    // impl XVariableTrait for XVariableTree {
+    //     fn to_string(&self) -> String {
+    //         let mut ret = format!("XVariableTree:  id = {}, sizes = ", self.id);
+    //         for e in self.sizes.iter() {
+    //             ret.push('[');
+    //             ret.push_str(e.to_string().as_str());
+    //             ret.push(']');
+    //         }
+    //         ret.push_str("nodes = ");
+    //         for e in self.nodes.iter() {
+    //             ret += &e.to_string(&self.id);
+    //             ret += "]  ";
+    //         }
+    //         ret
+    //     }
+    // }
 }

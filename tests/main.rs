@@ -45,8 +45,8 @@ fn main() {
     // // }
     // // print!("\n");
     // println!("tree = {}", tree.unwrap().to_string());
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
@@ -58,11 +58,28 @@ fn test_single() {
     let variable = model.build_variables();
     println!("variables:");
     for v in variable.iter() {
-        println!("\t{}", v.to_string())
+        println!("\t{}", v)
     }
     println!("constraints:");
-    for c in model.build_constraints(&variable).iter() {
-        println!("\t{}", c)
+    for c in model.build_constraints(&variable).iter_mut() {
+        println!("\t{}", c);
+        // match c{
+        //     XConstraintType::XConstraintNone(_) => {}
+        //     XConstraintType::XExtension(_) => {}
+        //     XConstraintType::XAllDifferent(_) => {}
+        //     XConstraintType::XAllDifferentExcept(_) => {}
+        //     XConstraintType::XInstantiation(_) => {}
+        //     XConstraintType::XAllEqual(_) => {}
+        //     XConstraintType::XOrdered(x) => {let r = x.get_scope();
+        //     println!("{},{}",r[0].0,r[0].1.to_string());}
+        //     XConstraintType::XRegular(_) => {}
+        //     XConstraintType::XMdd(_) => {}
+        //     XConstraintType::XIntention(_) => {}
+        //     XConstraintType::XGroup(_) => {}
+        //     XConstraintType::XSum(_) => {}
+        //     XConstraintType::XMaximum(_) => {}
+        //     XConstraintType::XMinimum(_) => {}
+        // }
     }
 }
 
@@ -92,13 +109,13 @@ fn test_all() {
                     // }
                     for v in variable.iter() {
                         if let XVariableType::XVariableNone(e) = v {
-                            eprintln!("Err {} {}", file.path().display(), e.to_string());
+                            eprintln!("Err {} {}", file.path().display(), e);
                             break;
                         }
                     }
                     for c in m.build_constraints(&variable).iter() {
                         if let XConstraintType::XConstraintNone(e) = c {
-                            eprintln!("Err {} {}", file.path().display(), e.to_string());
+                            eprintln!("Err {} {}", file.path().display(), e);
                             break;
                         }
                     }

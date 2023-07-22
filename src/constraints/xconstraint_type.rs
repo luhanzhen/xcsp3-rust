@@ -77,7 +77,7 @@ pub mod xcsp3_core {
             write!(f,"{}",
                     match self {
                         XConstraintType::XConstraintNone(e) => format!(
-                            "XConstraintNone: there must be an error when parse this constraint. Error is {}",e.to_string()
+                            "XConstraintNone: there must be an error when parse this constraint. Error is {}",e
                         ),
                         XConstraintType::XExtension(c) => c.to_string(),
                         XConstraintType::XAllEqual(c) => c.to_string(),

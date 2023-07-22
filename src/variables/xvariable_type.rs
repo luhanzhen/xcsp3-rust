@@ -43,7 +43,8 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_array::xcsp3_core::XVariableArray;
     use crate::variables::xvariable_int::xcsp3_core::XVariableInt;
-    use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
+    use std::fmt::{Display, Formatter};
+    // use crate::variables::xvariable_trait::xcsp3_core::XVariableTrait;
     use crate::variables::xvariable_tree::xcsp3_core::XVariableTree;
 
     #[derive(Clone)]
@@ -86,15 +87,24 @@ pub mod xcsp3_core {
                 _ => String::default(),
             }
         }
-        pub fn to_string(&self) -> String {
-            match self {
-                XVariableType::XVariableArray(a) => a.to_string(),
-                XVariableType::XVariableInt(i) => i.to_string(),
-                XVariableType::XVariableTree(t) => t.to_string(),
-                _ => {
-                    String::from("XVariableNone: there must be an error when parse this variable.")
+    }
+
+    impl Display for XVariableType {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    XVariableType::XVariableArray(a) => a.to_string(),
+                    XVariableType::XVariableInt(i) => i.to_string(),
+                    XVariableType::XVariableTree(t) => t.to_string(),
+                    _ => {
+                        String::from(
+                            "XVariableNone: there must be an error when parse this variable.",
+                        )
+                    }
                 }
-            }
+            )
         }
     }
 }

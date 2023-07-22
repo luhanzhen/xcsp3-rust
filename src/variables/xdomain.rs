@@ -138,7 +138,7 @@ pub mod xcsp3_core {
 
     impl Display for XIntegerValue {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}", self.value.to_string())
+            write!(f, "{}", self.value)
         }
     }
 

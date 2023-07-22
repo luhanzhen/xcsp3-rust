@@ -39,16 +39,23 @@
  */
 
 pub mod xcsp3_core {
+    use std::fmt::{Display, Formatter};
+
     #[derive(Debug, Clone, PartialEq, Eq)]
     pub struct ParseConstraintError {
         pub msg: String,
         pub r#type: ConstraintError,
     }
 
-    impl ParseConstraintError {
-        pub(crate) fn to_string(&self) -> String {
-            format!("{:?}: {}", self.r#type, self.msg)
+    impl Display for ParseConstraintError {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{:?}: {}", self.r#type, self.msg)
         }
+    }
+    impl ParseConstraintError {
+        // pub(crate) fn to_string(&self) -> String {
+        //     format!("{:?}: {}", self.r#type, self.msg)
+        // }
 
         pub(crate) fn get_scope_not_found_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str = " please visit http://xcsp.org/specifications/constraints/";

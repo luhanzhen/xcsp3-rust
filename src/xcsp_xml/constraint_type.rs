@@ -43,7 +43,7 @@ pub mod xcsp3_xml {
     use crate::xcsp_xml::constraint_group::xcsp3_xml::ConstraintGroup;
     use serde::Deserialize;
 
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize, Debug, Default)]
     pub enum ConstraintType {
         /**
                   syntax.
@@ -831,12 +831,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "list", default)]
             list: Box<[String]>,
         },
+        #[default]
         ConstraintNone,
-    }
-
-    impl Default for ConstraintType {
-        fn default() -> Self {
-            ConstraintType::ConstraintNone
-        }
     }
 }
