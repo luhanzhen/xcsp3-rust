@@ -39,7 +39,7 @@
  */
 
 pub mod xcsp3_core {
-    use crate::constraints::xrelational_operator::xcsp3_core::Operator;
+    use crate::data_structs::xrelational_operator::xcsp3_core::Operator;
     use std::collections::HashSet;
     use std::str::FromStr;
 

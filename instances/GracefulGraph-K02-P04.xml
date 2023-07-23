@@ -1,0 +1,30 @@
+<instance format="XCSP3" type="CSP">
+  <variables>
+    <array id="cn" note="clique nodes" size="[4][2]"> 0..10 </array>
+    <array id="ce" note="clique edges" size="[4][2][2]"> 1..10 </array>
+    <array id="cie" note="clique inter-edges" size="[3][2]"> 1..10 </array>
+  </variables>
+  <constraints>
+    <group>
+      <intension> eq(%0,dist(%1,%2)) </intension>
+      <args> ce[0][0][1] cn[0][0] cn[0][1] </args>
+      <args> ce[1][0][1] cn[1][0] cn[1][1] </args>
+      <args> ce[2][0][1] cn[2][0] cn[2][1] </args>
+      <args> ce[3][0][1] cn[3][0] cn[3][1] </args>
+    </group>
+    <group>
+      <intension> eq(%0,dist(%1,%2)) </intension>
+      <args> cie[0][0] cn[0][0] cn[1][0] </args>
+      <args> cie[0][1] cn[0][1] cn[1][1] </args>
+      <args> cie[1][0] cn[1][0] cn[2][0] </args>
+      <args> cie[1][1] cn[1][1] cn[2][1] </args>
+      <args> cie[2][0] cn[2][0] cn[3][0] </args>
+      <args> cie[2][1] cn[2][1] cn[3][1] </args>
+    </group>
+    <group>
+      <allDifferent> %... </allDifferent>
+      <args> cn[][] </args>
+      <args> ce[][0][1] cie[0][] cie[1][] cie[2][] </args>
+    </group>
+  </constraints>
+</instance>

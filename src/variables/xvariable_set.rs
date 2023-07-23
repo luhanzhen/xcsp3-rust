@@ -72,7 +72,7 @@ pub mod xcsp3_core {
 
     impl XVariableSet {
         pub fn iter(&self) -> Iter<'_, XVariableType> {
-            return self.variables.iter();
+            self.variables.iter()
         }
 
         // pub fn to_string(&self) -> String {

@@ -41,6 +41,7 @@
 pub mod xcsp3_core {
     use crate::errors::parse_constraint_error::xcsp3_core::ParseConstraintError;
     use crate::errors::parse_domain_error::xcsp3_core::ParseDomainError;
+    use crate::errors::parse_objectives_error::xcsp3_core::ParseObjectivesError;
     use crate::errors::parse_variable_error::ParseVariableError;
     use std::fmt::{Display, Formatter};
 
@@ -49,6 +50,7 @@ pub mod xcsp3_core {
         ParseDomainError(ParseDomainError),
         ParseVariableError(ParseVariableError),
         ParseConstraintError(ParseConstraintError),
+        ParseObjectivesError(ParseObjectivesError),
     }
 
     impl Display for Xcsp3Error {
@@ -60,6 +62,7 @@ pub mod xcsp3_core {
                     Xcsp3Error::ParseDomainError(e) => e.to_string(),
                     Xcsp3Error::ParseVariableError(e) => e.to_string(),
                     Xcsp3Error::ParseConstraintError(e) => e.to_string(),
+                    Xcsp3Error::ParseObjectivesError(e) => e.to_string(),
                 }
             )
         }
@@ -67,6 +70,22 @@ pub mod xcsp3_core {
 
     /// error factory
     impl Xcsp3Error {
+        pub fn get_objective_scope_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_scope_error(s))
+        }
+
+        pub fn get_objective_coeffs_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_coeffs_error(s))
+        }
+
+        pub fn get_objective_type_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_type_error(s))
+        }
+
+        pub fn get_objective_target_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_target_error(s))
+        }
+
         pub fn get_constraint_sum_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_sum_error(s))
         }

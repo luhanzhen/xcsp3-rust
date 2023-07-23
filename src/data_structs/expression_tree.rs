@@ -42,7 +42,6 @@ pub mod xcsp3_utils {
     use std::str::FromStr;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::expression_tree::xcsp3_utils::Operator::*;
 
     #[derive(Debug, Clone)]
     pub enum Operator {
@@ -76,31 +75,31 @@ pub mod xcsp3_utils {
     impl Operator {
         pub fn get_operator_by_str(op: &str) -> Option<Self> {
             match op {
-                "add" => Some(Add),
-                "neg" => Some(Neg),
-                "abs" => Some(Abs),
-                "sub" => Some(Sub),
-                "mul" => Some(Mul),
-                "div" => Some(Div),
-                "mod" => Some(Mod),
-                "sqr" => Some(Sqr),
-                "pow" => Some(Pow),
-                "min" => Some(Min),
-                "max" => Some(Max),
-                "dist" => Some(Dist),
-                "lt" => Some(Lt),
-                "le" => Some(Le),
-                "ge" => Some(Ge),
-                "gt" => Some(Gt),
-                "ne" => Some(Ne),
-                "eq" => Some(Eq),
-                "and" => Some(And),
-                "not" => Some(Not),
-                "or" => Some(Or),
-                "xor" => Some(Xor),
-                "iff" => Some(Iff),
-                "imp" => Some(Imp),
-                "if" => Some(If),
+                "add" => Some(Operator::Add),
+                "neg" => Some(Operator::Neg),
+                "abs" => Some(Operator::Abs),
+                "sub" => Some(Operator::Sub),
+                "mul" => Some(Operator::Mul),
+                "div" => Some(Operator::Div),
+                "mod" => Some(Operator::Mod),
+                "sqr" => Some(Operator::Sqr),
+                "pow" => Some(Operator::Pow),
+                "min" => Some(Operator::Min),
+                "max" => Some(Operator::Max),
+                "dist" => Some(Operator::Dist),
+                "lt" => Some(Operator::Lt),
+                "le" => Some(Operator::Le),
+                "ge" => Some(Operator::Ge),
+                "gt" => Some(Operator::Gt),
+                "ne" => Some(Operator::Ne),
+                "eq" => Some(Operator::Eq),
+                "and" => Some(Operator::And),
+                "not" => Some(Operator::Not),
+                "or" => Some(Operator::Or),
+                "xor" => Some(Operator::Xor),
+                "iff" => Some(Operator::Iff),
+                "imp" => Some(Operator::Imp),
+                "if" => Some(Operator::If),
                 _ => None,
             }
         }

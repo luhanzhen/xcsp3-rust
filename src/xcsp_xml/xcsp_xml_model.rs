@@ -65,10 +65,11 @@ the SYNTAX of xcsp3 is as follows:
  */
 pub mod xcsp3_xml {
     use crate::constraints::xconstraint_set::xcsp3_core::XConstraintSet;
+    use crate::objectives::xobjectives_set::xcsp3_core::XObjectivesSet;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use crate::xcsp_xml::constraint::xcsp3_xml::Constraint;
     use crate::xcsp_xml::constraint_type::xcsp3_xml::ConstraintType;
-    use crate::xcsp_xml::objective::xcsp3_xml::{Objective};
+    use crate::xcsp_xml::objective::xcsp3_xml::Objective;
     use crate::xcsp_xml::variable::xcsp3_xml::Variable;
     use crate::xcsp_xml::variable_type::xcsp3_xml::VariableType;
     use quick_xml::de::from_str;
@@ -84,7 +85,6 @@ pub mod xcsp3_xml {
         #[serde(rename = "COP")]
         Cop,
     }
-
 
     /// the instance of XCSP3
     #[derive(Deserialize)]
@@ -110,8 +110,17 @@ pub mod xcsp3_xml {
         //     (v,c)
         // }
 
-        pub fn build_objectives(&self) {
-            println!("{:?}", self.objectives)
+        pub fn build_objectives(&self) -> XObjectivesSet {
+            let object = XObjectivesSet::default();
+            println!("{:?}", self.objectives);
+            if let Some(oo) = &self.objectives {
+                for e in oo.maximize.iter() {
+                    // object.build_max(e.list,e.coeffs,e.value,e.r#type)
+                }
+                for e in oo.minimize.iter() {}
+            }
+
+            object
         }
 
         /// read the instance from the xml file

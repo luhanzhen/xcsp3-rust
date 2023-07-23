@@ -24,33 +24,58 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:54
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: xcsp3-rust
+ * </p>
+ * <p>@author: luhan zhen
+ * </p>
+ * <p>@date:  2023/7/23 15:13
+ * </p>
+ * <p>@email: zhenlh20@mails.jlu.edu.cn
+ * </p>
+ * <p>@version: 1.0
+ * </p>
+ * <p>@description:
+ * </p>
  */
 
 pub mod xcsp3_core {
 
-    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
-    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
-    use std::fmt::Display;
+    #[derive(Clone, Debug)]
+    pub enum XObjectivesType {
+        Minimize,
+        Maximize,
+    }
+    impl XObjectivesType {
+        pub fn get_objectives_type_by_str(op: &str) -> Option<Self> {
+            match op {
+                "minimize" => Some(Self::Minimize),
+                "maximize" => Some(Self::Maximize),
+                _ => None,
+            }
+        }
+    }
 
-    pub trait XConstraintTrait: Display {
-        // fn to_string(&self) -> String;
+    #[derive(Clone, Debug)]
+    pub enum XObjectivesOperator {
+        Sum,
+        Product,
+        Minimum,
+        Maximum,
+        NValues,
+        Lex,
+    }
 
-        ///get the scope string of constraint
-        fn get_scope_string(&self) -> &Vec<XVarVal>;
-
-        ///get the scope string of constraint
-        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)>;
+    impl XObjectivesOperator {
+        pub fn get_objectives_operator_by_str(op: &str) -> Option<Self> {
+            match op {
+                "Sum" => Some(Self::Sum),
+                "Product" => Some(Self::Product),
+                "minimize" => Some(Self::Minimum),
+                "maximize" => Some(Self::Maximum),
+                "nValues" => Some(Self::NValues),
+                "lex" => Some(Self::Lex),
+                _ => None,
+            }
+        }
     }
 }

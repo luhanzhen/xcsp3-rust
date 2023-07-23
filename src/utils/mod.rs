@@ -38,7 +38,5 @@
 * </p>
  **/
 
-pub mod bitset;
-pub mod expression_tree;
 pub mod time_interval;
 pub mod utils_functions;

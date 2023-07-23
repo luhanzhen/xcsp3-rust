@@ -1,0 +1,39 @@
+<instance format="XCSP3" type="CSP">
+  <variables>
+    <array id="x" size="[3][3]"> 0..2 </array>
+    <array id="y" size="[3][3]"> 0..2 </array>
+    <array id="z" size="[9]"> 0..8 </array>
+  </variables>
+  <constraints>
+    <allDifferent>
+      <matrix> x[][] </matrix>
+    </allDifferent>
+    <allDifferent>
+      <matrix> y[][] </matrix>
+    </allDifferent>
+    <allDifferent> z[] </allDifferent>
+    <group>
+      <extension>
+        <list> %0 %1 %2 </list>
+        <supports> (0,0,0)(0,1,1)(0,2,2)(1,0,3)(1,1,4)(1,2,5)(2,0,6)(2,1,7)(2,2,8) </supports>
+      </extension>
+      <args> x[0][0] y[0][0] z[0] </args>
+      <args> x[0][1] y[0][1] z[1] </args>
+      <args> x[0][2] y[0][2] z[2] </args>
+      <args> x[1][0] y[1][0] z[3] </args>
+      <args> x[1][1] y[1][1] z[4] </args>
+      <args> x[1][2] y[1][2] z[5] </args>
+      <args> x[2][0] y[2][0] z[6] </args>
+      <args> x[2][1] y[2][1] z[7] </args>
+      <args> x[2][2] y[2][2] z[8] </args>
+    </group>
+    <instantiation class="symmetryBreaking">
+      <list> x[0][] </list>
+      <values> 0 1 2 </values>
+    </instantiation>
+    <instantiation class="symmetryBreaking">
+      <list> y[0][] </list>
+      <values> 0 1 2 </values>
+    </instantiation>
+  </constraints>
+</instance>

@@ -45,13 +45,14 @@ pub mod xcsp3_core {
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
-    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
+
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xsum::xcsp3_core::XSum;
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::{Iter, IterMut};

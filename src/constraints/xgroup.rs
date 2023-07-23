@@ -40,7 +40,7 @@
 
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
-    use crate::constraints::xint_val_var::xcsp3_core::XVarVal;
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;

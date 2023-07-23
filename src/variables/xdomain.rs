@@ -42,8 +42,6 @@ pub mod xcsp3_core {
     use std::fmt::{Display, Formatter};
     use std::str::FromStr;
 
-
-
     #[derive(Clone)]
     pub enum XIntegerType {
         XIntegerNone,
@@ -180,7 +178,7 @@ pub mod xcsp3_core {
             XIntegerSymbolic { symbolic, values }
         }
 
-        pub fn find_symbolic(&self, sym: &str)->usize {
+        pub fn find_symbolic(&self, sym: &str) -> usize {
             for i in 0..self.symbolic.len() {
                 if self.symbolic[i] == sym {
                     return i;
@@ -288,23 +286,20 @@ pub mod xcsp3_core {
 
         pub fn contain_symbol(&self) -> bool {
             for e in self.values.iter() {
-                if let XIntegerType::XIntegerSymbolic(_) = e
-                {
+                if let XIntegerType::XIntegerSymbolic(_) = e {
                     return true;
                 }
             }
             false
         }
 
-        pub fn find_symbolic(&self, sym: &str)->usize {
+        pub fn find_symbolic(&self, sym: &str) -> usize {
             for e in self.values.iter() {
-                if let XIntegerType::XIntegerSymbolic(symbol) = e
-                {
-                    let r =  symbol.find_symbolic(sym);
-                     if r != usize::MAX
-                     {
-                         return r;
-                     }
+                if let XIntegerType::XIntegerSymbolic(symbol) = e {
+                    let r = symbol.find_symbolic(sym);
+                    if r != usize::MAX {
+                        return r;
+                    }
                 }
             }
             usize::MAX

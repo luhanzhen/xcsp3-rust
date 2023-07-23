@@ -24,33 +24,40 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/14 18:54
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: xcsp3-rust
+ * </p>
+ * <p>@author: luhan zhen
+ * </p>
+ * <p>@date:  2023/7/23 15:11
+ * </p>
+ * <p>@email: zhenlh20@mails.jlu.edu.cn
+ * </p>
+ * <p>@version: 1.0
+ * </p>
+ * <p>@description:
+ * </p>
  */
 
 pub mod xcsp3_core {
+    use crate::objectives::xobjective_target::xcsp3_core::XObjectiveTarget;
+    use std::slice::Iter;
 
-    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
-    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
-    use std::fmt::Display;
+    pub struct XObjectivesSet {
+        objectives: Vec<XObjectiveTarget>,
+    }
 
-    pub trait XConstraintTrait: Display {
-        // fn to_string(&self) -> String;
+    impl Default for XObjectivesSet {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
 
-        ///get the scope string of constraint
-        fn get_scope_string(&self) -> &Vec<XVarVal>;
-
-        ///get the scope string of constraint
-        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)>;
+    impl XObjectivesSet {
+        pub fn iter(&self) -> Iter<'_, XObjectiveTarget> {
+            self.objectives.iter()
+        }
+        pub fn new() -> Self {
+            Self { objectives: vec![] }
+        }
     }
 }

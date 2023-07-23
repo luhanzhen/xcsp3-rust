@@ -75,7 +75,7 @@ pub mod xcsp3_xml {
         #[serde(rename = "coeffs", default)]
         pub coeffs: String,
         #[serde(rename = "$value", default)]
-        pub value: String,
+        pub expression: String,
     }
 
     /**
@@ -84,6 +84,12 @@ pub mod xcsp3_xml {
       (<minimize.../> | <maximize.../>)+
     </objectives>
     ````
+    or
+      ```xml
+    <minimize  [ id="identifier" ]  [ type="expression" ]>
+      intExpr
+    </minimize>
+     ````
     */
     #[derive(Deserialize, Debug)]
     pub struct Objective {
@@ -92,6 +98,4 @@ pub mod xcsp3_xml {
         #[serde(rename = "maximize", default)]
         pub maximize: Vec<MaximizeMinimize>,
     }
-
-
 }

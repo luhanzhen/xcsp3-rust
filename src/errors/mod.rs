@@ -42,4 +42,5 @@ pub mod xcsp3error;
 
 mod parse_constraint_error;
 mod parse_domain_error;
+mod parse_objectives_error;
 mod parse_variable_error;

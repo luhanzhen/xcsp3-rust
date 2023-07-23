@@ -36,6 +36,7 @@
  * </p>
  */
 
+#[allow(dead_code)]
 pub mod xcsp3_utils {
 
     #[derive(Clone)]
