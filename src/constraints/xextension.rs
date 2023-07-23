@@ -113,7 +113,7 @@ pub mod xcsp3_core {
             // let tt= TimeInterval::new();
             let a = match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
-                    match tuple_to_vector(tuple, !list.contains("..") && scope_vec_str.len() == 1) {
+                    match tuple_to_vector(tuple,  ! tuple.contains('(')) {
                         Ok(tuples) => Ok(XExtension::new(scope_vec_str, set, tuples, is_support)),
                         Err(e) => Err(e),
                     }
