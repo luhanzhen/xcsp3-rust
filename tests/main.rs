@@ -1,4 +1,5 @@
 use walkdir::WalkDir;
+
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
@@ -19,10 +20,9 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
-
 fn main() {
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
@@ -46,9 +46,9 @@ fn test_single() {
 fn test_all() {
     let start = TimeInterval::new();
     let aa = WalkDir::new("./instances")
-    // let aa = WalkDir::new("D://XCSP3")
-    // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
-    // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
+        // let aa = WalkDir::new("D://XCSP3")
+        // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
+        // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
         // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
         // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
