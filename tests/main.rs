@@ -39,23 +39,6 @@ fn test_single() {
     println!("constraints:");
     for c in model.build_constraints(&variable).iter_mut() {
         println!("\t{}", c);
-        // match c{
-        //     XConstraintType::XConstraintNone(_) => {}
-        //     XConstraintType::XExtension(_) => {}
-        //     XConstraintType::XAllDifferent(_) => {}
-        //     XConstraintType::XAllDifferentExcept(_) => {}
-        //     XConstraintType::XInstantiation(_) => {}
-        //     XConstraintType::XAllEqual(_) => {}
-        //     XConstraintType::XOrdered(x) => {let r = x.get_scope();
-        //     println!("{},{}",r[0].0,r[0].1.to_string());}
-        //     XConstraintType::XRegular(_) => {}
-        //     XConstraintType::XMdd(_) => {}
-        //     XConstraintType::XIntention(_) => {}
-        //     XConstraintType::XGroup(_) => {}
-        //     XConstraintType::XSum(_) => {}
-        //     XConstraintType::XMaximum(_) => {}
-        //     XConstraintType::XMinimum(_) => {}
-        // }
     }
     for o in model.build_objectives().iter() {}
 }
