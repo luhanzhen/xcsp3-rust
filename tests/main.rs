@@ -19,32 +19,8 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
+
 fn main() {
-    // let tree = ExpressionTree::from_str("eq( add(%0 ,mul(1, %2,x[3][4][2]), %4 ), %5 )");
-    //
-    // // for e in tree.unwrap().first_order_iter() {
-    // //     print!("{:?}", e.to_string());
-    // // }
-    // // print!("\n");
-    // println!("tree = {}", tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(add(%0,%1),%2)");
-    // // for e in tree.unwrap().first_order_iter() {
-    // //     print!("{:?}", e.to_string());
-    // // }
-    // // print!("\n");
-    // println!("tree = {}", tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(add(x,y),z)");
-    // // for e in tree.unwrap().first_order_iter() {
-    // //     print!("{:?}", e.to_string());
-    // // }
-    // // print!("\n");
-    // println!("tree = {}", tree.unwrap().to_string());
-    // let tree = ExpressionTree::from_str("eq(%0,dist(%1, and(1,2,3,x[4])))");
-    // // for e in tree.unwrap().first_order_iter() {
-    // //     print!("{:?}", e.to_string());
-    // // }
-    // // print!("\n");
-    // println!("tree = {}", tree.unwrap().to_string());
     // test_single();
     test_all();
 }
