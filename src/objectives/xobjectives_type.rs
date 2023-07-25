@@ -39,21 +39,65 @@
  */
 
 pub mod xcsp3_core {
+    use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
+    use crate::objectives::xobjective_target::xcsp3_core::XObjectiveElement;
+    use std::fmt::{Display, Formatter};
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone)]
     pub enum XObjectivesType {
-        Minimize,
-        Maximize,
+        Minimize(XObjective),
+        Maximize(XObjective),
     }
-    impl XObjectivesType {
-        pub fn get_objectives_type_by_str(op: &str) -> Option<Self> {
-            match op {
-                "minimize" => Some(Self::Minimize),
-                "maximize" => Some(Self::Maximize),
-                _ => None,
-            }
+
+    impl Display for XObjectivesType {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    XObjectivesType::Minimize(o) => {
+                        format!("Minimize: {}", o.to_string())
+                    }
+                    XObjectivesType::Maximize(o) => {
+                        format!("Maximize: {}", o.to_string())
+                    }
+                }
+            )
         }
     }
+
+    #[derive(Clone)]
+    pub enum XObjective {
+        XObjectiveElement(XObjectiveElement),
+        Expression(ExpressionTree),
+    }
+
+    impl Display for XObjective {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{}",
+                match self {
+                    XObjective::XObjectiveElement(e) => {
+                        e.to_string()
+                    }
+                    XObjective::Expression(e) => {
+                        e.to_string()
+                    }
+                }
+            )
+        }
+    }
+
+    // impl XObjectivesType {
+    //     pub fn get_objectives_type_by_str(op: &str) -> Option<Self> {
+    //         match op {
+    //             "minimize" => Some(Self::Minimize),
+    //             "maximize" => Some(Self::Maximize),
+    //             _ => None,
+    //         }
+    //     }
+    // }
 
     #[derive(Clone, Debug)]
     pub enum XObjectivesOperator {

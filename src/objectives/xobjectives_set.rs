@@ -39,11 +39,12 @@
  */
 
 pub mod xcsp3_core {
-    use crate::objectives::xobjective_target::xcsp3_core::XObjectiveTarget;
+
+    use crate::objectives::xobjectives_type::xcsp3_core::XObjectivesType;
     use std::slice::Iter;
 
     pub struct XObjectivesSet {
-        objectives: Vec<XObjectiveTarget>,
+        objectives: Vec<XObjectivesType>,
     }
 
     impl Default for XObjectivesSet {
@@ -53,7 +54,11 @@ pub mod xcsp3_core {
     }
 
     impl XObjectivesSet {
-        pub fn iter(&self) -> Iter<'_, XObjectiveTarget> {
+        pub fn build_expression(&self, expression: &str) {}
+
+        pub fn build_() {}
+
+        pub fn iter(&self) -> Iter<'_, XObjectivesType> {
             self.objectives.iter()
         }
         pub fn new() -> Self {

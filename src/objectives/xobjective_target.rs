@@ -44,23 +44,23 @@ pub mod xcsp3_core {
     use crate::objectives::xobjectives_type::xcsp3_core::*;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Clone)]
-    pub struct XObjectiveTarget {
-        target: XObjectivesType,
+    #[derive(Clone, Debug)]
+    pub struct XObjectiveElement {
+        // target: XObjectivesType,
         operator: XObjectivesOperator,
         scope: Vec<XVarVal>,
         coeffs: Vec<XVarVal>,
     }
 
-    impl XObjectiveTarget {
+    impl XObjectiveElement {
         pub fn new(
-            target: XObjectivesType,
+            // target: XObjectivesType,
             operator: XObjectivesOperator,
             scope: Vec<XVarVal>,
             coeffs: Vec<XVarVal>,
         ) -> Self {
             Self {
-                target,
+                // target,
                 operator,
                 scope,
                 coeffs,
@@ -71,9 +71,9 @@ pub mod xcsp3_core {
             Err(Xcsp3Error::get_objective_target_error("e"))
         }
 
-        pub fn target(&self) -> &XObjectivesType {
-            &self.target
-        }
+        // pub fn target(&self) -> &XObjectivesType {
+        //     &self.target
+        // }
         pub fn operator(&self) -> &XObjectivesOperator {
             &self.operator
         }
@@ -85,7 +85,7 @@ pub mod xcsp3_core {
         }
     }
 
-    impl Display for XObjectiveTarget {
+    impl Display for XObjectiveElement {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret1 = String::default();
             for e in self.scope.iter() {
@@ -101,8 +101,8 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "XObjective: target = {:?}, operator = {:?} scope =  {}, coeffs = {}",
-                self.target, self.operator, ret1, ret2
+                "XObjective:  operator = {:?} scope =  {}, coeffs = {}",
+                self.operator, ret1, ret2
             )
         }
     }
