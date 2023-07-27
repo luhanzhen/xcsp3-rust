@@ -1,3 +1,4 @@
+use bitmaps::Bitmap;
 use walkdir::WalkDir;
 
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
@@ -21,7 +22,10 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  **/
 
 fn main() {
-    test_single();
+    let mut e: Bitmap<100> = Bitmap::new();
+    e.set(3, true);
+    println!("{:?}", e);
+    // test_single();
     // test_all();
 }
 
