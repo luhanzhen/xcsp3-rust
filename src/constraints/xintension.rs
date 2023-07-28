@@ -75,19 +75,6 @@ pub mod xcsp3_core {
     }
 
     impl XConstraintTrait for XIntention<'_> {
-        // fn to_string(&self) -> String {
-        //     let mut ret = "XIntention: scope =  ".to_string();
-        //     for e in self.scope_vec_var.iter() {
-        //         ret.push_str(e.0.as_str());
-        //         ret.push('(');
-        //         ret.push_str(e.1.to_string().as_str());
-        //         ret.push_str("), ")
-        //     }
-        //
-        //     ret.push_str(&format!("expression = {:?}", self.tree.to_string(),));
-        //     ret
-        // }
-
         fn get_scope_string(&self) -> &Vec<XVarVal> {
             &self.scope
         }
@@ -125,16 +112,15 @@ pub mod xcsp3_core {
                 Ok(tree) => {
                     let mut scope: Vec<XVarVal> = vec![];
                     for e in tree.get_scope() {
-                        let r = set.find_variable(&e);
-                        match r {
-                            Ok(r) => {
-                                println!("{}", r);
+                        match set.find_variable(&e) {
+                            Ok(_) => {
+                                // println!("{}", r);
+                                scope.push(XVarVal::IntVar(e))
                             }
                             Err(err) => {
-                                println!("{}, {}", e, err)
+                                return Err(err);
                             }
                         }
-                        scope.push(XVarVal::IntVar(e))
                     }
                     Ok(Self::new(scope, set, tree))
                 }

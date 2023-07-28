@@ -28,7 +28,7 @@
  * </p>
  * <p>@author: luhan zhen
  * </p>
- * <p>@date:  2023/7/23 15:11
+ * <p>@date:  2023/7/23 15:36
  * </p>
  * <p>@email: zhenlh20@mails.jlu.edu.cn
  * </p>
@@ -39,43 +39,34 @@
  */
 
 pub mod xcsp3_core {
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
+    use std::f32::consts::E;
 
     use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
-    use crate::objectives::xobjectives_type::xcsp3_core::XObjectivesType;
-    use std::slice::Iter;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use std::fmt::{Display, Formatter};
 
-    pub struct XObjectivesSet {
-        objectives: Vec<XObjectivesType>,
+    #[derive(Clone)]
+    pub struct XObjectiveExpression {
+        // target: XObjectivesType,
+        expression: ExpressionTree,
+        scope: Vec<XVarVal>,
     }
 
-    impl Default for XObjectivesSet {
-        fn default() -> Self {
-            Self::new()
+    impl Display for XObjectiveExpression {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(f, "",)
         }
     }
-
-    impl XObjectivesSet {
-        pub fn build_max(&mut self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
-            // println!("{} {} {} {}", list, coeffs, expression, type_str);
-            if !expression.is_empty() {
-                match ExpressionTree::from_string(expression) {
-                    Ok(tree) => {
-                        // self.objectives.push(XObjectivesType::Maximize());
-                    }
-                    Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
-                }
-            }
-        }
-
-        pub fn build_min(&self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
-            println!("{} {} {} {}", list, coeffs, expression, type_str)
-        }
-
-        pub fn iter(&self) -> Iter<'_, XObjectivesType> {
-            self.objectives.iter()
-        }
-        pub fn new() -> Self {
-            Self { objectives: vec![] }
+    impl XObjectiveExpression {
+        // pub fn from_expr(expr: &str) -> Result<Self, Xcsp3Error> {
+        //     // match ExpressionTree::from_string(expr) {
+        //         // Ok(tree) => Ok(Self::new(tree,  )),
+        //         // Err(e) => Err(e),
+        //     // }
+        // }
+        pub fn new(expression: ExpressionTree, scope: Vec<XVarVal>) -> Self {
+            Self { expression, scope }
         }
     }
 }

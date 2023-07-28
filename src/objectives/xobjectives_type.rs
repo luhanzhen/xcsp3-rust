@@ -39,10 +39,10 @@
  */
 
 pub mod xcsp3_core {
-    use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
-    use crate::objectives::xobjective_target::xcsp3_core::XObjectiveElement;
-    use std::fmt::{Display, Formatter};
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::objectives::xobjective_element::xcsp3_core::XObjectiveElement;
+    use crate::objectives::xobjective_expression::xcsp3_core::XObjectiveExpression;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
     pub enum XObjectivesType {
@@ -74,7 +74,7 @@ pub mod xcsp3_core {
     #[derive(Clone)]
     pub enum XObjective {
         XObjectiveElement(XObjectiveElement),
-        Expression(ExpressionTree),
+        XObjectiveExpression(XObjectiveExpression),
     }
 
     impl Display for XObjective {
@@ -86,7 +86,7 @@ pub mod xcsp3_core {
                     XObjective::XObjectiveElement(e) => {
                         e.to_string()
                     }
-                    XObjective::Expression(e) => {
+                    XObjective::XObjectiveExpression(e) => {
                         e.to_string()
                     }
                 }

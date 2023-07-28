@@ -39,8 +39,8 @@
  */
 
 pub mod xcsp3_xml {
-    use std::fmt::{Display, Formatter};
     use serde::Deserialize;
+    use std::fmt::{Display, Formatter};
 
     #[derive(Deserialize, Debug)]
     pub enum ObjectiveTarget {
@@ -58,15 +58,14 @@ pub mod xcsp3_xml {
         Lex,
         None,
     }
-    impl  Display for ObjectiveTarget
-    {
+    impl Display for ObjectiveTarget {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-             write!(f,"{:?}", &self)
+            write!(f, "{:?}", &self)
         }
     }
     impl Default for ObjectiveTarget {
         fn default() -> Self {
-             Self::None
+            Self::None
         }
     }
     /**

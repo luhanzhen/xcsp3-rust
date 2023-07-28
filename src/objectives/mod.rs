@@ -62,6 +62,7 @@
  * </p>
  */
 
-mod xobjective_target;
+mod xobjective_element;
+mod xobjective_expression;
 pub mod xobjectives_set;
 mod xobjectives_type;

@@ -1,6 +1,4 @@
-use bitmaps::Bitmap;
 use walkdir::WalkDir;
-
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
@@ -44,8 +42,9 @@ fn test_single() {
     for c in model.build_constraints(&variable).iter_mut() {
         println!("\t{}", c);
     }
+    println!("objectives:");
     for o in model.build_objectives().iter() {
-
+        println!("\t{}", o);
     }
 }
 

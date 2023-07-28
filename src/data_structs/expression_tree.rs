@@ -38,10 +38,12 @@
  * </p>
  */
 pub mod xcsp3_utils {
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use std::fmt::{Display, Formatter};
     use std::str::FromStr;
 
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
     #[derive(Debug, Clone)]
     pub enum Operator {
@@ -190,6 +192,25 @@ pub mod xcsp3_utils {
             }
             scope
         }
+        pub fn get(self, set: &XVariableSet) -> Vec<XVarVal> {
+            let mut scope: Vec<XVarVal> = vec![];
+            for e in self.first_order_iter() {
+                if let TreeNode::Variable(v) = e {
+                    let r = set.find_variable(v);
+                    match r {
+                        Ok(r) => {
+                            println!("{}", r);
+                            scope.push(XVarVal::IntVar(v.to_string()))
+                        }
+                        Err(err) => {
+                            println!("{}, {}", e, err)
+                        }
+                    }
+                }
+            }
+            scope
+        }
+
         //
         // pub fn to_string(&self) -> String {
         //     let mut ret = String::new();

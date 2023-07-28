@@ -47,7 +47,6 @@ pub mod xcsp3_core {
 
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::time_interval::xcsp3_utils::TimeInterval;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
 
@@ -112,12 +111,10 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             // let tt= TimeInterval::new();
             let a = match list_to_vec_var_val(list) {
-                Ok(scope_vec_str) => {
-                    match tuple_to_vector(tuple,  ! tuple.contains('(')) {
-                        Ok(tuples) => Ok(XExtension::new(scope_vec_str, set, tuples, is_support)),
-                        Err(e) => Err(e),
-                    }
-                }
+                Ok(scope_vec_str) => match tuple_to_vector(tuple, !tuple.contains('(')) {
+                    Ok(tuples) => Ok(XExtension::new(scope_vec_str, set, tuples, is_support)),
+                    Err(e) => Err(e),
+                },
                 Err(e) => Err(e),
             };
             // println!("{:?}",tt.get());
