@@ -39,6 +39,7 @@
  */
 
 pub mod xcsp3_xml {
+    use std::fmt::{Display, Formatter};
     use serde::Deserialize;
 
     #[derive(Deserialize, Debug)]
@@ -55,8 +56,19 @@ pub mod xcsp3_xml {
         Nvalues,
         #[serde(rename = "lex")]
         Lex,
+        None,
     }
-
+    impl  Display for ObjectiveTarget
+    {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+             write!(f,"{:?}", &self)
+        }
+    }
+    impl Default for ObjectiveTarget {
+        fn default() -> Self {
+             Self::None
+        }
+    }
     /**
     ```xml
     <minimize or maximize [ id="identifier" ]  [ type="expression" ]>
@@ -68,8 +80,8 @@ pub mod xcsp3_xml {
     pub struct MaximizeMinimize {
         #[serde(rename = "id", default)]
         pub id: String,
-        #[serde(rename = "type")]
-        pub r#type: Option<ObjectiveTarget>,
+        #[serde(rename = "type", default)]
+        pub r#type: ObjectiveTarget,
         #[serde(rename = "list", default)]
         pub list: String,
         #[serde(rename = "coeffs", default)]

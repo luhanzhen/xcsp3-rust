@@ -42,9 +42,11 @@ pub mod xcsp3_core {
     use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
     use crate::objectives::xobjective_target::xcsp3_core::XObjectiveElement;
     use std::fmt::{Display, Formatter};
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
 
     #[derive(Clone)]
     pub enum XObjectivesType {
+        XObjectiveNone(Xcsp3Error),
         Minimize(XObjective),
         Maximize(XObjective),
     }
@@ -61,6 +63,9 @@ pub mod xcsp3_core {
                     XObjectivesType::Maximize(o) => {
                         format!("Maximize: {}", o.to_string())
                     }
+                    XObjectivesType::XObjectiveNone(e) =>  format!(
+                        "XObjectiveNone: there must be an error when parse this objective. Error is {}",e
+                    ),
                 }
             )
         }

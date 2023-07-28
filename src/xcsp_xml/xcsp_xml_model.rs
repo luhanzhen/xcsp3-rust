@@ -112,12 +112,14 @@ pub mod xcsp3_xml {
 
         pub fn build_objectives(&self) -> XObjectivesSet {
             let object = XObjectivesSet::default();
-            println!("{:?}", self.objectives);
+            // println!("{:?}", self.objectives);
             if let Some(oo) = &self.objectives {
                 for e in oo.maximize.iter() {
-                    // object.build_max(e.list,e.coeffs,e.value,e.r#type)
+                    object.build_max(&e.list,&e.coeffs,&e.expression,&e.r#type.to_string())
                 }
-                for e in oo.minimize.iter() {}
+                for e in oo.minimize.iter() {
+                    object.build_min(&e.list,&e.coeffs,&e.expression,&e.r#type.to_string())
+                }
             }
 
             object

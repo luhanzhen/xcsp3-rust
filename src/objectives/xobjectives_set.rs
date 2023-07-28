@@ -54,9 +54,19 @@ pub mod xcsp3_core {
     }
 
     impl XObjectivesSet {
-        pub fn build_expression(&self, expression: &str) {}
+        pub fn build_expression(&self, expression: &str) {
 
-        pub fn build_() {}
+        }
+
+        pub fn build_max(&self,list :&str,coeffs:&str,expression:&str,type_str: &str) {
+            println!("{} {} {} {}",list,coeffs,expression,type_str)
+
+        }
+
+        pub fn build_min(&self,list :&str,coeffs:&str,expression:&str,type_str: &str)  {
+            println!("{} {} {} {}",list,coeffs,expression,type_str)
+
+        }
 
         pub fn iter(&self) -> Iter<'_, XObjectivesType> {
             self.objectives.iter()

@@ -22,10 +22,10 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
  **/
 
 fn main() {
-    let mut e: Bitmap<100> = Bitmap::new();
-    e.set(3, true);
-    println!("{:?}", e);
-    // test_single();
+    // let mut e: Bitmap<100> = Bitmap::new();
+    // e.set(3, true);
+    // println!("{:?}", e);
+    test_single();
     // test_all();
 }
 
@@ -44,7 +44,9 @@ fn test_single() {
     for c in model.build_constraints(&variable).iter_mut() {
         println!("\t{}", c);
     }
-    for o in model.build_objectives().iter() {}
+    for o in model.build_objectives().iter() {
+
+    }
 }
 
 fn test_all() {
