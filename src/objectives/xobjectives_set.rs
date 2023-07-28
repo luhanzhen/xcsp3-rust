@@ -41,8 +41,10 @@
 pub mod xcsp3_core {
 
     use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
-    use crate::objectives::xobjectives_type::xcsp3_core::XObjectivesType;
+    use crate::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
     use std::slice::Iter;
+    use crate::objectives::xobjective_expression::xcsp3_core::XObjectiveExpression;
+
 
     pub struct XObjectivesSet {
         objectives: Vec<XObjectivesType>,
@@ -58,18 +60,27 @@ pub mod xcsp3_core {
         pub fn build_max(&mut self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
             // println!("{} {} {} {}", list, coeffs, expression, type_str);
             if !expression.is_empty() {
-                match ExpressionTree::from_string(expression) {
-                    Ok(tree) => {
-                        // self.objectives.push(XObjectivesType::Maximize());
+                match XObjectiveExpression::from_expr(expression) {
+                    Ok(xoe) => {
+                        self.objectives.push(XObjectivesType::Maximize(XObjective::XObjectiveExpression(xoe)));
                     }
                     Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
                 }
             }
         }
 
-        pub fn build_min(&self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
-            println!("{} {} {} {}", list, coeffs, expression, type_str)
+        pub fn build_min(&mut self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
+            // println!("{} {} {} {}", list, coeffs, expression, type_str)
+               if !expression.is_empty() {
+                match XObjectiveExpression::from_expr(expression) {
+                    Ok(xoe) => {
+                        self.objectives.push(XObjectivesType::Minimize(XObjective::XObjectiveExpression(xoe)));
+                    }
+                    Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
+                }
+            }
         }
+
 
         pub fn iter(&self) -> Iter<'_, XObjectivesType> {
             self.objectives.iter()

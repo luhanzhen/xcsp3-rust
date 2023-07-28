@@ -55,16 +55,16 @@ pub mod xcsp3_core {
 
     impl Display for XObjectiveExpression {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "",)
+            write!(f, "{}",self.expression.to_string())
         }
     }
     impl XObjectiveExpression {
-        // pub fn from_expr(expr: &str) -> Result<Self, Xcsp3Error> {
-        //     // match ExpressionTree::from_string(expr) {
-        //         // Ok(tree) => Ok(Self::new(tree,  )),
-        //         // Err(e) => Err(e),
-        //     // }
-        // }
+        pub fn from_expr(expr: &str) -> Result<Self, Xcsp3Error> {
+            match ExpressionTree::from_string(expr) {
+                Ok(tree) => Ok(Self::new(tree, vec![])),
+                Err(e) => Err(e),
+            }
+        }
         pub fn new(expression: ExpressionTree, scope: Vec<XVarVal>) -> Self {
             Self { expression, scope }
         }
