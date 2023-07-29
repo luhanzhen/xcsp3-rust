@@ -138,20 +138,62 @@ pub mod xcsp3_utils {
     /// return the transitions,
     /// eg  "(a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)" -> vec[ (a,0,a),(a,1,b),(b,1,c),(c,0,d),(d,0,d),(d,1,e),(e,0,e)]
     pub fn list_to_transitions(list: &str) -> Result<Vec<(String, i32, String)>, Xcsp3Error> {
+        // let mut ret: Vec<(String, i32, String)> = Vec::new();
+        // let list = list.to_string().replace(')', "@").replace('(', " ");
+        // let lists: Vec<&str> = list.split('@').collect();
+        // for e in lists.iter() {
+        //     if !e.is_empty() {
+        //         let tran_str = e.to_string().replace(',', " ");
+        //         let tran: Vec<&str> = tran_str.split_whitespace().collect();
+        //         match i32::from_str(tran[1]) {
+        //             Ok(n) => ret.push((tran[0].to_string(), n, tran[2].to_string())),
+        //             Err(_) => {
+        //                 return Err(Xcsp3Error::get_constraint_regular_transitions_error(
+        //                     "parse the transitions error, ",
+        //                 ));
+        //             }
+        //         }
+        //     }
+        // }
+        // Ok(ret)
         let mut ret: Vec<(String, i32, String)> = Vec::new();
-        let list = list.to_string().replace(')', "@").replace('(', " ");
-        let lists: Vec<&str> = list.split('@').collect();
-        for e in lists.iter() {
-            if !e.is_empty() {
-                let tran_str = e.to_string().replace(',', " ");
-                let tran: Vec<&str> = tran_str.split_whitespace().collect();
-                match i32::from_str(tran[1]) {
-                    Ok(n) => ret.push((tran[0].to_string(), n, tran[2].to_string())),
+        let chars = list.chars();
+
+        // let mut tt: Vec<i32> = vec![];
+        // let mut n: usize = 0;
+        if let Some(left) = list.find('(') {
+            if let Some(right) = list.find(')') {
+                ret.reserve(list.len() / (right - left));
+                // n = (right - left - 1) / 2;
+            }
+        }
+
+        let mut last = usize::MAX;
+        let mut last_comma1 = usize::MAX;
+        let mut last_comma2 = usize::MAX;
+        for (i, x) in chars.enumerate() {
+            if x == '(' {
+                last = i;
+            } else if x == ')' {
+                // println!("{}",&tuple_str[last+1..i]);
+                match i32::from_str(&list[last_comma1 + 1..last_comma2]) {
+                    Ok(num) => ret.push((
+                        list[last + 1..last_comma1].to_string(),
+                        num,
+                        list[last_comma2 + 1..i].to_string(),
+                    )),
                     Err(_) => {
                         return Err(Xcsp3Error::get_constraint_regular_transitions_error(
                             "parse the transitions error, ",
                         ));
                     }
+                }
+                last_comma1 = usize::MAX;
+            } else if x == ',' {
+                if last_comma1 == usize::MAX {
+                    last_comma1 = i;
+                } else {
+                    last_comma2 = i;
                 }
             }
         }
@@ -293,7 +335,7 @@ pub mod xcsp3_utils {
                         }
                         Err(_) => {
                             if &tuple_str[last + 1..i] == "*" {
-                                tt.push(2_147_483_647i32);
+                                tt.push(i32::MAX);
                             } else {
                                 return Err(err);
                             }
@@ -308,7 +350,7 @@ pub mod xcsp3_utils {
                         }
                         Err(_) => {
                             if &tuple_str[last + 1..i] == "*" {
-                                tt.push(2_147_483_647i32);
+                                tt.push(i32::MAX);
                             } else {
                                 return Err(err);
                             }
@@ -347,8 +389,8 @@ pub mod xcsp3_utils {
             //             }
             //             Err(_) => {
             //                 if &tuple_str[last + 1..i] == "*" {
-            //                     // tt.push(2_147_483_647i32);
-            //                     ret[tuple_index][tuple_in_index] = 2_147_483_647i32;
+            //                     // tt.push(i32::max);
+            //                     ret[tuple_index][tuple_in_index] = i32::max;
             //                     tuple_in_index+=1;
             //                 } else {
             //                     return Err(Xcsp3Error::get_constraint_extension_error(
@@ -368,7 +410,7 @@ pub mod xcsp3_utils {
             //             }
             //             Err(_) => {
             //                 if &tuple_str[last + 1..i] == "*" {
-            //                     ret[tuple_index][tuple_in_index] = 2_147_483_647i32;
+            //                     ret[tuple_index][tuple_in_index] = i32::max;
             //                     tuple_in_index+=1;
             //                 } else {
             //                     return Err(Xcsp3Error::get_constraint_extension_error(

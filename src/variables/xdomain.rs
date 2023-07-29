@@ -100,7 +100,7 @@ pub mod xcsp3_core {
                 XIntegerType::IntegerValue(iv) => iv.maximum(),
                 XIntegerType::IntegerInterval(ii) => ii.maximum(),
                 XIntegerType::XIntegerSymbolic(ii) => ii.maximum(),
-                XIntegerType::XIntegerNone => 2_147_483_647i32,
+                XIntegerType::XIntegerNone => i32::MAX,
                 //i32::MAX, my ide named clion tell me i32::MAX is private constant, but rustc can compile it...
             }
         }
@@ -429,7 +429,7 @@ pub mod xcsp3_core {
             XDomainIter {
                 values: &self.values,
                 current: 0,
-                current1: 2_147_483_647i32, //i32::MAX {
+                current1: i32::MAX, //i32::MAX {
             }
         }
     }
@@ -451,7 +451,7 @@ pub mod xcsp3_core {
             for cc in self.current..self.values.len() {
                 match &self.values[cc] {
                     XIntegerType::XIntegerSymbolic(s) => {
-                        if self.current1 == 2_147_483_647i32 {
+                        if self.current1 == i32::MAX {
                             //i32::MAX {
                             self.current1 = s.minimum();
                             ret = Some(self.current1);
@@ -476,14 +476,14 @@ pub mod xcsp3_core {
                         break;
                     }
                     XIntegerType::IntegerInterval(i) => {
-                        if self.current1 == 2_147_483_647i32 {
+                        if self.current1 == i32::MAX {
                             //i32::MAX {
                             self.current1 = i.minimum();
                             ret = Some(self.current1);
                             self.current1 += 1;
                             break;
                         } else if self.current1 > i.maximum() {
-                            self.current1 = 2_147_483_647i32; //i32::MAX {
+                            self.current1 = i32::MAX; //i32::MAX {
                             self.current += 1;
                             continue;
                         } else {
