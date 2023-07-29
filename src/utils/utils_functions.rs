@@ -39,7 +39,7 @@
 pub mod xcsp3_utils {
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use std::str::FromStr;
+    // use std::str::FromStr;
 
     pub fn list_to_vec_var_val(list: &str) -> Result<Vec<XVarVal>, Xcsp3Error> {
         let mut ret: Vec<XVarVal> = vec![];
@@ -154,7 +154,8 @@ pub mod xcsp3_utils {
                 last = i;
             } else if x == ')' {
                 // println!("{}",&tuple_str[last+1..i]);
-                match i32::from_str(&list[last_comma1 + 1..last_comma2]) {
+                match  list[last_comma1 + 1..last_comma2].parse::<i32>()
+                {
                     Ok(num) => ret.push((
                         list[last + 1..last_comma1].to_string(),
                         num,
@@ -203,7 +204,7 @@ pub mod xcsp3_utils {
         let mut ret: Vec<i32> = Vec::new();
         let lists: Vec<&str> = list.split_whitespace().collect();
         for l in lists.iter() {
-            match i32::from_str(l) {
+            match l.parse::<i32>() {
                 Ok(n) => ret.push(n),
                 Err(_) => {
                     return Err(Xcsp3Error::get_constraint_list_of_values_error(
@@ -222,7 +223,7 @@ pub mod xcsp3_utils {
         let list = list.to_string().replace(['(', ')', ','], " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
         for e in lists.iter() {
-            match i32::from_str(e) {
+            match e.parse::<i32>() {
                 Ok(n) => ret.push(n),
                 Err(_) => {
                     return Err(Xcsp3Error::get_constraint_list_of_values_error(
@@ -258,8 +259,8 @@ pub mod xcsp3_utils {
                 if tuple.contains("..") {
                     let interval: Vec<&str> = tuple.split("..").collect();
                     if interval.len() == 2 {
-                        let left = i32::from_str(interval[0]);
-                        let right = i32::from_str(interval[1]);
+                        let left =  interval[0].parse::<i32>() ;
+                        let right = interval[1].parse::<i32>() ;
                         match left {
                             Ok(l) => match right {
                                 Ok(r) => {
@@ -281,7 +282,7 @@ pub mod xcsp3_utils {
                         }
                     }
                 } else {
-                    match i32::from_str(tuple) {
+                    match tuple.parse::<i32>()  {
                         Ok(v) => ret.push(vec![v]),
                         Err(_) => {
                             return Err(err);
@@ -308,7 +309,7 @@ pub mod xcsp3_utils {
                     last = i;
                 } else if x == ')' {
                     // println!("{}",&tuple_str[last+1..i]);
-                    match i32::from_str(&tuple_str[last + 1..i]) {
+                    match  tuple_str[last + 1..i].parse::<i32>()  {
                         Ok(num) => {
                             tt.push(num);
                         }
@@ -323,7 +324,7 @@ pub mod xcsp3_utils {
                     ret.push(tt.clone())
                 } else if x == ',' {
                     // println!("{}",&tuple_str[last+1..i]);
-                    match i32::from_str(&tuple_str[last + 1..i]) {
+                    match  tuple_str[last + 1..i].parse::<i32>()  {
                         Ok(num) => {
                             tt.push(num);
                         }
@@ -420,8 +421,9 @@ pub mod xcsp3_utils {
             } else if n.contains("..") {
                 let interval: Vec<&str> = n.split("..").collect();
                 if interval.len() == 2 {
-                    let low = usize::from_str(interval[0]);
-                    let up = usize::from_str(interval[1]);
+                    let low =  interval[0].parse::<usize>() ;
+                    let up =  interval[1].parse::<usize>() ;
+
                     match low {
                         Ok(l) => match up {
                             Ok(u) => {
@@ -442,7 +444,7 @@ pub mod xcsp3_utils {
                     }
                 }
             } else {
-                match usize::from_str(n) {
+                match n.parse::<usize>() {
                     Ok(v) => {
                         lower.push(v);
                         upper.push(v);
@@ -465,7 +467,7 @@ pub mod xcsp3_utils {
         sizes = sizes.replace(']', " ");
         let nums: Vec<&str> = sizes.split_whitespace().collect();
         for n in nums.iter() {
-            match usize::from_str(n) {
+            match n.parse::<usize>(){
                 Ok(v) => {
                     ret.push(v);
                     sz *= v;
