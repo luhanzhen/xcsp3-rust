@@ -138,36 +138,15 @@ pub mod xcsp3_utils {
     /// return the transitions,
     /// eg  "(a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)" -> vec[ (a,0,a),(a,1,b),(b,1,c),(c,0,d),(d,0,d),(d,1,e),(e,0,e)]
     pub fn list_to_transitions(list: &str) -> Result<Vec<(String, i32, String)>, Xcsp3Error> {
-        // let mut ret: Vec<(String, i32, String)> = Vec::new();
-        // let list = list.to_string().replace(')', "@").replace('(', " ");
-        // let lists: Vec<&str> = list.split('@').collect();
-        // for e in lists.iter() {
-        //     if !e.is_empty() {
-        //         let tran_str = e.to_string().replace(',', " ");
-        //         let tran: Vec<&str> = tran_str.split_whitespace().collect();
-        //         match i32::from_str(tran[1]) {
-        //             Ok(n) => ret.push((tran[0].to_string(), n, tran[2].to_string())),
-        //             Err(_) => {
-        //                 return Err(Xcsp3Error::get_constraint_regular_transitions_error(
-        //                     "parse the transitions error, ",
-        //                 ));
-        //             }
-        //         }
-        //     }
-        // }
-        // Ok(ret)
+
         let mut ret: Vec<(String, i32, String)> = Vec::new();
         let chars = list.chars();
-
-        // let mut tt: Vec<i32> = vec![];
-        // let mut n: usize = 0;
         if let Some(left) = list.find('(') {
             if let Some(right) = list.find(')') {
                 ret.reserve(list.len() / (right - left));
                 // n = (right - left - 1) / 2;
             }
         }
-
         let mut last = usize::MAX;
         let mut last_comma1 = usize::MAX;
         let mut last_comma2 = usize::MAX;

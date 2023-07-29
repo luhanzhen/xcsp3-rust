@@ -23,8 +23,8 @@ fn main() {
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
     // println!("{:?}", e);
-    test_single();
-    // test_all();
+    // test_single();
+    test_all();
 }
 
 fn test_single() {
@@ -61,7 +61,9 @@ fn test_all() {
     let start = TimeInterval::new();
     // let aa = WalkDir::new("./instances")
     //     let aa = WalkDir::new("D://XCSP3")
-    let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
+    // let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
+    // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
+    let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
         // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
         // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
@@ -95,7 +97,7 @@ fn test_all() {
                             break;
                         }
                     }
-                    if ti.get().as_secs() > 1 {
+                    if ti.get().as_secs_f32() > 0.5 {
                         println!(
                             "parse the instance named {} by {:?}.",
                             file.path().display(),
