@@ -109,7 +109,6 @@ pub mod xcsp3_xml {
         //     c = self.build_constraints(&v);
         //     (v,c)
         // }
-
         pub fn build_objectives<'a>(&'a self, set: &'a XVariableSet) -> XObjectivesSet {
             let mut object = XObjectivesSet::new(set);
             // println!("{:?}", self.objectives);

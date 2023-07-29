@@ -138,7 +138,6 @@ pub mod xcsp3_utils {
     /// return the transitions,
     /// eg  "(a,0,a)(a,1,b)(b,1,c)(c,0,d)(d,0,d)(d,1,e)(e,0,e)" -> vec[ (a,0,a),(a,1,b),(b,1,c),(c,0,d),(d,0,d),(d,1,e),(e,0,e)]
     pub fn list_to_transitions(list: &str) -> Result<Vec<(String, i32, String)>, Xcsp3Error> {
-
         let mut ret: Vec<(String, i32, String)> = Vec::new();
         let chars = list.chars();
         if let Some(left) = list.find('(') {
@@ -183,10 +182,11 @@ pub mod xcsp3_utils {
     /// eg str"(x1,x2,x3,x4,x5)(y1,y2,y3,y4,y5)(z1,z2,z3,z4,z5)" - > vec[[x1,x2,x3,x4,x5][y1,y2,y3,y4,y5][z1,z2,z3,z4,z5]]
     pub fn list_to_matrix_ids(list: &str) -> Vec<Vec<String>> {
         let mut ret: Vec<Vec<String>> = Vec::new();
-        let mut list = list.to_string();
-        list = list.replace(')', "@");
-        list = list.replace('\n', "");
-        list = list.replace('(', " ");
+        let list = list
+            .to_string()
+            .replace(')', "@")
+            .replace('\n', "")
+            .replace('(', " ");
         let lists: Vec<&str> = list.split('@').collect();
         for e in lists.iter() {
             if !e.is_empty() {
@@ -293,18 +293,18 @@ pub mod xcsp3_utils {
             let chars = tuple_str.chars();
             let mut last = 0;
             let mut tt: Vec<i32> = vec![];
-            // let mut n: usize = 0;
+            let mut n: usize = 0;
             if let Some(left) = tuple_str.find('(') {
                 if let Some(right) = tuple_str.find(')') {
                     ret.reserve(tuple_str.len() / (right - left));
-                    // n = (right - left - 1) / 2;
+                    n = (right - left - 1) / 2;
                 }
             }
 
             for (i, x) in chars.enumerate() {
                 if x == '(' {
                     tt.clear();
-                    // tt.reserve(n);
+                    tt.reserve(n);
                     last = i;
                 } else if x == ')' {
                     // println!("{}",&tuple_str[last+1..i]);

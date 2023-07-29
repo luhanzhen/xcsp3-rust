@@ -6,12 +6,12 @@ rust-version = "1.70"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 keywords = [
     "constraint",
-    "satisfiability",
     "csp",
     "xcsp3",
     "combinatorial",
     "parser",
 ]
+
 description = "Rust bindings for the FLTK GUI library"
 readme = "README.md"
 categories = ["gui"]
@@ -24,6 +24,8 @@ serde = {version = "1.0.166", features = ["serde_derive"]}
 walkdir = {version = "2.3.3"}
 bitmaps = "3.2.0"
 regex = "1.9.1"
+flame = "0.2.2"
+flamer = "0.5"
 #glob = "0.3.1"
 
 [[bin]]

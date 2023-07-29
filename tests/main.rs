@@ -1,3 +1,4 @@
+
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
@@ -23,8 +24,8 @@ fn main() {
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
     // println!("{:?}", e);
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
