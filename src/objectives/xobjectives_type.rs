@@ -45,23 +45,23 @@ pub mod xcsp3_core {
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
-    pub enum XObjectivesType {
+    pub enum XObjectivesType<'a> {
         XObjectiveNone(Xcsp3Error),
-        Minimize(XObjective),
-        Maximize(XObjective),
+        Minimize(XObjective<'a>),
+        Maximize(XObjective<'a>),
     }
 
-    impl Display for XObjectivesType {
+    impl Display for XObjectivesType<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,
                 "{}",
                 match self {
                     XObjectivesType::Minimize(o) => {
-                        format!("Minimize: {}", o.to_string())
+                        format!("Minimize: {}", o)
                     }
                     XObjectivesType::Maximize(o) => {
-                        format!("Maximize: {}", o.to_string())
+                        format!("Maximize: {}", o)
                     }
                     XObjectivesType::XObjectiveNone(e) =>  format!(
                         "XObjectiveNone: there must be an error when parse this objective. Error is {}",e
@@ -72,12 +72,12 @@ pub mod xcsp3_core {
     }
 
     #[derive(Clone)]
-    pub enum XObjective {
-        XObjectiveElement(XObjectiveElement),
-        XObjectiveExpression(XObjectiveExpression),
+    pub enum XObjective<'a> {
+        XObjectiveElement(XObjectiveElement<'a>),
+        XObjectiveExpression(XObjectiveExpression<'a>),
     }
 
-    impl Display for XObjective {
+    impl Display for XObjective<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,
@@ -91,40 +91,6 @@ pub mod xcsp3_core {
                     }
                 }
             )
-        }
-    }
-
-    // impl XObjectivesType {
-    //     pub fn get_objectives_type_by_str(op: &str) -> Option<Self> {
-    //         match op {
-    //             "minimize" => Some(Self::Minimize),
-    //             "maximize" => Some(Self::Maximize),
-    //             _ => None,
-    //         }
-    //     }
-    // }
-
-    #[derive(Clone, Debug)]
-    pub enum XObjectivesOperator {
-        Sum,
-        Product,
-        Minimum,
-        Maximum,
-        NValues,
-        Lex,
-    }
-
-    impl XObjectivesOperator {
-        pub fn get_objectives_operator_by_str(op: &str) -> Option<Self> {
-            match op {
-                "Sum" => Some(Self::Sum),
-                "Product" => Some(Self::Product),
-                "minimize" => Some(Self::Minimum),
-                "maximize" => Some(Self::Maximum),
-                "nValues" => Some(Self::NValues),
-                "lex" => Some(Self::Lex),
-                _ => None,
-            }
         }
     }
 }

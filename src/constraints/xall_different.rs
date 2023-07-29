@@ -49,7 +49,7 @@ pub mod xcsp3_core {
     use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub struct XAllDifferent<'a> {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,

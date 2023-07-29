@@ -83,6 +83,14 @@ pub mod xcsp3_core {
             }
         }
 
+        pub(crate) fn get_element_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/connection/element/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ElementError,
+            }
+        }
         pub(crate) fn get_sum_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
@@ -125,5 +133,6 @@ pub mod xcsp3_core {
         IntensionError,
         GroupError,
         SumError,
+        ElementError,
     }
 }

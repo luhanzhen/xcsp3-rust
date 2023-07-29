@@ -50,7 +50,7 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::Iter;
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub struct XExtension<'a> {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,

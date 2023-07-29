@@ -40,34 +40,32 @@
 
 pub mod xcsp3_xml {
     use serde::Deserialize;
-    use std::fmt::{Display, Formatter};
-
-    #[derive(Deserialize, Debug)]
-    pub enum ObjectiveTarget {
-        #[serde(rename = "sum")]
-        Sum,
-        #[serde(rename = "product")]
-        Product,
-        #[serde(rename = "minimum")]
-        Minimum,
-        #[serde(rename = "maximum")]
-        Maximum,
-        #[serde(rename = "nvalues")]
-        Nvalues,
-        #[serde(rename = "lex")]
-        Lex,
-        None,
-    }
-    impl Display for ObjectiveTarget {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", &self)
-        }
-    }
-    impl Default for ObjectiveTarget {
-        fn default() -> Self {
-            Self::None
-        }
-    }
+    // #[derive(Deserialize, Debug)]
+    // pub enum ObjectiveTarget {
+    //     #[serde(rename = "sum")]
+    //     Sum,
+    //     #[serde(rename = "product")]
+    //     Product,
+    //     #[serde(rename = "minimum")]
+    //     Minimum,
+    //     #[serde(rename = "maximum")]
+    //     Maximum,
+    //     #[serde(rename = "nvalues")]
+    //     Nvalues,
+    //     #[serde(rename = "lex")]
+    //     Lex,
+    //     None,
+    // }
+    // impl Display for ObjectiveTarget {
+    //     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    //         write!(f, "{:?}", &self)
+    //     }
+    // }
+    // impl Default for ObjectiveTarget {
+    //     fn default() -> Self {
+    //         Self::None
+    //     }
+    // }
     /**
     ```xml
     <minimize or maximize [ id="identifier" ]  [ type="expression" ]>
@@ -79,8 +77,8 @@ pub mod xcsp3_xml {
     pub struct MaximizeMinimize {
         #[serde(rename = "id", default)]
         pub id: String,
-        #[serde(rename = "type", default)]
-        pub r#type: ObjectiveTarget,
+        #[serde(rename = "@type", default)]
+        pub r#type: String,
         #[serde(rename = "list", default)]
         pub list: String,
         #[serde(rename = "coeffs", default)]

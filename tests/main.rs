@@ -4,7 +4,7 @@ use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 
-/**
+/*
 * <p>@project_name: xcsp3-rust
 * </p>
 * <p>@author: luhan zhen
@@ -29,6 +29,7 @@ fn main() {
 
 fn test_single() {
     let xml_file = ".//instances//my-example.xml";
+    // let xml_file = ".//instances//Hanoi-03.xml";
     // let xml_file = ".//instances//Bibd-sc-22-033-12-08-04.xml";
     // let xml_file = ".//instances//Allergy.xml";
     // let xml_file = ".//instances//Subisomorphism-g05-g18.xml";
@@ -43,15 +44,24 @@ fn test_single() {
         println!("\t{}", c);
     }
     println!("objectives:");
-    for o in model.build_objectives().iter() {
+    for o in model.build_objectives(&variable).iter() {
         println!("\t{}", o);
+        // match o {
+        //     XObjectivesType::XObjectiveNone(_) => {}
+        //     XObjectivesType::Minimize(e) => match e {
+        //         XObjective::XObjectiveElement(ee) => {}
+        //         XObjective::XObjectiveExpression(ex) => {}
+        //     },
+        //     XObjectivesType::Maximize(_) => {}
+        // }
     }
 }
 
 fn test_all() {
     let start = TimeInterval::new();
-    let aa = WalkDir::new("./instances")
-        // let aa = WalkDir::new("D://XCSP3")
+    // let aa = WalkDir::new("./instances")
+    //     let aa = WalkDir::new("D://XCSP3")
+    let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
         // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
         // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
@@ -64,11 +74,11 @@ fn test_all() {
         // !file.path().display().to_string().contains("Bibd") &&
         if file.metadata().unwrap().is_file() && file.path().display().to_string().ends_with(".xml")
         {
+            let ti = TimeInterval::new();
             let model = XcspXmlModel::from_path(&file.path().display().to_string());
             match model {
                 Err(_) => eprintln!("Err {}", file.path().display()),
                 Ok(m) => {
-                    let ti = TimeInterval::new();
                     let variable = m.build_variables();
                     // for v in variable.iter() {
                     //     println!("{}", v.to_string())
@@ -85,11 +95,14 @@ fn test_all() {
                             break;
                         }
                     }
-                    println!(
-                        "parse the instance named {} by {:?}.",
-                        file.path().display(),
-                        ti.get()
-                    );
+                    if ti.get().as_secs() > 1 {
+                        println!(
+                            "parse the instance named {} by {:?}.",
+                            file.path().display(),
+                            ti.get()
+                        );
+                    }
+
                     // println!("Done {}", file.path().display());
                 }
             }

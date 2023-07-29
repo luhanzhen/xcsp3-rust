@@ -51,7 +51,7 @@ pub mod xcsp3_core {
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub struct XAllDifferentExcept<'a> {
         map: HashMap<String, &'a XDomainInteger>,
         scope: Vec<XVarVal>,

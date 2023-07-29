@@ -48,7 +48,7 @@ pub mod xcsp3_core {
     use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub struct XElement<'a> {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,

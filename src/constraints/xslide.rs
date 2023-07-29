@@ -24,58 +24,46 @@
 */
 
 /*
-* <p>@project_name: xcsp3-rust
-* </p>
-* <p>@author: luhan zhen
-* </p>
-* <p>@date:  2023/7/15 15:13
-* </p>
-* <p>@email: zhenlh20@mails.jlu.edu.cn
-* </p>
-* <p>@version: 1.0
-* </p>
- * <p>@description: 1.0
-* </p>
+ * <p>@project_name: xcsp3-rust
+ * </p>
+ * <p>@author: luhan zhen
+ * </p>
+ * <p>@date:  2023/7/29 16:45
+ * </p>
+ * <p>@email: zhenlh20@mails.jlu.edu.cn
+ * </p>
+ * <p>@version: 1.0
+ * </p>
+ * <p>@description:
+ * </p>
  */
 
 pub mod xcsp3_core {
-    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
-    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::utils::utils_functions::xcsp3_utils::{list_to_transitions, list_to_vec_var_val};
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
-    // #[derive(Clone)]
-    pub struct XMdd<'a> {
-        scope: Vec<XVarVal>,
+    pub struct XSlide<'a> {
+        args: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,
         set: &'a XVariableSet,
-        transitions: Vec<(String, i32, String)>,
+        template: Box<XConstraintType<'a>>,
+        circular: bool,
+        offset: i32,
     }
 
-    impl Display for XMdd<'_> {
-        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            let mut ret = String::default();
-            for e in self.scope.iter() {
-                ret.push('(');
-                ret.push_str(&e.to_string());
-                ret.push_str("), ")
-            }
-            ret.push_str(&format!("transitions = {:?}", self.transitions));
-            write!(f, "XMdd: scope =  {}", ret)
+    impl<'a> XSlide<'a> {
+        pub fn get_offset(&self) -> i32 {
+            self.offset
         }
-    }
-
-    impl XConstraintTrait for XMdd<'_> {
-        fn get_scope_string(&self) -> &Vec<XVarVal> {
-            &self.scope
+        pub fn get_circular(&self) -> bool {
+            self.circular
         }
-
-        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
-            for e in &self.scope {
+        pub fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.args {
                 if let XVarVal::IntVar(s) = e {
                     if !self.map.contains_key(s) {
                         if let Ok(vec) = self.set.construct_scope(&[s]) {
@@ -92,37 +80,44 @@ pub mod xcsp3_core {
             }
             scope_vec_var
         }
-    }
 
-    impl<'a> XMdd<'a> {
-        pub fn from_str(
-            list: &str,
-            transitions_str: &str,
-            set: &'a XVariableSet,
-        ) -> Result<Self, Xcsp3Error> {
-            match list_to_vec_var_val(list) {
-                Ok(scope_vec_str) => match list_to_transitions(transitions_str) {
-                    Ok(transitions) => Ok(XMdd::new(scope_vec_str, set, transitions)),
-                    Err(e) => Err(e),
-                },
-                Err(e) => Err(e),
-            }
+        pub fn get_args(&self) -> &Vec<XVarVal> {
+            &self.args
         }
 
-        pub fn get_transitions(&self) -> &Vec<(String, i32, String)> {
-            &self.transitions
+        pub fn get_template(&self) -> &XConstraintType<'a> {
+            &self.template
         }
+
         pub fn new(
-            scope: Vec<XVarVal>,
+            args: Vec<XVarVal>,
             set: &'a XVariableSet,
-            transitions: Vec<(String, i32, String)>,
+            template: Box<XConstraintType<'a>>,
         ) -> Self {
-            XMdd {
-                scope,
+            Self {
+                args,
                 map: Default::default(),
                 set,
-                transitions,
+                template,
+                circular: false,
+                offset: 0,
             }
+        }
+    }
+
+    impl Display for XSlide<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
+            for a in self.args.iter() {
+                ret.push_str(a.to_string().as_str());
+                ret.push_str(", ")
+            }
+            write!(
+                f,
+                "XSlide: [constraint = {} [ args =  {}]]",
+                &self.template.to_string(),
+                ret
+            )
         }
     }
 }

@@ -58,3 +58,9 @@ pub mod xgroup;
 pub mod xintension;
 pub mod xmax_min;
 pub mod xsum;
+
+pub mod xcardinality;
+pub mod xchannel;
+pub mod xcount;
+pub mod xn_values;
+pub mod xslide;

@@ -55,7 +55,7 @@ pub mod xcsp3_core {
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub enum XConstraintType<'a> {
         XConstraintNone(Xcsp3Error),
         XExtension(XExtension<'a>),

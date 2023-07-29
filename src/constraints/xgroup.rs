@@ -47,7 +47,7 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Clone)]
+    // #[derive(Clone)]
     pub struct XGroup<'a> {
         args: Vec<Vec<XVarVal>>,
         // map: Vec<HashMap<String, &'a XDomainInteger>>,

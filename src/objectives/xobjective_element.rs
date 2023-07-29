@@ -41,51 +41,117 @@
 pub mod xcsp3_core {
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-    use crate::objectives::xobjectives_type::xcsp3_core::*;
+    use std::collections::HashMap;
+
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone, Debug)]
-    pub struct XObjectiveElement {
-        // target: XObjectivesType,
-        operator: XObjectivesOperator,
-        scope: Vec<XVarVal>,
-        coeffs: Vec<XVarVal>,
+    pub enum XElementOperator {
+        Sum,
+        Product,
+        Minimum,
+        Maximum,
+        NValues,
+        Lex,
     }
 
-    impl XObjectiveElement {
+    impl XElementOperator {
+        pub fn get_objectives_operator_by_str(op: &str) -> Option<Self> {
+            match op {
+                "sum" => Some(Self::Sum),
+                "product" => Some(Self::Product),
+                "minimum" => Some(Self::Minimum),
+                "maximum" => Some(Self::Maximum),
+                "nValues" => Some(Self::NValues),
+                "lex" => Some(Self::Lex),
+                _ => None,
+            }
+        }
+    }
+
+    #[derive(Clone)]
+    pub struct XObjectiveElement<'a> {
+        operator: XElementOperator,
+        scope: Vec<XVarVal>,
+        coeffs: Vec<XVarVal>,
+        set: &'a XVariableSet,
+        map: HashMap<String, &'a XDomainInteger>,
+    }
+
+    impl<'a> XObjectiveElement<'a> {
+        pub fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
+        }
+
+        pub fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
+        }
+
         pub fn new(
-            // target: XObjectivesType,
-            operator: XObjectivesOperator,
+            operator: XElementOperator,
             scope: Vec<XVarVal>,
             coeffs: Vec<XVarVal>,
+            set: &'a XVariableSet,
         ) -> Self {
             Self {
-                // target,
                 operator,
                 scope,
                 coeffs,
+                set,
+                map: Default::default(),
             }
         }
 
-        pub fn from_str() -> Result<Self, Xcsp3Error> {
-            Err(Xcsp3Error::get_objective_target_error("e"))
+        pub fn from_str(
+            list_str: &str,
+            coeffs_str: &str,
+            ope_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            match list_to_vec_var_val(list_str) {
+                Ok(scope_vec_str) => match list_to_vec_var_val(coeffs_str) {
+                    Ok(coef_vec_str) => {
+                        match XElementOperator::get_objectives_operator_by_str(ope_str) {
+                            None => Err(Xcsp3Error::get_objective_target_error(
+                                "parse objective type error, ",
+                            )),
+                            Some(v) => Ok(Self::new(v, scope_vec_str, coef_vec_str, set)),
+                        }
+                    }
+                    Err(e) => Err(e),
+                },
+                Err(e) => Err(e),
+            }
+            // Err(Xcsp3Error::get_objective_target_error("e"))
         }
 
-        // pub fn target(&self) -> &XObjectivesType {
-        //     &self.target
-        // }
-        pub fn operator(&self) -> &XObjectivesOperator {
+        pub fn get_operator(&self) -> &XElementOperator {
             &self.operator
         }
-        pub fn scope(&self) -> &Vec<XVarVal> {
-            &self.scope
-        }
-        pub fn coeffs(&self) -> &Vec<XVarVal> {
+        pub fn get_coeffs(&self) -> &Vec<XVarVal> {
             &self.coeffs
         }
     }
 
-    impl Display for XObjectiveElement {
+    impl Display for XObjectiveElement<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret1 = String::default();
             for e in self.scope.iter() {
@@ -101,7 +167,7 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "XObjective:  operator = {:?} scope =  {}, coeffs = {}",
+                "operator = {:?} scope =  {}, coeffs = {}",
                 self.operator, ret1, ret2
             )
         }

@@ -319,7 +319,7 @@
 
     </constraints>
     <objectives>
-        <minimize type="sum">d[]</minimize>
+        <minimize type="sum">x[]</minimize>
         <minimize type="sum">
             <list>x1 x2 x3 x4 x5</list>
             <coeffs>2 4 1 4 8</coeffs>

@@ -40,53 +40,93 @@
 
 pub mod xcsp3_core {
 
-    use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
-    use crate::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
-    use std::slice::Iter;
+    use crate::objectives::xobjective_element::xcsp3_core::XObjectiveElement;
     use crate::objectives::xobjective_expression::xcsp3_core::XObjectiveExpression;
+    use crate::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::slice::{Iter, IterMut};
 
-
-    pub struct XObjectivesSet {
-        objectives: Vec<XObjectivesType>,
+    pub struct XObjectivesSet<'a> {
+        objectives: Vec<XObjectivesType<'a>>,
+        set: &'a XVariableSet,
     }
 
-    impl Default for XObjectivesSet {
-        fn default() -> Self {
-            Self::new()
-        }
-    }
-
-    impl XObjectivesSet {
-        pub fn build_max(&mut self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
-            // println!("{} {} {} {}", list, coeffs, expression, type_str);
-            if !expression.is_empty() {
-                match XObjectiveExpression::from_expr(expression) {
+    impl<'a> XObjectivesSet<'a> {
+        pub fn build_maximize(
+            &mut self,
+            list: &str,
+            coeffs: &str,
+            expression: &str,
+            type_str: &str,
+        ) {
+            // println!("list {} coeffs {} expression {} type_str {}", list, coeffs, expression, type_str);
+            if type_str.is_empty() {
+                match XObjectiveExpression::from_expr(expression, self.set) {
                     Ok(xoe) => {
-                        self.objectives.push(XObjectivesType::Maximize(XObjective::XObjectiveExpression(xoe)));
+                        self.objectives.push(XObjectivesType::Maximize(
+                            XObjective::XObjectiveExpression(xoe),
+                        ));
                     }
+                    Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
+                }
+            } else {
+                match XObjectiveElement::from_str(
+                    if !list.is_empty() { list } else { expression },
+                    coeffs,
+                    type_str,
+                    self.set,
+                ) {
+                    Ok(ele) => self.objectives.push(XObjectivesType::Maximize(
+                        XObjective::XObjectiveElement(ele),
+                    )),
                     Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
                 }
             }
         }
 
-        pub fn build_min(&mut self, list: &str, coeffs: &str, expression: &str, type_str: &str) {
-            // println!("{} {} {} {}", list, coeffs, expression, type_str)
-               if !expression.is_empty() {
-                match XObjectiveExpression::from_expr(expression) {
+        pub fn build_minimize(
+            &mut self,
+            list: &str,
+            coeffs: &str,
+            expression: &str,
+            type_str: &str,
+        ) {
+            // println!("list {} coeffs {} expression {} type_str {}", list, coeffs, expression, type_str);
+            if type_str.is_empty() {
+                match XObjectiveExpression::from_expr(expression, self.set) {
                     Ok(xoe) => {
-                        self.objectives.push(XObjectivesType::Minimize(XObjective::XObjectiveExpression(xoe)));
+                        self.objectives.push(XObjectivesType::Minimize(
+                            XObjective::XObjectiveExpression(xoe),
+                        ));
                     }
+                    Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
+                }
+            } else {
+                match XObjectiveElement::from_str(
+                    if !list.is_empty() { list } else { expression },
+                    coeffs,
+                    type_str,
+                    self.set,
+                ) {
+                    Ok(ele) => self.objectives.push(XObjectivesType::Minimize(
+                        XObjective::XObjectiveElement(ele),
+                    )),
                     Err(e) => self.objectives.push(XObjectivesType::XObjectiveNone(e)),
                 }
             }
         }
-
 
         pub fn iter(&self) -> Iter<'_, XObjectivesType> {
             self.objectives.iter()
         }
-        pub fn new() -> Self {
-            Self { objectives: vec![] }
+        pub fn iter_mut(&mut self) -> IterMut<'_, XObjectivesType<'a>> {
+            self.objectives.iter_mut()
+        }
+        pub fn new(set: &'a XVariableSet) -> Self {
+            Self {
+                objectives: vec![],
+                set,
+            }
         }
     }
 }

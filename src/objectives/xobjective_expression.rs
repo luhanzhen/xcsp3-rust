@@ -39,34 +39,94 @@
  */
 
 pub mod xcsp3_core {
-    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
-    use std::f32::consts::E;
-
     use crate::data_structs::expression_tree::xcsp3_utils::ExpressionTree;
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
 
     #[derive(Clone)]
-    pub struct XObjectiveExpression {
-        // target: XObjectivesType,
+    pub struct XObjectiveExpression<'a> {
         expression: ExpressionTree,
         scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
     }
 
-    impl Display for XObjectiveExpression {
+    impl Display for XObjectiveExpression<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}",self.expression.to_string())
+            let mut ret = String::default();
+            for e in self.scope.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
+            write!(
+                f,
+                "scope =  {}, expression = {:?}",
+                ret,
+                self.expression.to_string()
+            )
         }
     }
-    impl XObjectiveExpression {
-        pub fn from_expr(expr: &str) -> Result<Self, Xcsp3Error> {
+
+    impl<'a> XObjectiveExpression<'a> {
+        pub fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
+        }
+        pub fn get_expression(&self) -> &ExpressionTree {
+            &self.expression
+        }
+
+        pub fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
+        }
+        pub fn from_expr(expr: &str, set: &'a XVariableSet) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::from_string(expr) {
-                Ok(tree) => Ok(Self::new(tree, vec![])),
+                Ok(tree) => {
+                    let mut scope: Vec<XVarVal> = vec![];
+                    for e in tree.get_scope() {
+                        match set.find_variable(&e) {
+                            Ok(_) => {
+                                // println!("{}", r);
+                                scope.push(XVarVal::IntVar(e))
+                            }
+                            Err(err) => {
+                                return Err(err);
+                            }
+                        }
+                    }
+                    // Ok(Self::new(scope, set, tree))
+                    Ok(Self::new(tree, scope, set))
+                }
+
                 Err(e) => Err(e),
             }
         }
-        pub fn new(expression: ExpressionTree, scope: Vec<XVarVal>) -> Self {
-            Self { expression, scope }
+        pub fn new(expression: ExpressionTree, scope: Vec<XVarVal>, set: &'a XVariableSet) -> Self {
+            Self {
+                expression,
+                scope,
+                map: Default::default(),
+                set,
+            }
         }
     }
 }

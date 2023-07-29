@@ -648,18 +648,37 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <slide [ circular="boolean" ]>
+            <list [ offset="integer" ]> (intVar wspace)2+ </list>
+            <constraint .../> <!-- constraint template involving parameters -->
+        </slide>
         ```
 
         eg.
         ```xml
-
+        <slide id="c1">
+            <list>x1 x2 x3 x4</list>
+            <intension>eq(add(%0,%1),%2)</intension>
+        </slide>
+        <slide id="c2" circular="true">
+            <list>y1 y2 y3 y4</list>
+            <extension>
+                <list>%0 %1</list>
+                <supports>(a,a)(a,c)(b,b)(c,a)(c,b)</supports>
+            </extension>
+        </slide>
+        <slide id="c3">
+            <list offset="2">w1 z1 w2 z2 w3 z3</list>
+            <intension>ne(%0,%1)</intension>
+        </slide>
         ```
          */
         #[serde(rename = "slide")]
         Slide {
             #[serde(rename = "@id", default)]
             id: String,
+            #[serde(rename = "@circular", default)]
+            circular: String,
             #[serde(rename = "list", default)]
             vars: String,
             #[serde(rename = "$value", default)]

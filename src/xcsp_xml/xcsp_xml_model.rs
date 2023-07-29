@@ -110,15 +110,15 @@ pub mod xcsp3_xml {
         //     (v,c)
         // }
 
-        pub fn build_objectives(&self) -> XObjectivesSet {
-            let mut object = XObjectivesSet::default();
+        pub fn build_objectives<'a>(&'a self, set: &'a XVariableSet) -> XObjectivesSet {
+            let mut object = XObjectivesSet::new(set);
             // println!("{:?}", self.objectives);
             if let Some(oo) = &self.objectives {
                 for e in oo.maximize.iter() {
-                    object.build_max(&e.list, &e.coeffs, &e.expression, &e.r#type.to_string())
+                    object.build_maximize(&e.list, &e.coeffs, &e.expression, &e.r#type.to_string())
                 }
                 for e in oo.minimize.iter() {
-                    object.build_min(&e.list, &e.coeffs, &e.expression, &e.r#type.to_string())
+                    object.build_minimize(&e.list, &e.coeffs, &e.expression, &e.r#type.to_string())
                 }
             }
 
@@ -127,13 +127,13 @@ pub mod xcsp3_xml {
 
         /// read the instance from the xml file
         pub fn from_path(path: &str) -> Result<XcspXmlModel, DeError> {
-            let now = Instant::now();
+            let _now = Instant::now();
             if !path.ends_with(".xml") {
                 return Err(DeError::UnexpectedEof);
             }
             let xml = fs::read_to_string(path).unwrap();
             let r = from_str(&xml);
-            println!("read the instance named {} by {:?}.", path, now.elapsed());
+            // println!("read the instance named {} by {:?}.", path, _now.elapsed());
             r
         }
 
@@ -308,7 +308,14 @@ pub mod xcsp3_xml {
                     // println!("{}{:?}", vars, values);
                     set.build_instantiation(vars, values);
                 }
-                ConstraintType::Slide { .. } => {}
+                ConstraintType::Slide {
+                    id,
+                    circular,
+                    vars,
+                    constraints,
+                } => {
+                    println!("{id}, {circular} {vars},{:?}", constraints)
+                }
                 ConstraintType::Channel { .. } => {}
                 ConstraintType::AllDistant { .. } => {}
                 ConstraintType::Precedence { .. } => {}

@@ -72,6 +72,8 @@ pub mod xcsp3_utils {
         Iff,
         Imp,
         If,
+        Set,
+        In,
     }
 
     impl Operator {
@@ -102,6 +104,8 @@ pub mod xcsp3_utils {
                 "iff" => Some(Operator::Iff),
                 "imp" => Some(Operator::Imp),
                 "if" => Some(Operator::If),
+                "set" => Some(Operator::Set),
+                "in" => Some(Operator::In),
                 _ => None,
             }
         }

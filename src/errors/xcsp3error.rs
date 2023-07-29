@@ -86,6 +86,9 @@ pub mod xcsp3_core {
             Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_target_error(s))
         }
 
+        pub fn get_constraint_element_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_element_error(s))
+        }
         pub fn get_constraint_sum_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_sum_error(s))
         }
