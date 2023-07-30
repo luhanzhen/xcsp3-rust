@@ -70,6 +70,9 @@ pub mod xcsp3_core {
 
     /// error factory
     impl Xcsp3Error {
+        pub fn get_constraint_slide_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_slide_error(s))
+        }
         pub fn get_objective_scope_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseObjectivesError(ParseObjectivesError::get_scope_error(s))
         }

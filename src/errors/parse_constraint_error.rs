@@ -91,6 +91,16 @@ pub mod xcsp3_core {
                 r#type: ConstraintError::ElementError,
             }
         }
+
+        pub(crate) fn get_slide_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/miscellaneous/slide/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::SlideError,
+            }
+        }
+
         pub(crate) fn get_sum_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
@@ -134,5 +144,6 @@ pub mod xcsp3_core {
         GroupError,
         SumError,
         ElementError,
+        SlideError,
     }
 }

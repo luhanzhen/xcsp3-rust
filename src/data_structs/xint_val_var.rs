@@ -33,24 +33,24 @@ pub mod xcsp3_core {
         fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
             write!(
                 f,
-                "{:?}",
-                self // match self {
-                     //     XVarVal::IntVar(v) => {
-                     //         v.clone()
-                     //     }
-                     //     XVarVal::IntVal(v) => {
-                     //         v.to_string()
-                     //     }
-                     //     XVarVal::IntInterval(l, r) => {
-                     //         format!("{}..{}", l, r)
-                     //     }
-                     //     XVarVal::IntArgument(e) => {
-                     //         format!("%{}", e)
-                     //     }
-                     //     XVarVal::IntStart => {
-                     //         "%...".to_string()
-                     //     }
-                     // }
+                "{}",
+                match self {
+                    XVarVal::IntVar(v) => {
+                        v.clone()
+                    }
+                    XVarVal::IntVal(v) => {
+                        v.to_string()
+                    }
+                    XVarVal::IntInterval(l, r) => {
+                        format!("{}..{}", l, r)
+                    }
+                    XVarVal::IntArgument(e) => {
+                        format!("%{}", e)
+                    }
+                    XVarVal::IntStart => {
+                        "%...".to_string()
+                    }
+                }
             )
         }
     }

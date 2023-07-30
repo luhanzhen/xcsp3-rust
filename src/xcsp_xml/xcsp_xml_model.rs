@@ -308,12 +308,19 @@ pub mod xcsp3_xml {
                     set.build_instantiation(vars, values);
                 }
                 ConstraintType::Slide {
-                    id,
                     circular,
-                    vars,
+                    list,
                     constraints,
                 } => {
-                    println!("{id}, {circular} {vars},{:?}", constraints)
+                    // println!("{circular} {:?},{:?}", list, constraints);
+                    XcspXmlModel::parse_constraint(&constraints, set);
+                    match set.get_last_constraint() {
+                        None => {}
+                        Some(cc) => {
+                            // println!("{}",cc.to_string())
+                            set.build_slide(cc, &list.vars, &list.offset, circular);
+                        }
+                    }
                 }
                 ConstraintType::Channel { .. } => {}
                 ConstraintType::AllDistant { .. } => {}

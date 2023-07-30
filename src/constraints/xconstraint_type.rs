@@ -51,6 +51,7 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::constraints::xslide::xcsp3_core::XSlide;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::fmt::{Display, Formatter};
@@ -72,6 +73,7 @@ pub mod xcsp3_core {
         XMaximum(XMaxMin<'a>),
         XMinimum(XMaxMin<'a>),
         XElement(XElement<'a>),
+        XSlide(XSlide<'a>),
     }
 
     impl Display for XConstraintType<'_> {
@@ -95,7 +97,7 @@ pub mod xcsp3_core {
                         XConstraintType::XMinimum(c) => c.to_string(),
                         XConstraintType::XMaximum(c) => c.to_string(),
                         XConstraintType::XElement(c) => c.to_string(),
-
+                        XConstraintType::XSlide(c) => c.to_string(),
                     }
              )
         }

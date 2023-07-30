@@ -51,6 +51,7 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
+    use crate::constraints::xslide::xcsp3_core::XSlide;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
@@ -81,7 +82,21 @@ pub mod xcsp3_core {
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
             }
         }
-
+        pub fn build_slide(
+            &mut self,
+            cc: XConstraintType<'a>,
+            vars: &str,
+            offset_str: &str,
+            circular_str: &str,
+        ) {
+            // println!("tttt: {}", cc.to_string())
+            match XSlide::from_str(cc, vars, offset_str, circular_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XSlide(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
         pub fn build_group(&mut self, cc: XConstraintType<'a>, args: &[String]) {
             // if let XConstraintType::XGroup(_) = &cc {
             //     // println!("group is in {}",c.to_string());

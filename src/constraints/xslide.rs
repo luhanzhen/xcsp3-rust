@@ -41,6 +41,8 @@
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_type::xcsp3_core::XConstraintType;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
     use crate::variables::xdomain::xcsp3_core::XDomainInteger;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::collections::HashMap;
@@ -89,9 +91,77 @@ pub mod xcsp3_core {
             &self.template
         }
 
+        pub fn from_str(
+            cc: XConstraintType<'a>,
+            arg_str: &str,
+            offset_str: &str,
+            circular_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            match list_to_vec_var_val(arg_str) {
+                Ok(scope_vec_str) => {
+                    let offset = if offset_str.is_empty() {
+                        0
+                    } else {
+                        match offset_str.parse::<i32>() {
+                            Ok(o) => o,
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_constraint_slide_error(
+                                    "parse the offset error, ",
+                                ));
+                            }
+                        }
+                    };
+                    let circular = if circular_str.is_empty() {
+                        false
+                    } else {
+                        match circular_str.parse::<bool>() {
+                            Ok(c) => c,
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_constraint_slide_error(
+                                    "parse the circular error, ",
+                                ))
+                            }
+                        }
+                    };
+                    Ok(Self::new(
+                        scope_vec_str,
+                        set,
+                        offset,
+                        circular,
+                        Box::new(cc),
+                    ))
+                }
+                Err(e) => Err(e),
+            }
+
+            // match list_to_vec_var_val(arg_str) {
+            //     Ok(scope_vec_str) => match offset_str.parse::<i32>() {
+            //         Ok(offset) => match circular_str.parse::<bool>() {
+            //             Ok(circular) => Ok(Self::new(
+            //                 scope_vec_str,
+            //                 set,
+            //                 offset,
+            //                 circular,
+            //                 Box::new(cc),
+            //             )),
+            //             Err(_) => Err(Xcsp3Error::get_constraint_slide_error(
+            //                 "parse the circular error, ",
+            //             )),
+            //         },
+            //         Err(_) => Err(Xcsp3Error::get_constraint_slide_error(
+            //             "parse the offset error, ",
+            //         )),
+            //     },
+            //     Err(e) => Err(e),
+            // }
+        }
+
         pub fn new(
             args: Vec<XVarVal>,
             set: &'a XVariableSet,
+            offset: i32,
+            circular: bool,
             template: Box<XConstraintType<'a>>,
         ) -> Self {
             Self {
@@ -99,8 +169,8 @@ pub mod xcsp3_core {
                 map: Default::default(),
                 set,
                 template,
-                circular: false,
-                offset: 0,
+                circular,
+                offset,
             }
         }
     }

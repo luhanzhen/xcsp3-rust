@@ -1,4 +1,3 @@
-
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
@@ -64,7 +63,8 @@ fn test_all() {
     //     let aa = WalkDir::new("D://XCSP3")
     // let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
     // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
-    let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
+    let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
         // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
         // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
