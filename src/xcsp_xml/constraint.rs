@@ -57,4 +57,22 @@ pub mod xcsp3_xml {
         #[serde(rename = "@offset", default)]
         pub offset: String,
     }
+
+    #[derive(Deserialize, Debug, Default)]
+    pub struct ListWithClosed {
+        // #[serde(rename = "constraint", default)]
+        #[serde(rename = "$value", default)]
+        pub vars: String,
+        #[serde(rename = "@closed", default)]
+        pub closed: String,
+    }
+
+    #[derive(Deserialize, Debug, Default)]
+    pub struct ListWithStartIndex {
+        // #[serde(rename = "constraint", default)]
+        #[serde(rename = "$value", default)]
+        pub value: String,
+        #[serde(rename = "@startIndex", default)]
+        pub start_index: String,
+    }
 }

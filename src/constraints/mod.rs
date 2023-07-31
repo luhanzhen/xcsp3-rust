@@ -62,5 +62,8 @@ pub mod xsum;
 pub mod xcardinality;
 pub mod xchannel;
 pub mod xcount;
+pub mod xcumulative;
 pub mod xn_values;
+pub mod xno_overlap;
 pub mod xslide;
+pub mod xstretch;

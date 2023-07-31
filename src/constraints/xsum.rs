@@ -68,12 +68,14 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            ret.push_str("coeffs = (");
-            for e in self.coeffs.iter() {
-                ret.push_str(&e.to_string());
-                ret.push_str(", ")
+            if !self.coeffs.is_empty() {
+                ret.push_str("coeffs = (");
+                for e in self.coeffs.iter() {
+                    ret.push_str(&e.to_string());
+                    ret.push_str(", ")
+                }
             }
-            ret.push_str("), ");
+            ret.push_str(") ");
             write!(
                 f,
                 "XSum: scope =  {}, Operator = {:?}, Operand = {:?}",
@@ -116,12 +118,9 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
-                    let mut coe: Vec<XVarVal>;
+                    let coe: Vec<XVarVal>;
                     if coeffs.is_empty() {
                         coe = vec![];
-                        for _ in 0..scope_vec_str.len() {
-                            coe.push(XVarVal::IntVal(1))
-                        }
                     } else {
                         coe = match list_to_vec_var_val(coeffs) {
                             Ok(coe_vec) => coe_vec,
@@ -134,7 +133,7 @@ pub mod xcsp3_core {
                     let ope: Operator = match Operator::get_operator_by_str(spilt[0]) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
-                                "parse sum constraint error, ",
+                                "parse sum  constraint Operator error, ",
                             ));
                         }
                         Some(o) => o,
@@ -143,7 +142,7 @@ pub mod xcsp3_core {
                     let rand: Operand = match Operand::get_operand_by_str(&spilt[1..], &ope) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
-                                "parse sum constraint error, ",
+                                "parse sum constraint Operand error, ",
                             ));
                         }
                         Some(r) => r,
@@ -152,47 +151,6 @@ pub mod xcsp3_core {
                 }
                 Err(e) => Err(e),
             }
-
-            // let scope_vec_str = list_to_scope_ids(list);
-            // match set.construct_scope(&scope_vec_str) {
-            //     Ok(scope) => {
-            //         let mut coe: Vec<i32>;
-            //         if coeffs.is_empty() || coeffs.contains("%...") {
-            //             coe = vec![];
-            //             for _ in 0..scope_vec_str.len() {
-            //                 coe.push(1)
-            //             }
-            //         } else {
-            //             // println!("e{}", coeffs);
-            //             match list_to_values(coeffs) {
-            //                 Ok(v) => coe = v,
-            //                 Err(e) => return Err(e),
-            //             }
-            //         }
-            //         let condition = condition.replace(['(', ')', ','], " ");
-            //         let spilt: Vec<&str> = condition.split_whitespace().collect();
-            //         let ope: Operator;
-            //         match Operator::get_operator_by_str(spilt[0]) {
-            //             None => {
-            //                 return Err(Xcsp3Error::get_constraint_sum_error(
-            //                     "parse sum constraint error, ",
-            //                 ));
-            //             }
-            //             Some(o) => ope = o,
-            //         }
-            //         let rand: Operand;
-            //         match Operand::get_operand_by_str(&spilt[1..], &ope) {
-            //             None => {
-            //                 return Err(Xcsp3Error::get_constraint_sum_error(
-            //                     "parse sum constraint error, ",
-            //                 ));
-            //             }
-            //             Some(r) => rand = r,
-            //         }
-            //         Ok(Self::new(scope_vec_str, scope, ope, rand, coe))
-            //     }
-            //     Err(e) => Err(e),
-            // }
         }
 
         pub fn new(

@@ -96,20 +96,10 @@ pub mod xcsp3_xml {
         variables: Option<Variable>,
         constraints: Constraint,
         objectives: Option<Objective>,
-        // #[serde(skip)]
-        // variables_set: XVariableSet,
-        // #[serde(skip)]
-        // constraints_set: XConstraintSet<'a>,
     }
 
     impl XcspXmlModel {
-        // pub fn build(&self) -> (XVariableSet,XConstraintSet) {
-        //     let (v,c):(XVariableSet,XConstraintSet);
-        //     v = self.build_variables();
-        //     c = self.build_constraints(&v);
-        //     (v,c)
-        // }
-        pub fn build_objectives<'a>(&'a self, set: &'a XVariableSet) -> XObjectivesSet {
+        pub fn build_objectives<'a>(&'a self, set: &'a XVariableSet) -> XObjectivesSet<'a> {
             let mut object = XObjectivesSet::new(set);
             // println!("{:?}", self.objectives);
             if let Some(oo) = &self.objectives {
@@ -291,13 +281,26 @@ pub mod xcsp3_xml {
                     condition,
                     coeffs,
                 } => set.build_sum(vars, condition, coeffs),
-                ConstraintType::Count { .. } => {}
-                ConstraintType::NValues { .. } => {}
-                ConstraintType::Cardinality { .. } => {}
+                ConstraintType::Count {
+                    vars,
+                    values,
+                    condition,
+                } => set.build_count(vars, condition, values),
+
+                ConstraintType::NValues {
+                    vars,
+                    except,
+                    condition,
+                } => set.build_n_values(vars, condition, except),
+                ConstraintType::Cardinality {
+                    list,
+                    values,
+                    occurs,
+                } => set.build_cardinality(list, &values.vars, occurs, &values.closed),
                 ConstraintType::Minimum { list, condition } => set.build_minimum(list, condition),
                 ConstraintType::Maximum { list, condition } => set.build_maximum(list, condition),
                 ConstraintType::Element { vars, value, index } => {
-                    set.build_element(vars, value, index)
+                    set.build_element(&vars.value, value, index, &vars.start_index)
                 }
 
                 ConstraintType::Stretch { .. } => {}
@@ -323,6 +326,7 @@ pub mod xcsp3_xml {
                     }
                 }
                 ConstraintType::Channel { .. } => {}
+
                 ConstraintType::AllDistant { .. } => {}
                 ConstraintType::Precedence { .. } => {}
                 ConstraintType::Balance { .. } => {}
@@ -335,7 +339,7 @@ pub mod xcsp3_xml {
             }
         }
 
-        pub fn build_constraints<'a>(&'a self, set: &'a XVariableSet) -> XConstraintSet {
+        pub fn build_constraints<'a>(&'a self, set: &'a XVariableSet) -> XConstraintSet<'a> {
             let mut constraint: XConstraintSet = XConstraintSet::new(set);
             for con_type in self.constraints.constraints.iter() {
                 XcspXmlModel::parse_constraint(con_type, &mut constraint);

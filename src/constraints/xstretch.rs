@@ -28,7 +28,7 @@
  * </p>
  * <p>@author: luhan zhen
  * </p>
- * <p>@date:  2023/7/23 15:07
+ * <p>@date:  2023/7/31 12:42
  * </p>
  * <p>@email: zhenlh20@mails.jlu.edu.cn
  * </p>
@@ -37,10 +37,30 @@
  * <p>@description:
  * </p>
  */
+pub mod xcsp3_core {
+    use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
+    use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::utils::utils_functions::xcsp3_utils::list_to_vec_var_val;
+    use crate::variables::xdomain::xcsp3_core::XDomainInteger;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use std::collections::HashMap;
+    use std::fmt::{Display, Formatter};
+    pub struct XStretch<'a> {
+        scope: Vec<XVarVal>,
+        map: HashMap<String, &'a XDomainInteger>,
+        set: &'a XVariableSet,
+    }
+    impl Display for XStretch<'_> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut ret = String::default();
+            for e in self.scope.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
 
-#![doc = include_str!("./readme.md")]
-
-pub mod xobjective_element;
-pub mod xobjective_expression;
-pub mod xobjectives_set;
-pub mod xobjectives_type;
+            write!(f, "XChannel: scope =  {}, ", ret,)
+        }
+    }
+}

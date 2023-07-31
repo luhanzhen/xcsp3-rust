@@ -55,6 +55,7 @@ pub mod xcsp3_core {
         set: &'a XVariableSet,
         value: XVarVal,
         index: XVarVal,
+        start_index: i32,
     }
 
     impl<'a> XElement<'a> {
@@ -62,27 +63,46 @@ pub mod xcsp3_core {
             list: &str,
             value_str: &str,
             index_str: &str,
+            start_index_str: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
+            // println!("{start_index_str}");
             match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
                     let value = match XVarVal::from_string(value_str) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
-                                "parse element constraint error, ",
+                                "parse element constraint value error, ",
                             ));
                         }
                         Some(v) => v,
                     };
-                    let index = match XVarVal::from_string(index_str) {
-                        None => {
-                            return Err(Xcsp3Error::get_constraint_sum_error(
-                                "parse element constraint error, ",
-                            ));
+                    let index = if !index_str.is_empty() {
+                        match XVarVal::from_string(index_str) {
+                            None => {
+                                return Err(Xcsp3Error::get_constraint_sum_error(
+                                    "parse element constraint index error, ",
+                                ));
+                            }
+                            Some(i) => i,
                         }
-                        Some(i) => i,
+                    } else {
+                        XVarVal::IntNone
                     };
-                    Ok(XElement::new(scope_vec_str, set, value, index))
+                    let start_index = if !start_index_str.is_empty() {
+                        match start_index_str.parse::<i32>() {
+                            Ok(n) => n,
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_constraint_sum_error(
+                                    "parse element constraint start_index error, ",
+                                ));
+                            }
+                        }
+                    } else {
+                        i32::MAX
+                    };
+
+                    Ok(XElement::new(scope_vec_str, set, value, index, start_index))
                 }
 
                 Err(e) => Err(e),
@@ -94,6 +114,7 @@ pub mod xcsp3_core {
             set: &'a XVariableSet,
             value: XVarVal,
             index: XVarVal,
+            start_index: i32,
         ) -> Self {
             Self {
                 scope,
@@ -101,7 +122,11 @@ pub mod xcsp3_core {
                 set,
                 value,
                 index,
+                start_index,
             }
+        }
+        pub fn get_start_index(&self) -> i32 {
+            self.start_index
         }
     }
     impl Display for XElement<'_> {
@@ -112,11 +137,13 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            write!(
-                f,
-                "XElement: scope =  {}, value = {}, index = {}",
-                ret, self.value, self.index
-            )
+            if self.start_index != i32::MAX {
+                ret.push_str(&format!(" start_index = {} ", self.start_index))
+            }
+            if let XVarVal::IntNone = self.index {
+                ret.push_str(&format!(" index = {} ", self.index))
+            }
+            write!(f, "XElement: scope =  {}, value = {}", ret, self.value,)
         }
     }
 

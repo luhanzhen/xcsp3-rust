@@ -39,7 +39,9 @@
  */
 
 pub mod xcsp3_xml {
-    use crate::xcsp_xml::constraint::xcsp3_xml::ListWithOffset;
+    use crate::xcsp_xml::constraint::xcsp3_xml::{
+        ListWithClosed, ListWithOffset, ListWithStartIndex,
+    };
     use crate::xcsp_xml::constraint_block::xcsp3_xml::ConstraintBlock;
     use crate::xcsp_xml::constraint_group::xcsp3_xml::ConstraintGroup;
     use serde::Deserialize;
@@ -183,7 +185,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "$value", default)]
             vars: String,
             #[serde(rename = "list", default)]
-            list: Box<[String]>,
+            list: Vec<String>,
         },
 
         /**
@@ -395,18 +397,46 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <count>
+          <list> (intVar wspace)2+ </list>
+          <values> (intVal wspace)+ | (intVar wspace)+ </values>
+          <condition> "(" operator "," operand ")" </condition>
+        </count>
         ```
 
         eg.
         ```xml
-
+        <count id="c1">
+          <list> v1 v2 v3 v4 </list>
+          <values> v </values>
+          <condition> (ne,k1) </condition>
+        </count>
+        <count id="c2">   <!-- among -->
+          <list> w1 w2 w3 w4 </list>
+          <values> 1 5 8 </values>
+          <condition> (eq,k2) </condition>
+        </count>
+        <count id="c3">  <!-- atLeast -->
+          <list> x1 x2 x3 x4 x5 </list>
+          <values> 1 </values>
+          <condition> (ge,k3) </condition>
+        </count>
+        <count id="c4">  <!-- atMost -->
+          <list> y1 y2 y3 y4 </list>
+          <values> 0 </values>
+          <condition> (le,2) </condition>
+        </count>
+        <count id="c5">  <!-- exactly -->
+          <list> z1 z3 z3 </list>
+          <values> z </values>
+          <condition> (eq,k5) </condition>
+        </count>
         ```
          */
         #[serde(rename = "count")]
         Count {
-            #[serde(rename = "@id", default)]
-            id: String,
+            // #[serde(rename = "@id", default)]
+            // id: String,
             #[serde(rename = "list", default)]
             vars: String,
             #[serde(rename = "values", default)]
@@ -418,12 +448,28 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <nValues>
+          <list> (intVar wspace)2+ </list>
+          [<except> (intVal wspace)+ </except>]
+          <condition> "(" operator "," operand ")" </condition>
+        </nValues>
         ```
 
         eg.
         ```xml
-
+        <nValues id="c1">
+          <list> x1 x2 x3 x4 </list>
+          <condition> (eq,3) </condition>
+        </nValues>
+        <nValues id="c2">
+          <list> y1 y2 y3 y4 y5 </list>
+          <condition> (le,w) </condition>
+        </nValues>
+        <nValues id="c3">
+          <list> z1 z2 z3 z4 </list>
+          <except> 0 </except>
+          <condition> (eq,2) </condition>
+        </nValues>
         ```
          */
         #[serde(rename = "nValues")]
@@ -439,20 +485,33 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <cardinality>
+          <list> (intVar wspace)2+ </list>
+          <values  [ closed="boolean" ]> (intVal wspace)+ | (intVar wspace)+ </values>
+          <occurs> (intVal wspace)+ | (intVar wspace)+ | (intIntvl wspace)+ </occurs>
+        </cardinality>
         ```
 
         eg.
         ```xml
-
+        <cardinality>
+          <list> x1 x2 x3 x4 </list>
+          <values> 2 5 10 </values>
+          <occurs> 0..1 1..3 2..3 </occurs>
+        </cardinality>
+        <cardinality>
+          <list> y1 y2 y3 y4 y5 </list>
+          <values closed="false"> 0 1 2 3 </values>
+          <occurs> z0 z1 z2 z3 </occurs>
+        </cardinality>
         ```
          */
         #[serde(rename = "cardinality")]
         Cardinality {
             #[serde(rename = "list", default)]
-            vars: String,
+            list: String,
             #[serde(rename = "values", default)]
-            values: String,
+            values: ListWithClosed,
             #[serde(rename = "occurs", default)]
             occurs: String,
         },
@@ -541,7 +600,7 @@ pub mod xcsp3_xml {
         #[serde(rename = "element")]
         Element {
             #[serde(rename = "list", default)]
-            vars: String,
+            vars: ListWithStartIndex,
             #[serde(rename = "value", default)]
             value: String,
             #[serde(rename = "index", default)]

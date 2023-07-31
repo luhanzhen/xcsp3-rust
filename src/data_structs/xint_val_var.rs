@@ -27,6 +27,7 @@ pub mod xcsp3_core {
         IntInterval(i32, i32),
         IntArgument(i32),
         IntStart,
+        IntNone,
     }
 
     impl Display for XVarVal {
@@ -50,6 +51,9 @@ pub mod xcsp3_core {
                     XVarVal::IntStart => {
                         "%...".to_string()
                     }
+                    XVarVal::IntNone => {
+                        "".to_string()
+                    }
                 }
             )
         }
@@ -59,6 +63,8 @@ pub mod xcsp3_core {
         pub fn from_string(s: &str) -> Option<Self> {
             if s.contains('[') {
                 Some(XVarVal::IntVar(String::from(s)))
+            } else if s.is_empty() {
+                None
             } else if s.contains('%') {
                 if Regex::new(r"%(0|[1-9][0-9]*)").unwrap().is_match(s)
                 //%num

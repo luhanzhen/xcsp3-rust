@@ -43,14 +43,16 @@ pub mod xcsp3_core {
     use crate::errors::parse_domain_error::xcsp3_core::ParseDomainError;
     use crate::errors::parse_objectives_error::xcsp3_core::ParseObjectivesError;
     use crate::errors::parse_variable_error::ParseVariableError;
+    use quick_xml::DeError;
     use std::fmt::{Display, Formatter};
 
-    #[derive(Debug, Clone, PartialEq, Eq)]
+    #[derive(Debug, Clone)]
     pub enum Xcsp3Error {
         ParseDomainError(ParseDomainError),
         ParseVariableError(ParseVariableError),
         ParseConstraintError(ParseConstraintError),
         ParseObjectivesError(ParseObjectivesError),
+        ReadXmlError(DeError),
     }
 
     impl Display for Xcsp3Error {
@@ -63,6 +65,7 @@ pub mod xcsp3_core {
                     Xcsp3Error::ParseVariableError(e) => e.to_string(),
                     Xcsp3Error::ParseConstraintError(e) => e.to_string(),
                     Xcsp3Error::ParseObjectivesError(e) => e.to_string(),
+                    Xcsp3Error::ReadXmlError(e) => e.to_string(),
                 }
             )
         }
@@ -70,6 +73,9 @@ pub mod xcsp3_core {
 
     /// error factory
     impl Xcsp3Error {
+        pub fn get_read_xml_error(err: DeError) -> Xcsp3Error {
+            Xcsp3Error::ReadXmlError(err)
+        }
         pub fn get_constraint_slide_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_slide_error(s))
         }
@@ -91,6 +97,13 @@ pub mod xcsp3_core {
 
         pub fn get_constraint_element_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_element_error(s))
+        }
+        pub fn get_constraint_count_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_count_error(s))
+        }
+
+        pub fn get_constraint_cardinality_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_cardinality_error(s))
         }
         pub fn get_constraint_sum_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_sum_error(s))

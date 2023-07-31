@@ -100,7 +100,23 @@ pub mod xcsp3_core {
                 r#type: ConstraintError::SlideError,
             }
         }
+        pub(crate) fn get_count_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::CountError,
+            }
+        }
 
+        pub(crate) fn get_cardinality_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::CardinalityError,
+            }
+        }
         pub(crate) fn get_sum_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
@@ -145,5 +161,7 @@ pub mod xcsp3_core {
         SumError,
         ElementError,
         SlideError,
+        CountError,
+        CardinalityError,
     }
 }

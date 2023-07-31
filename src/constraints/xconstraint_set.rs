@@ -46,9 +46,12 @@ pub mod xcsp3_core {
     use crate::constraints::xgroup::xcsp3_core::XGroup;
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
 
+    use crate::constraints::xcardinality::xcsp3_core::XCardinality;
+    use crate::constraints::xcount::xcsp3_core::XCount;
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
+    use crate::constraints::xn_values::xcsp3_core::XNValues;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xslide::xcsp3_core::XSlide;
@@ -74,8 +77,29 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn build_element(&mut self, vars: &str, values_str: &str, index_str: &str) {
-            match XElement::from_str(vars, values_str, index_str, self.set) {
+        pub fn build_cardinality(
+            &mut self,
+            list: &str,
+            values_str: &str,
+            occurs_str: &str,
+            closed_str: &str,
+        ) {
+            match XCardinality::from_str(list, values_str, occurs_str, closed_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XCardinality(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
+        pub fn build_element(
+            &mut self,
+            vars: &str,
+            values_str: &str,
+            index_str: &str,
+            start_index_str: &str,
+        ) {
+            match XElement::from_str(vars, values_str, index_str, start_index_str, self.set) {
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XElement(c));
                 }
@@ -137,6 +161,24 @@ pub mod xcsp3_core {
             match XMaxMin::from_str(vars, condition, false, self.set) {
                 Ok(c) => {
                     self.constraints.push(XConstraintType::XMaximum(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
+        pub fn build_count(&mut self, vars: &str, condition: &str, coeffs: &str) {
+            match XCount::from_str(vars, condition, coeffs, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XCount(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
+        pub fn build_n_values(&mut self, vars: &str, condition: &str, coeffs: &str) {
+            match XNValues::from_str(vars, condition, coeffs, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XNValues(c));
                 }
                 Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
             }

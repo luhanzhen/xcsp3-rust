@@ -42,6 +42,10 @@ pub mod xcsp3_core {
     use crate::constraints::xall_different::xcsp3_core::XAllDifferent;
     use crate::constraints::xall_different_except::xcsp3_core::XAllDifferentExcept;
     use crate::constraints::xall_equal::xcsp3_core::XAllEqual;
+    use crate::constraints::xcardinality::xcsp3_core::XCardinality;
+    use crate::constraints::xchannel::xcsp3_core::XChannel;
+    use crate::constraints::xcount::xcsp3_core::XCount;
+    use crate::constraints::xcumulative::xcsp3_core::XCumulative;
     use crate::constraints::xelement::xcsp3_core::XElement;
     use crate::constraints::xextension::xcsp3_core::XExtension;
     use crate::constraints::xgroup::xcsp3_core::XGroup;
@@ -49,9 +53,12 @@ pub mod xcsp3_core {
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
+    use crate::constraints::xn_values::xcsp3_core::XNValues;
+    use crate::constraints::xno_overlap::xcsp3_core::XNoOverlap;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xslide::xcsp3_core::XSlide;
+    use crate::constraints::xstretch::xcsp3_core::XStretch;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::fmt::{Display, Formatter};
@@ -74,6 +81,13 @@ pub mod xcsp3_core {
         XMinimum(XMaxMin<'a>),
         XElement(XElement<'a>),
         XSlide(XSlide<'a>),
+        XCount(XCount<'a>),
+        XNValues(XNValues<'a>),
+        XCardinality(XCardinality<'a>),
+        XChannel(XChannel<'a>),
+        XCumulative(XCumulative<'a>),
+        XNoOverlap(XNoOverlap<'a>),
+        XStretch(XStretch<'a>),
     }
 
     impl Display for XConstraintType<'_> {
@@ -83,6 +97,10 @@ pub mod xcsp3_core {
                         XConstraintType::XConstraintNone(e) => format!(
                             "XConstraintNone: there must be an error when parse this constraint. Error is {}",e
                         ),
+                        XConstraintType::XStretch(c) => c.to_string(),
+                        XConstraintType::XChannel(c) => c.to_string(),
+                        XConstraintType::XCumulative(c) => c.to_string(),
+                        XConstraintType::XNoOverlap(c) => c.to_string(),
                         XConstraintType::XExtension(c) => c.to_string(),
                         XConstraintType::XAllEqual(c) => c.to_string(),
                         XConstraintType::XAllDifferent(c) => c.to_string(),
@@ -98,6 +116,9 @@ pub mod xcsp3_core {
                         XConstraintType::XMaximum(c) => c.to_string(),
                         XConstraintType::XElement(c) => c.to_string(),
                         XConstraintType::XSlide(c) => c.to_string(),
+                        XConstraintType::XCount(c) => c.to_string(),
+                        XConstraintType::XNValues(c) => c.to_string(),
+                        XConstraintType::XCardinality(c) => c.to_string(),
                     }
              )
         }
