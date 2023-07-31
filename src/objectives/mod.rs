@@ -38,7 +38,7 @@
  * </p>
  */
 
-#![doc = include_str!("./readme.md")]
+
 
 pub mod xobjective_element;
 pub mod xobjective_expression;

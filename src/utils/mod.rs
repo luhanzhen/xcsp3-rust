@@ -38,7 +38,7 @@
 * </p>
  **/
 
-#![doc = include_str!("./readme.md")]
+
 
 pub mod time_interval;
 pub mod utils_functions;
