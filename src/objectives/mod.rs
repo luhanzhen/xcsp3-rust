@@ -38,8 +38,6 @@
  * </p>
  */
 
-
-
 pub mod xobjective_element;
 pub mod xobjective_expression;
 pub mod xobjectives_set;

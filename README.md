@@ -11,8 +11,12 @@
 
 
 ## Description
-###  This lib is implemented by rust and is licensed under the MIT license. The purpose of this library is to read XCSP files into rust constraint programming solvers.
-### http://xcsp.org/
+### This lib is implemented by rust and is licensed under the MIT license. 
+### The purpose of this library is to read XCSP files into rust constraint programming solvers.
+### You can learn about the semantics of XCSP3 through this site http://xcsp.org/.
+### I will keep improving this code to support more constraints and fix possible bugs.
+### If you have something to tell me, feel free to contact me.
+
 
 ## Usage
 
@@ -33,14 +37,17 @@ xcsp3-rust = "0.1.0"
         let xml_file = ".//instances//my-example.xml";
         let model = XcspXmlModel::from_path(xml_file).unwrap();
         let variable = model.build_variables();
+        
         println!("variables:");
         for v in variable.iter() {
-            println!("\t{}", v)
+            println!("\t{}", v);
         }
+        
         println!("constraints:");
-        for c in model.build_constraints(&variable).iter_mut() {
+        for c in model.build_constraints(&variable).iter() {
             println!("\t{}", c);
         }
+        
         println!("objectives:");
         for o in model.build_objectives(&variable).iter() {
             println!("\t{}", o);
@@ -54,12 +61,12 @@ xcsp3-rust = "0.1.0"
 ```mermaid
 graph BT
 A["XCSP(xml file)"] --serde--> B(XcspXmlModel)
-B --parse--> C([XVariableSet])
-B --parse--> D([XConstraintSet])
-B --parse--> E([XObjectivesSet])
-C --read--> F[/main.rs/]
-D --read--> F
-E --read--> F
+B --parser--> C([XVariableSet])
+B --parser--> D([XConstraintSet])
+B --parser--> E([XObjectivesSet])
+C --reader--> F[/main.rs/]
+D --reader--> F
+E --reader--> F
 
 ```
 ### XVariableSet
@@ -126,5 +133,6 @@ graph LR
 ## Author
 > luhan zhen
 
+> tip: Maybe my code is not the best, but I will keep improving it to better build our 'CP' community.
 
 

@@ -51,7 +51,6 @@ pub mod xmdd;
 pub mod xordered;
 pub mod xregular;
 
-pub mod xblocks;
 pub mod xconstraint_trait;
 pub mod xelement;
 pub mod xgroup;

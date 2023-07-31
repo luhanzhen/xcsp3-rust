@@ -38,7 +38,5 @@
 * </p>
  **/
 
-
-
 pub mod time_interval;
 pub mod utils_functions;
