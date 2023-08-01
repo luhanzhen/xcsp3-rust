@@ -87,7 +87,7 @@ graph LR
 ```
 ### XConstraintSet
 ```mermaid
-graph LR
+graph TB
     D([XConstraintSet]) -.-> XConstraintType(XConstraintType)
     XConstraintType -->  XExtension(XExtension) -.scope.-> Scope(XVarVal)
     XConstraintType --> XAllDifferent(XAllDifferent)-.scope.-> Scope
