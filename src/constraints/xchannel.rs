@@ -37,6 +37,10 @@
  * <p>@description:
  * </p>
  */
+
+
+
+
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
@@ -50,6 +54,26 @@ pub mod xcsp3_core {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,
         set: &'a XVariableSet,
+        start_index: Option<i32>,
+    }
+
+
+
+    impl <'a>XChannel<'a> {
+
+
+        pub fn new( scope: Vec<XVarVal>,
+                    set: &'a XVariableSet,
+                    start_index: Option<i32>,)->Self
+        {
+            Self
+            {
+                scope,
+                map: Default::default(),
+                set,
+                start_index,
+            }
+        }
     }
 
     impl Display for XChannel<'_> {

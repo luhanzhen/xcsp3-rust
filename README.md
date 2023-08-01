@@ -64,7 +64,7 @@ A["XCSP(xml file)"] --serde--> B(XcspXmlModel)
 B --parser--> C([XVariableSet])
 B --parser--> D([XConstraintSet])
 B --parser--> E([XObjectivesSet])
-C --reader--> F[/main.rs/]
+C --reader--> F[/example.rs/]
 D --reader--> F
 E --reader--> F
 
@@ -87,7 +87,7 @@ graph LR
 ```
 ### XConstraintSet
 ```mermaid
-graph TB
+graph LR
     D([XConstraintSet]) -.-> XConstraintType(XConstraintType)
     XConstraintType -->  XExtension(XExtension) -.scope.-> Scope(XVarVal)
     XConstraintType --> XAllDifferent(XAllDifferent)-.scope.-> Scope
