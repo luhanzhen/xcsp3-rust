@@ -313,17 +313,13 @@ pub mod xcsp3_xml {
                     origins,
                     lengths,
                     zero_ignored,
-                } =>
-                    {
-                        if origins.contains(',') && origins.contains('(')
-                        {
-                            set.build_no_overlap_k_dim(origins, lengths, zero_ignored);
-                        }else {
-                            set.build_no_overlap(origins, lengths, zero_ignored);
-                        }
-
-
-                    },
+                } => {
+                    if origins.contains(',') && origins.contains('(') {
+                        set.build_no_overlap_k_dim(origins, lengths, zero_ignored);
+                    } else {
+                        set.build_no_overlap(origins, lengths, zero_ignored);
+                    }
+                }
                 ConstraintType::Cumulative {
                     origins,
                     lengths,

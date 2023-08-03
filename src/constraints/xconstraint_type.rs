@@ -55,6 +55,7 @@ pub mod xcsp3_core {
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xn_values::xcsp3_core::XNValues;
     use crate::constraints::xno_overlap::xcsp3_core::XNoOverlap;
+    use crate::constraints::xno_overlap_k_dimensional::xcsp3_core::XNoOverlapKDim;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xslide::xcsp3_core::XSlide;
@@ -62,7 +63,6 @@ pub mod xcsp3_core {
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::fmt::{Display, Formatter};
-    use crate::constraints::xno_overlap_k_dimensional::xcsp3_core::XNoOverlapKDim;
 
     // #[derive(Clone)]
     pub enum XConstraintType<'a> {

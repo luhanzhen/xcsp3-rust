@@ -196,18 +196,19 @@ pub mod xcsp3_utils {
             }
             scope
         }
-        pub fn get(self, set: &XVariableSet) -> Vec<XVarVal> {
+        pub fn get(&self, set: &XVariableSet) -> Vec<XVarVal> {
             let mut scope: Vec<XVarVal> = vec![];
             for e in self.first_order_iter() {
                 if let TreeNode::Variable(v) = e {
                     let r = set.find_variable(v);
                     match r {
-                        Ok(r) => {
-                            println!("{}", r);
+                        Ok(_) => {
+                            // println!("{}", r);
                             scope.push(XVarVal::IntVar(v.to_string()))
                         }
-                        Err(err) => {
-                            println!("{}, {}", e, err)
+                        Err(_) => {
+
+                            // println!("{}, {}", e, err)
                         }
                     }
                 }

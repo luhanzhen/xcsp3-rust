@@ -61,40 +61,34 @@ pub mod xcsp3_core {
             zero_ignored_str: &str,
             set: &'a XVariableSet,
         ) -> Result<Self, Xcsp3Error> {
-            let scope: Vec<Vec<XVarVal>> =
-                {
-                    let mut sc = vec![];
-                    let binding = list.replace(['(', ',',')']," ");
-                    let spilt: Vec<&str> = binding.split_whitespace().collect();
-                    for e in spilt.iter()
-                    {
-                        sc.push(
-                        match list_to_vec_var_val(e) {
-                            Ok(n) => n,
-                            Err(e) => {
-                                return Err(e);
-                            }
-                        })
-                    }
-                    sc
-                };
-            let lengths =
-                {
-                    let mut le = vec![];
-                    let binding = lengths_str.replace(['(', ',',')']," ");
-                    let spilt: Vec<&str> = binding.split_whitespace().collect();
-                    for e in spilt.iter()
-                    {
-                        le.push(
-                            match list_to_vec_var_val(e) {
-                                Ok(n) => n,
-                                Err(e) => {
-                                    return Err(e);
-                                }
-                            })
-                    }
-                    le
-                };
+            let scope: Vec<Vec<XVarVal>> = {
+                let mut sc = vec![];
+                let binding = list.replace(['(', ',', ')'], " ");
+                let spilt: Vec<&str> = binding.split_whitespace().collect();
+                for e in spilt.iter() {
+                    sc.push(match list_to_vec_var_val(e) {
+                        Ok(n) => n,
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    })
+                }
+                sc
+            };
+            let lengths = {
+                let mut le = vec![];
+                let binding = lengths_str.replace(['(', ',', ')'], " ");
+                let spilt: Vec<&str> = binding.split_whitespace().collect();
+                for e in spilt.iter() {
+                    le.push(match list_to_vec_var_val(e) {
+                        Ok(n) => n,
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    })
+                }
+                le
+            };
             let zero_ignored = if !zero_ignored_str.is_empty() {
                 match zero_ignored_str.parse::<bool>() {
                     Ok(n) => Some(n),
@@ -134,45 +128,45 @@ pub mod xcsp3_core {
             &self.scope
         }
 
-        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
-
-            for e in &self.scope {
-                if let XVarVal::IntVar(s) = e {
-                    if !self.map.contains_key(s) {
-                        if let Ok(vec) = self.set.construct_scope(&[s]) {
-                            for (vs, vv) in vec.into_iter() {
-                                self.map.insert(vs, vv);
-                            }
-                        }
-                    }
-                }
-            }
-            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
-            for e in self.map.iter() {
-                scope_vec_var.push((e.0, e.1))
-            }
-            scope_vec_var
-        }
+        // fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+        //
+        //     for e in &self.scope {
+        //         if let XVarVal::IntVar(s) = e {
+        //             if !self.map.contains_key(s) {
+        //                 if let Ok(vec) = self.set.construct_scope(&[s]) {
+        //                     for (vs, vv) in vec.into_iter() {
+        //                         self.map.insert(vs, vv);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+        //     for e in self.map.iter() {
+        //         scope_vec_var.push((e.0, e.1))
+        //     }
+        //     scope_vec_var
+        // }
     }
 
     impl Display for XNoOverlapKDim<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret = String::default();
-            for e in self.scope.iter() {
-                ret.push('(');
-                ret.push_str(&e.to_string());
-                ret.push_str("), ")
-            }
+            // for e in self.scope.iter() {
+            //     ret.push('(');
+            //     ret.push_str(&e.to_string());
+            //     ret.push_str("), ")
+            // }
             ret.push_str("  lengths = ");
-            for e in self.lengths.iter() {
-                ret.push('(');
-                ret.push_str(&e.to_string());
-                ret.push_str("), ")
-            }
+            // for e in self.lengths.iter() {
+            //     ret.push('(');
+            //     ret.push_str(&e.to_string());
+            //     ret.push_str("), ")
+            // }
             if let Some(n) = &self.zero_ignored {
                 ret.push_str(&format!(" zeroIgnored = {}, ", n))
             }
-            write!(f, "XNoOverlap: scope =  {}, ", ret, )
+            write!(f, "XNoOverlap: scope =  {}, ", ret,)
         }
     }
 }

@@ -182,25 +182,6 @@ pub mod xcsp3_core {
             }
         }
 
-        // pub fn exist_variables(&self, scope_str: &[String]) -> bool {
-        //     for e in scope_str.iter() {
-        //         if e.contains('%') {
-        //             continue;
-        //         } else {
-        //             match self.find_variable(e) {
-        //                 Ok(v) => match v {
-        //                     XVariableType::XVariableNone(_) => return false,
-        //                     XVariableType::XVariableArray(_) => {}
-        //                     XVariableType::XVariableInt(_) => continue,
-        //                     XVariableType::XVariableTree(_) => {}
-        //                 },
-        //                 Err(_) => return false,
-        //             }
-        //         }
-        //     }
-        //     true
-        // }
-
         ///construct the scope from XVariableSet, when scope is equal to %x, where x is an i32 number, return empty tuple
         pub fn construct_scope(
             &self,
