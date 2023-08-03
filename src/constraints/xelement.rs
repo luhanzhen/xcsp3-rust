@@ -55,7 +55,7 @@ pub mod xcsp3_core {
         set: &'a XVariableSet,
         value: XVarVal,
         index: XVarVal,
-        start_index: i32,
+        start_index: Option<i32>,
     }
 
     impl<'a> XElement<'a> {
@@ -91,7 +91,7 @@ pub mod xcsp3_core {
                     };
                     let start_index = if !start_index_str.is_empty() {
                         match start_index_str.parse::<i32>() {
-                            Ok(n) => n,
+                            Ok(n) => Some(n),
                             Err(_) => {
                                 return Err(Xcsp3Error::get_constraint_sum_error(
                                     "parse element constraint start_index error, ",
@@ -99,7 +99,7 @@ pub mod xcsp3_core {
                             }
                         }
                     } else {
-                        i32::MAX
+                        None
                     };
 
                     Ok(XElement::new(scope_vec_str, set, value, index, start_index))
@@ -114,7 +114,7 @@ pub mod xcsp3_core {
             set: &'a XVariableSet,
             value: XVarVal,
             index: XVarVal,
-            start_index: i32,
+            start_index: Option<i32>,
         ) -> Self {
             Self {
                 scope,
@@ -125,8 +125,8 @@ pub mod xcsp3_core {
                 start_index,
             }
         }
-        pub fn get_start_index(&self) -> i32 {
-            self.start_index
+        pub fn get_start_index(&self) -> &Option<i32> {
+            &self.start_index
         }
     }
     impl Display for XElement<'_> {
@@ -137,8 +137,8 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            if self.start_index != i32::MAX {
-                ret.push_str(&format!(" start_index = {} ", self.start_index))
+            if let Some(n) = &self.start_index {
+                ret.push_str(&format!(" start_index = {} ", n))
             }
             if let XVarVal::IntNone = self.index {
                 ret.push_str(&format!(" index = {} ", self.index))

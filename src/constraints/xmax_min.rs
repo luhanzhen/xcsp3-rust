@@ -82,26 +82,6 @@ pub mod xcsp3_core {
     }
 
     impl XConstraintTrait for XMaxMin<'_> {
-        // fn to_string(&self) -> String {
-        //     let mut ret: String;
-        //     if self.is_maximum() {
-        //         ret = "XMaximum: scope =  ".to_string();
-        //     } else {
-        //         ret = "XMinimum: scope =  ".to_string();
-        //     }
-        //     for e in self.scope_vec_var.iter() {
-        //         ret.push_str(e.0.as_str());
-        //         ret.push('(');
-        //         ret.push_str(e.1.to_string().as_str());
-        //         ret.push_str("), ")
-        //     }
-        //     ret.push_str(&format!(
-        //         " Operator = {:?}, Operand = {:?}",
-        //         self.operator, self.operand
-        //     ));
-        //     ret
-        // }
-
         fn get_scope_string(&self) -> &Vec<XVarVal> {
             &self.scope
         }
@@ -137,25 +117,22 @@ pub mod xcsp3_core {
                 Ok(scope) => {
                     let condition = condition.replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
-                    let ope: Operator;
-                    match Operator::get_operator_by_str(spilt[0]) {
+                    let ope: Operator = match Operator::get_operator_by_str(spilt[0]) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
                             ))
                         }
-                        Some(o) => ope = o,
-                    }
-                    let rand: Operand;
-
-                    match Operand::get_operand_by_str(&spilt[1..], &ope) {
+                        Some(o) => o,
+                    };
+                    let rand: Operand = match Operand::get_operand_by_str(&spilt[1..], &ope) {
                         None => {
                             return Err(Xcsp3Error::get_constraint_sum_error(
                                 "parse sum constraint error, ",
                             ))
                         }
-                        Some(r) => rand = r,
-                    }
+                        Some(r) => r,
+                    };
                     Ok(Self::new(scope, set, ope, rand, is_maximum_or_minimum))
                 }
                 Err(e) => Err(e),

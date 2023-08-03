@@ -610,12 +610,21 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <stretch>
+          <list> (intVar wspace)2+ </list>
+          <values> (intVal wspace)+ </values>
+          <widths> (intIntvl wspace)+ </widths>
+          [<patterns> ("(" intVal "," intVal ")")+ </patterns>]
+        </stretch>
         ```
 
         eg.
         ```xml
-
+        <stretch>
+          <list> x1 x2 x3 x4 x5 x6 x7 </list>
+          <values> 1 2 3 0 </values>
+          <widths> 1..3 1..3 2..3 2..4 </widths>
+        </stretch>
         ```
          */
         #[serde(rename = "stretch")]
@@ -633,12 +642,18 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <noOverlap  [ zeroIgnored="boolean" ]>
+          <origins> (intVar wspace)2+ </origins>
+          <lengths> (intVal wspace)2+ | (intVar wspace)2+ </lengths>
+        </noOverlap>
         ```
 
         eg.
         ```xml
-
+        <noOverlap>
+          <origins> x1 x2 x3 </origins>
+          <lengths> l1 l2 l3 </lengths>
+        </noOverlap>
         ```
          */
         #[serde(rename = "noOverlap")]
@@ -647,17 +662,40 @@ pub mod xcsp3_xml {
             origins: String,
             #[serde(rename = "lengths", default)]
             lengths: String,
+            #[serde(rename = "@zeroIgnored", default)]
+            zero_ignored: String,
         },
 
         /**
         syntax.
         ```xml
-
+        <cumulative>
+          <origins> (intVar wspace)2+ </origins>
+          <lengths> (intVal wspace)2+ | (intVar wspace)2+ </lengths>
+          [<ends> (intVar wspace)2+ </ends>]
+          <heights> (intVal wspace)2+ | (intVar wspace)2+ </heights>
+          <condition> "(" operator "," operand ")" </condition>
+        </cumulative>
+        <cumulative>
+          <origins> (intVar wspace)2+ </origins>
+          <lengths> (intVal wspace)2+ | (intVar wspace)2+ </lengths>
+          [ <ends> (intVar wspace)2+ </ends> ]
+          <heights> (intVal wspace)2+ | (intVar wspace)2+ </heights>
+          <machines> (intVar wspace)2+ </machines>
+          <conditions  [ startIndex="integer" ]>
+            ("(" operator "," operand ")")2+
+          </conditions>
+        </cumulative>
         ```
 
         eg.
         ```xml
-
+        <cumulative>
+          <origins> s1 s2 s3 s4 </origins>
+          <lengths> l1 l2 l3 l4 </lengths>
+          <heights> h1 h2 h3 h4 </heights>
+          <condition> (le,4) </condition>
+        </cumulative>
         ```
          */
         #[serde(rename = "cumulative")]
@@ -669,7 +707,7 @@ pub mod xcsp3_xml {
             #[serde(rename = "heights", default)]
             heights: String,
             #[serde(rename = "condition", default)]
-            condition: String,
+            condition: ListWithStartIndex,
             #[serde(rename = "ends", default)]
             ends: String,
             #[serde(rename = "machines", default)]
@@ -748,20 +786,37 @@ pub mod xcsp3_xml {
         /**
         syntax.
         ```xml
-
+        <channel>
+          <list  [ startIndex="integer" ]> (intVar wspace)2+ </list>
+          <list  [ startIndex="integer" ]> (intVar wspace)2+ </list>
+        </channel>
+        <channel> (intVar wspace)2+ </channel>  <!-- Simplified Form -->
+        <channel>
+          <list  [ startIndex="integer" ]> (01Var wspace)2+ </list>
+          <value> intVar </value>
+        </channel>
         ```
 
         eg.
         ```xml
-
+        <channel>
+          <list> x1 x2 x3 x4 </list>
+          <list> y1 y2 y3 y4 </list>
+        </channel>
+        <channel>
+          <list> z1 z2 z3 z4 z5 </list>
+          <value> v </value>
+        </channel>
         ```
          */
         #[serde(rename = "channel")]
         Channel {
             #[serde(rename = "list", default)]
-            vars: Box<[String]>,
+            lists: Box<[ListWithStartIndex]>,
             #[serde(rename = "value", default)]
-            value: String,
+            with_value: String,
+            #[serde(rename = "$value", default)]
+            simplified_list: String,
         },
 
         /**

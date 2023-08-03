@@ -74,6 +74,14 @@ pub mod xcsp3_core {
             }
         }
 
+        pub(crate) fn get_channel_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/generic/extension/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::ChannelError,
+            }
+        }
         pub(crate) fn get_extension_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/generic/extension/";
@@ -109,6 +117,22 @@ pub mod xcsp3_core {
             }
         }
 
+        pub(crate) fn get_cumulative_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::CumulativeError,
+            }
+        }
+        pub(crate) fn get_no_overlap_error(s: &str) -> ParseConstraintError {
+            const WEBSITE: &str =
+                " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
+            ParseConstraintError {
+                msg: (s.to_owned() + WEBSITE),
+                r#type: ConstraintError::NoOverlapError,
+            }
+        }
         pub(crate) fn get_cardinality_error(s: &str) -> ParseConstraintError {
             const WEBSITE: &str =
                 " please visit http://xcsp.org/specifications/constraints/counting-summing/sum/";
@@ -163,5 +187,8 @@ pub mod xcsp3_core {
         SlideError,
         CountError,
         CardinalityError,
+        ChannelError,
+        NoOverlapError,
+        CumulativeError,
     }
 }

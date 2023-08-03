@@ -303,9 +303,33 @@ pub mod xcsp3_xml {
                     set.build_element(&vars.value, value, index, &vars.start_index)
                 }
 
-                ConstraintType::Stretch { .. } => {}
-                ConstraintType::NoOverlap { .. } => {}
-                ConstraintType::Cumulative { .. } => {}
+                ConstraintType::Stretch {
+                    vars,
+                    values,
+                    widths,
+                    patterns,
+                } => set.build_stretch(vars, values, widths, patterns),
+                ConstraintType::NoOverlap {
+                    origins,
+                    lengths,
+                    zero_ignored,
+                } => set.build_no_overlap(origins, lengths, zero_ignored),
+                ConstraintType::Cumulative {
+                    origins,
+                    lengths,
+                    heights,
+                    condition,
+                    ends,
+                    machines,
+                } => set.build_cumulative(
+                    origins,
+                    lengths,
+                    heights,
+                    &condition.value,
+                    ends,
+                    machines,
+                    &condition.start_index,
+                ),
                 ConstraintType::Instantiation { vars, values } => {
                     // println!("{}{:?}", vars, values);
                     set.build_instantiation(vars, values);
@@ -325,7 +349,23 @@ pub mod xcsp3_xml {
                         }
                     }
                 }
-                ConstraintType::Channel { .. } => {}
+                ConstraintType::Channel {
+                    lists,
+                    with_value,
+                    simplified_list,
+                } => {
+                    if !simplified_list.is_empty() {
+                        set.build_channel(simplified_list, "", "");
+                    } else {
+                        if with_value.is_empty() {
+                            for e in lists.iter() {
+                                set.build_channel(&e.value, &e.start_index, "");
+                            }
+                        } else {
+                            set.build_channel(&lists[0].value, &lists[0].start_index, with_value);
+                        }
+                    }
+                }
 
                 ConstraintType::AllDistant { .. } => {}
                 ConstraintType::Precedence { .. } => {}

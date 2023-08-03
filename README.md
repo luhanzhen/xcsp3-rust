@@ -37,20 +37,56 @@ xcsp3-rust = "0.1.0"
         let xml_file = ".//instances//my-example.xml";
         let model = XcspXmlModel::from_path(xml_file).unwrap();
         let variable = model.build_variables();
-        
         println!("variables:");
         for v in variable.iter() {
             println!("\t{}", v);
+            match v {
+                XVariableType::XVariableNone(_) => {}
+                XVariableType::XVariableArray(_) => {}
+                XVariableType::XVariableInt(_) => {}
+                XVariableType::XVariableTree(_) => {}
+            }
         }
-        
         println!("constraints:");
-        for c in model.build_constraints(&variable).iter() {
+        for c in model.build_constraints(&variable).iter_mut() {
             println!("\t{}", c);
+            match c {
+                XConstraintType::XConstraintNone(_) => {}
+                XConstraintType::XExtension(_) => {}
+                XConstraintType::XAllDifferent(_) => {}
+                XConstraintType::XAllDifferentExcept(_) => {}
+                XConstraintType::XInstantiation(_) => {}
+                XConstraintType::XAllEqual(_) => {}
+                XConstraintType::XOrdered(_) => {}
+                XConstraintType::XRegular(_) => {}
+                XConstraintType::XMdd(_) => {}
+                XConstraintType::XIntention(_) => {}
+                XConstraintType::XGroup(_) => {}
+                XConstraintType::XSum(_) => {}
+                XConstraintType::XMaximum(_) => {}
+                XConstraintType::XMinimum(_) => {}
+                XConstraintType::XElement(_) => {}
+                XConstraintType::XSlide(_) => {}
+                XConstraintType::XCount(_) => {}
+                XConstraintType::XNValues(_) => {}
+                XConstraintType::XCardinality(_) => {}
+                XConstraintType::XChannel(_) => {}
+                XConstraintType::XCumulative(_) => {}
+                XConstraintType::XNoOverlap(_) => {}
+                XConstraintType::XStretch(_) => {}
+            }
         }
-        
         println!("objectives:");
         for o in model.build_objectives(&variable).iter() {
             println!("\t{}", o);
+            match o {
+                XObjectivesType::XObjectiveNone(_) => {}
+                XObjectivesType::Minimize(e) => match e {
+                    XObjective::XObjectiveElement(_) => {}
+                    XObjective::XObjectiveExpression(_) => {}
+                },
+                XObjectivesType::Maximize(_) => {}
+            }
         }
     }
 ```

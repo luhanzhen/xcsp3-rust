@@ -46,12 +46,92 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
+
     pub struct XNoOverlap<'a> {
         scope: Vec<XVarVal>,
+        lengths: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,
         set: &'a XVariableSet,
+        zero_ignored: Option<bool>,
     }
+    impl<'a> XNoOverlap<'a> {
+        pub fn from_str(
+            list: &str,
+            lengths_str: &str,
+            zero_ignored_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            let scope = match list_to_vec_var_val(list) {
+                Ok(n) => n,
+                Err(e) => {
+                    return Err(e);
+                }
+            };
+            let lengths = match list_to_vec_var_val(lengths_str) {
+                Ok(n) => n,
+                Err(e) => {
+                    return Err(e);
+                }
+            };
+            let zero_ignored = if !zero_ignored_str.is_empty() {
+                match zero_ignored_str.parse::<bool>() {
+                    Ok(n) => Some(n),
+                    Err(_) => {
+                        return Err(Xcsp3Error::get_constraint_no_overlap_error(
+                            "parse XNoOverlap constraint zero_ignored error, ",
+                        ));
+                    }
+                }
+            } else {
+                None
+            };
+            Ok(Self::new(scope, lengths, set, zero_ignored))
+        }
+        pub fn new(
+            scope: Vec<XVarVal>,
+            lengths: Vec<XVarVal>,
+            set: &'a XVariableSet,
+            zero_ignored: Option<bool>,
+        ) -> Self {
+            Self {
+                scope,
+                lengths,
+                map: Default::default(),
+                set,
+                zero_ignored,
+            }
+        }
+        pub fn lengths(&self) -> &Vec<XVarVal> {
+            &self.lengths
+        }
+        pub fn zero_ignored(&self) -> Option<bool> {
+            self.zero_ignored
+        }
+    }
+    impl XConstraintTrait for XNoOverlap<'_> {
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
+        }
 
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
+        }
+    }
     impl Display for XNoOverlap<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret = String::default();
@@ -60,12 +140,15 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            // if self.start_index != i32::MAX {
-            //     ret.push_str(&format!(" start_index = {} ", self.start_index))
-            // }
-            // if let XVarVal::IntNone = self.index {
-            //     ret.push_str(&format!(" index = {} ", self.index))
-            // }
+            ret.push_str("  lengths = ");
+            for e in self.lengths.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
+            if let Some(n) = &self.zero_ignored {
+                ret.push_str(&format!(" zeroIgnored = {}, ", n))
+            }
             write!(f, "XNoOverlap: scope =  {}, ", ret,)
         }
     }

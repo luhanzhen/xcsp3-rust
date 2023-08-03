@@ -1,5 +1,6 @@
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
+use xcsp3_rust::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
@@ -23,8 +24,8 @@ fn main() {
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
     // println!("{:?}", e);
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
@@ -37,33 +38,64 @@ fn test_single() {
     let variable = model.build_variables();
     println!("variables:");
     for v in variable.iter() {
-        println!("\t{}", v)
+        println!("\t{}", v);
+        match v {
+            XVariableType::XVariableNone(_) => {}
+            XVariableType::XVariableArray(_) => {}
+            XVariableType::XVariableInt(_) => {}
+            XVariableType::XVariableTree(_) => {}
+        }
     }
     println!("constraints:");
     for c in model.build_constraints(&variable).iter_mut() {
         println!("\t{}", c);
+        match c {
+            XConstraintType::XConstraintNone(_) => {}
+            XConstraintType::XExtension(_) => {}
+            XConstraintType::XAllDifferent(_) => {}
+            XConstraintType::XAllDifferentExcept(_) => {}
+            XConstraintType::XInstantiation(_) => {}
+            XConstraintType::XAllEqual(_) => {}
+            XConstraintType::XOrdered(_) => {}
+            XConstraintType::XRegular(_) => {}
+            XConstraintType::XMdd(_) => {}
+            XConstraintType::XIntention(_) => {}
+            XConstraintType::XGroup(_) => {}
+            XConstraintType::XSum(_) => {}
+            XConstraintType::XMaximum(_) => {}
+            XConstraintType::XMinimum(_) => {}
+            XConstraintType::XElement(_) => {}
+            XConstraintType::XSlide(_) => {}
+            XConstraintType::XCount(_) => {}
+            XConstraintType::XNValues(_) => {}
+            XConstraintType::XCardinality(_) => {}
+            XConstraintType::XChannel(_) => {}
+            XConstraintType::XCumulative(_) => {}
+            XConstraintType::XNoOverlap(_) => {}
+            XConstraintType::XStretch(_) => {}
+        }
     }
     println!("objectives:");
     for o in model.build_objectives(&variable).iter() {
         println!("\t{}", o);
-        // match o {
-        //     XObjectivesType::XObjectiveNone(_) => {}
-        //     XObjectivesType::Minimize(e) => match e {
-        //         XObjective::XObjectiveElement(ee) => {}
-        //         XObjective::XObjectiveExpression(ex) => {}
-        //     },
-        //     XObjectivesType::Maximize(_) => {}
-        // }
+        match o {
+            XObjectivesType::XObjectiveNone(_) => {}
+            XObjectivesType::Minimize(e) => match e {
+                XObjective::XObjectiveElement(_) => {}
+                XObjective::XObjectiveExpression(_) => {}
+            },
+            XObjectivesType::Maximize(_) => {}
+        }
     }
 }
 
 fn test_all() {
     let start = TimeInterval::new();
     // let aa = WalkDir::new("./instances")
-        let aa = WalkDir::new("D://XCSP3")
-    // let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
-    // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
+    let aa = WalkDir::new("D://XCSP3")
+        // let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
+        // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
         // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")

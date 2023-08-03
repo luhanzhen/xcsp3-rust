@@ -47,14 +47,18 @@ pub mod xcsp3_core {
     use crate::constraints::xinstantiation::xcsp3_core::XInstantiation;
 
     use crate::constraints::xcardinality::xcsp3_core::XCardinality;
+    use crate::constraints::xchannel::xcsp3_core::XChannel;
     use crate::constraints::xcount::xcsp3_core::XCount;
+    use crate::constraints::xcumulative::xcsp3_core::XCumulative;
     use crate::constraints::xintension::xcsp3_core::XIntention;
     use crate::constraints::xmax_min::xcsp3_core::XMaxMin;
     use crate::constraints::xmdd::xcsp3_core::XMdd;
     use crate::constraints::xn_values::xcsp3_core::XNValues;
+    use crate::constraints::xno_overlap::xcsp3_core::XNoOverlap;
     use crate::constraints::xordered::xcsp3_core::XOrdered;
     use crate::constraints::xregular::xcsp3_core::XRegular;
     use crate::constraints::xslide::xcsp3_core::XSlide;
+    use crate::constraints::xstretch::xcsp3_core::XStretch;
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
     use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
@@ -77,6 +81,49 @@ pub mod xcsp3_core {
             }
         }
 
+        pub fn build_no_overlap(&mut self, list: &str, lengths_str: &str, zero_ignored_str: &str) {
+            match XNoOverlap::from_str(list, lengths_str, zero_ignored_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XNoOverlap(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
+        pub fn build_cumulative(
+            &mut self,
+            origins_str: &str,
+            lengths_str: &str,
+            heights_str: &str,
+            condition_str: &str,
+            ends_str: &str,
+            machines_str: &str,
+            start_index_str: &str,
+        ) {
+            match XCumulative::from_str(
+                origins_str,
+                lengths_str,
+                heights_str,
+                condition_str,
+                ends_str,
+                machines_str,
+                start_index_str,
+                self.set,
+            ) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XCumulative(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+        pub fn build_channel(&mut self, list: &str, start_index_str: &str, value_str: &str) {
+            match XChannel::from_str(list, start_index_str, value_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XChannel(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
         pub fn build_cardinality(
             &mut self,
             list: &str,
@@ -92,6 +139,20 @@ pub mod xcsp3_core {
             }
         }
 
+        pub fn build_stretch(
+            &mut self,
+            list: &str,
+            value_str: &str,
+            widths_str: &str,
+            patterns_str: &str,
+        ) {
+            match XStretch::from_str(list, value_str, widths_str, patterns_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XStretch(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
         pub fn build_element(
             &mut self,
             vars: &str,

@@ -38,9 +38,6 @@
  * </p>
  */
 
-
-
-
 pub mod xcsp3_core {
     use crate::constraints::xconstraint_trait::xcsp3_core::XConstraintTrait;
     use crate::data_structs::xint_val_var::xcsp3_core::XVarVal;
@@ -50,28 +47,98 @@ pub mod xcsp3_core {
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::collections::HashMap;
     use std::fmt::{Display, Formatter};
+
     pub struct XChannel<'a> {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,
         set: &'a XVariableSet,
         start_index: Option<i32>,
+        value: Option<XVarVal>,
     }
 
+    impl XConstraintTrait for XChannel<'_> {
+        fn get_scope_string(&self) -> &Vec<XVarVal> {
+            &self.scope
+        }
 
+        fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for e in &self.scope {
+                if let XVarVal::IntVar(s) = e {
+                    if !self.map.contains_key(s) {
+                        if let Ok(vec) = self.set.construct_scope(&[s]) {
+                            for (vs, vv) in vec.into_iter() {
+                                self.map.insert(vs, vv);
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
+        }
+    }
 
-    impl <'a>XChannel<'a> {
+    impl<'a> XChannel<'a> {
+        pub fn get_start_index(&self) -> &Option<i32> {
+            &self.start_index
+        }
 
+        pub fn get_value(&self) -> &Option<XVarVal> {
+            &self.value
+        }
 
-        pub fn new( scope: Vec<XVarVal>,
-                    set: &'a XVariableSet,
-                    start_index: Option<i32>,)->Self
-        {
-            Self
-            {
+        pub fn from_str(
+            list: &str,
+            start_index_str: &str,
+            value_str: &str,
+            set: &'a XVariableSet,
+        ) -> Result<Self, Xcsp3Error> {
+            match list_to_vec_var_val(list) {
+                Ok(scope_vec_str) => {
+                    let start_index = if start_index_str.is_empty() {
+                        None
+                    } else {
+                        match start_index_str.parse::<i32>() {
+                            Ok(n) => Some(n),
+                            Err(_) => {
+                                return Err(Xcsp3Error::get_constraint_channel_error(
+                                    "parse channel constraint start_index error, ",
+                                ));
+                            }
+                        }
+                    };
+                    let value = if value_str.is_empty() {
+                        None
+                    } else {
+                        match XVarVal::from_string(value_str) {
+                            None => {
+                                return Err(Xcsp3Error::get_constraint_channel_error(
+                                    "parse channel constraint value error, ",
+                                ));
+                            }
+                            Some(v) => Some(v),
+                        }
+                    };
+                    Ok(Self::new(scope_vec_str, set, start_index, value))
+                }
+                Err(e) => Err(e),
+            }
+        }
+        pub fn new(
+            scope: Vec<XVarVal>,
+            set: &'a XVariableSet,
+            start_index: Option<i32>,
+            value: Option<XVarVal>,
+        ) -> Self {
+            Self {
                 scope,
                 map: Default::default(),
                 set,
                 start_index,
+                value,
             }
         }
     }
@@ -84,8 +151,13 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-
-            write!(f, "XChannel: scope =  {}, ", ret,)
+            if let Some(XVarVal::IntVar(e)) = &self.value {
+                ret.push_str(&format!(" value = {}, ", e))
+            }
+            if let Some(n) = &self.start_index {
+                ret.push_str(&format!(" start_index = {}, ", n))
+            }
+            write!(f, "XChannel: scope =  {}", ret,)
         }
     }
 }

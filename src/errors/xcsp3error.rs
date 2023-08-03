@@ -102,6 +102,14 @@ pub mod xcsp3_core {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_count_error(s))
         }
 
+        pub fn get_constraint_no_overlap_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_no_overlap_error(s))
+        }
+
+        pub fn get_constraint_cumulative_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_cumulative_error(s))
+        }
+
         pub fn get_constraint_cardinality_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_cardinality_error(s))
         }
@@ -115,6 +123,9 @@ pub mod xcsp3_core {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_expression_error(s))
         }
 
+        pub fn get_constraint_channel_error(s: &str) -> Xcsp3Error {
+            Xcsp3Error::ParseConstraintError(ParseConstraintError::get_channel_error(s))
+        }
         pub fn get_constraint_extension_error(s: &str) -> Xcsp3Error {
             Xcsp3Error::ParseConstraintError(ParseConstraintError::get_extension_error(s))
         }
