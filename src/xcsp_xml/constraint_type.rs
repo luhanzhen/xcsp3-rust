@@ -654,6 +654,10 @@ pub mod xcsp3_xml {
           <origins> x1 x2 x3 </origins>
           <lengths> l1 l2 l3 </lengths>
         </noOverlap>
+        <noOverlap>
+          <origins> (x1,y1,z1)(x2,y2,z2)(x3,y3,z3)(x4,y4,z4) </origins>
+          <lengths> (2,4,1)(4,2,3)(5,1,2)(3,3,2) </lengths>
+        </noOverlap>
         ```
          */
         #[serde(rename = "noOverlap")]
@@ -819,164 +823,77 @@ pub mod xcsp3_xml {
             simplified_list: String,
         },
 
-        /**
-        syntax.
-        ```xml
+        // #[serde(rename = "allDistant")]
+        // AllDistant {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "condition", default)]
+        //     condition: String,
+        // },
 
-        ```
+        // #[serde(rename = "precedence")]
+        // Precedence {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "values", default)]
+        //     values: String,
+        // },
 
-        eg.
-        ```xml
+        // #[serde(rename = "balance")]
+        // Balance {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "condition", default)]
+        //     condition: String,
+        //     #[serde(rename = "values", default)]
+        //     values: String,
+        // },
 
-        ```
-         */
-        #[serde(rename = "allDistant")]
-        AllDistant {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "condition", default)]
-            condition: String,
-        },
+        // #[serde(rename = "spread")]
+        // Spread {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "condition", default)]
+        //     condition: String,
+        //     #[serde(rename = "total", default)]
+        //     total: String,
+        // },
 
-        /**
-        syntax.
-        ```xml
+        // #[serde(rename = "deviation")]
+        // Deviation {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "condition", default)]
+        //     condition: String,
+        //     #[serde(rename = "total", default)]
+        //     total: String,
+        // },
 
-        ```
+        // #[serde(rename = "binPacking")]
+        // BinPacking {
+        //     #[serde(rename = "list", default)]
+        //     vars: String,
+        //     #[serde(rename = "sizes", default)]
+        //     sizes: String,
+        //     #[serde(rename = "condition", default)]
+        //     condition: String,
+        // },
 
-        eg.
-        ```xml
+        // #[serde(rename = "lex")]
+        // Lex {
+        //     #[serde(rename = "matrix", default)]
+        //     matrix: String,
+        //     #[serde(rename = "operator", default)]
+        //     operator: String,
+        // },
 
-        ```
-         */
-        #[serde(rename = "precedence")]
-        Precedence {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "values", default)]
-            values: String,
-        },
-
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "balance")]
-        Balance {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "condition", default)]
-            condition: String,
-            #[serde(rename = "values", default)]
-            values: String,
-        },
-
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "spread")]
-        Spread {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "condition", default)]
-            condition: String,
-            #[serde(rename = "total", default)]
-            total: String,
-        },
-
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "deviation")]
-        Deviation {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "condition", default)]
-            condition: String,
-            #[serde(rename = "total", default)]
-            total: String,
-        },
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "binPacking")]
-        BinPacking {
-            #[serde(rename = "list", default)]
-            vars: String,
-            #[serde(rename = "sizes", default)]
-            sizes: String,
-            #[serde(rename = "condition", default)]
-            condition: String,
-        },
-
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "lex")]
-        Lex {
-            #[serde(rename = "matrix", default)]
-            matrix: String,
-            #[serde(rename = "operator", default)]
-            operator: String,
-        },
-
-        /**
-        syntax.
-        ```xml
-
-        ```
-
-        eg.
-        ```xml
-
-        ```
-         */
-        #[serde(rename = "clause")]
-        Clause {
-            #[serde(rename = "$value", default)]
-            vars: String,
-            #[serde(rename = "list", default)]
-            list: Box<[String]>,
-        },
+        // #[serde(rename = "clause")]
+        // Clause {
+        //     #[serde(rename = "$value", default)]
+        //     vars: String,
+        //     #[serde(rename = "list", default)]
+        //     list: Box<[String]>,
+        // },
         #[default]
         ConstraintNone,
     }

@@ -121,9 +121,9 @@ pub mod xcsp3_xml {
                 return Err(DeError::UnexpectedEof);
             }
             let xml = fs::read_to_string(path).unwrap();
-            let r = from_str(&xml);
+
             // println!("read the instance named {} by {:?}.", path, _now.elapsed());
-            r
+            from_str(&xml)
         }
 
         /// read the instance from string
@@ -313,7 +313,17 @@ pub mod xcsp3_xml {
                     origins,
                     lengths,
                     zero_ignored,
-                } => set.build_no_overlap(origins, lengths, zero_ignored),
+                } =>
+                    {
+                        if origins.contains(',') && origins.contains('(')
+                        {
+                            set.build_no_overlap_k_dim(origins, lengths, zero_ignored);
+                        }else {
+                            set.build_no_overlap(origins, lengths, zero_ignored);
+                        }
+
+
+                    },
                 ConstraintType::Cumulative {
                     origins,
                     lengths,
@@ -340,7 +350,7 @@ pub mod xcsp3_xml {
                     constraints,
                 } => {
                     // println!("{circular} {:?},{:?}", list, constraints);
-                    XcspXmlModel::parse_constraint(&constraints, set);
+                    XcspXmlModel::parse_constraint(constraints, set);
                     match set.get_last_constraint() {
                         None => {}
                         Some(cc) => {
@@ -356,26 +366,25 @@ pub mod xcsp3_xml {
                 } => {
                     if !simplified_list.is_empty() {
                         set.build_channel(simplified_list, "", "");
-                    } else {
-                        if with_value.is_empty() {
-                            for e in lists.iter() {
-                                set.build_channel(&e.value, &e.start_index, "");
-                            }
-                        } else {
-                            set.build_channel(&lists[0].value, &lists[0].start_index, with_value);
+                    } else if with_value.is_empty() {
+                        for e in lists.iter() {
+                            set.build_channel(&e.value, &e.start_index, "");
                         }
+                    } else {
+                        set.build_channel(&lists[0].value, &lists[0].start_index, with_value);
                     }
                 }
 
-                ConstraintType::AllDistant { .. } => {}
-                ConstraintType::Precedence { .. } => {}
-                ConstraintType::Balance { .. } => {}
-                ConstraintType::Spread { .. } => {}
-                ConstraintType::Deviation { .. } => {}
-                ConstraintType::BinPacking { .. } => {}
-                ConstraintType::Lex { .. } => {}
-                ConstraintType::Clause { .. } => {}
-                _ => {}
+                // ConstraintType::AllDistant { .. } => {}
+                // ConstraintType::Precedence { .. } => {}
+                // ConstraintType::Balance { .. } => {}
+                // ConstraintType::Spread { .. } => {}
+                // ConstraintType::Deviation { .. } => {}
+                // ConstraintType::BinPacking { .. } => {}
+                // ConstraintType::Lex { .. } => {}
+                // ConstraintType::Clause { .. } => {}
+                // _ => {}
+                ConstraintType::ConstraintNone => {}
             }
         }
 

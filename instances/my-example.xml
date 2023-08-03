@@ -199,6 +199,10 @@
             <origins> x1 x2 x3 </origins>
             <lengths> l1 l2 l3 </lengths>
         </noOverlap>
+        <noOverlap>
+            <origins> (x1,y1,z1)(x2,y2,z2)(x3,y3,z3)(x4,y4,z4) </origins>
+            <lengths> (2,4,1)(4,2,3)(5,1,2)(3,3,2) </lengths>
+        </noOverlap>
         <stretch>
             <list> x1 x2 x3 x4 x5 x6 x7 </list>
             <values> 1 2 3 0 </values>

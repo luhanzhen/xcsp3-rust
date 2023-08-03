@@ -64,6 +64,7 @@ pub mod xcsp3_core {
     use crate::utils::utils_functions::xcsp3_utils::list_to_matrix_ids;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use std::slice::{Iter, IterMut};
+    use crate::constraints::xno_overlap_k_dimensional::xcsp3_core::XNoOverlapKDim;
 
     /**
     the XConstraintSet is a container that stores all constraints.
@@ -80,6 +81,16 @@ pub mod xcsp3_core {
                 set,
             }
         }
+
+        pub fn build_no_overlap_k_dim(&mut self, list: &str, lengths_str: &str, zero_ignored_str: &str) {
+            match XNoOverlapKDim::from_str(list, lengths_str, zero_ignored_str, self.set) {
+                Ok(c) => {
+                    self.constraints.push(XConstraintType::XNoOverlapKDim(c));
+                }
+                Err(e) => self.constraints.push(XConstraintType::XConstraintNone(e)),
+            }
+        }
+
 
         pub fn build_no_overlap(&mut self, list: &str, lengths_str: &str, zero_ignored_str: &str) {
             match XNoOverlap::from_str(list, lengths_str, zero_ignored_str, self.set) {

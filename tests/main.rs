@@ -73,6 +73,7 @@ fn test_single() {
             XConstraintType::XCumulative(_) => {}
             XConstraintType::XNoOverlap(_) => {}
             XConstraintType::XStretch(_) => {}
+            XConstraintType::XNoOverlapKDim(_) => {}
         }
     }
     println!("objectives:");

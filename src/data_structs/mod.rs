@@ -13,7 +13,6 @@
  * </p>
  */
 
-
 pub mod expression_tree;
 pub mod xint_val_var;
 pub mod xrelational_operand;

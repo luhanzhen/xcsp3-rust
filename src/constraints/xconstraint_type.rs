@@ -62,6 +62,7 @@ pub mod xcsp3_core {
     use crate::constraints::xsum::xcsp3_core::XSum;
     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
     use std::fmt::{Display, Formatter};
+    use crate::constraints::xno_overlap_k_dimensional::xcsp3_core::XNoOverlapKDim;
 
     // #[derive(Clone)]
     pub enum XConstraintType<'a> {
@@ -88,6 +89,7 @@ pub mod xcsp3_core {
         XCumulative(XCumulative<'a>),
         XNoOverlap(XNoOverlap<'a>),
         XStretch(XStretch<'a>),
+        XNoOverlapKDim(XNoOverlapKDim<'a>),
     }
 
     impl Display for XConstraintType<'_> {
@@ -119,6 +121,7 @@ pub mod xcsp3_core {
                         XConstraintType::XCount(c) => c.to_string(),
                         XConstraintType::XNValues(c) => c.to_string(),
                         XConstraintType::XCardinality(c) => c.to_string(),
+                        XConstraintType::XNoOverlapKDim(c) => c.to_string(),
                     }
              )
         }

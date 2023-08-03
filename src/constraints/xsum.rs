@@ -118,15 +118,14 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
-                    let coe: Vec<XVarVal>;
-                    if coeffs.is_empty() {
-                        coe = vec![];
+                    let coe: Vec<XVarVal> = if coeffs.is_empty() {
+                        vec![]
                     } else {
-                        coe = match list_to_vec_var_val(coeffs) {
+                        match list_to_vec_var_val(coeffs) {
                             Ok(coe_vec) => coe_vec,
                             Err(e) => return Err(e),
                         }
-                    }
+                    };
                     let condition = condition.replace(['(', ')', ','], " ");
                     let spilt: Vec<&str> = condition.split_whitespace().collect();
 
