@@ -184,7 +184,7 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "XSlide: [constraint = {} [ args =  {}]]",
+                "XSlide: [constraint = {} [ list =  {}]]",
                 &self.template.to_string(),
                 ret
             )

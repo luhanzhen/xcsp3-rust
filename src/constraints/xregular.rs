@@ -69,7 +69,7 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "XRegular: scope =  {}, transitions = {:?}, start = {}, final = {:?}",
+                "XRegular: list =  {}, transitions = {:?}, start = {}, final = {:?}",
                 ret, self.transitions, self.start, self.r#final
             )
         }

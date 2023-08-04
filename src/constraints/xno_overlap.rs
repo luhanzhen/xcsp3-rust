@@ -149,7 +149,7 @@ pub mod xcsp3_core {
             if let Some(n) = &self.zero_ignored {
                 ret.push_str(&format!(" zeroIgnored = {}, ", n))
             }
-            write!(f, "XNoOverlap: scope =  {}, ", ret,)
+            write!(f, "XNoOverlap: origins =  {}, ", ret,)
         }
     }
 }

@@ -67,7 +67,7 @@ pub mod xcsp3_core {
 
             write!(
                 f,
-                "XIntention: scope =  {}, expression = {:?}",
+                "XIntention: scope =  {}, function = {:?}",
                 ret,
                 self.tree.to_string()
             )
@@ -111,18 +111,6 @@ pub mod xcsp3_core {
             match ExpressionTree::from_string(expression) {
                 Ok(tree) => {
                     let scope: Vec<XVarVal> = tree.get(set);
-                    // for e in tree.get_scope() {
-                    //     match set.find_variable(&e) {
-                    //         Ok(_) => {
-                    //             // println!("{}", r);
-                    //             scope.push(XVarVal::IntVar(e))
-                    //         }
-                    //         Err(err) => {
-                    //
-                    //             return Err(err);
-                    //         }
-                    //     }
-                    // }
                     Ok(Self::new(scope, set, tree))
                 }
                 Err(e) => Err(e),

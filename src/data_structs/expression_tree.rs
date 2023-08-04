@@ -140,30 +140,28 @@ pub mod xcsp3_utils {
         }
     }
 
-    impl TreeNode {
-        // pub fn to_string(&self) -> String {
-        //     match self {
-        //         TreeNode::Constant(i) => i.to_string(),
-        //         TreeNode::RightBracket => ")".to_string(),
-        //         TreeNode::LeftBracket => "(".to_string(),
-        //         TreeNode::Variable(v) => v.to_string(),
-        //         TreeNode::Argument(a) => format!("%{}", a),
-        //         TreeNode::Operator(o, _) => {
-        //             format!("{:?}", o)
-        //             // let mut ret = format!("{:?}", o);
-        //             // ret.push_str("(");
-        //             // for (i, n) in v.iter().enumerate() {
-        //             //     ret.push_str(&n.to_string());
-        //             //     if i != v.len() - 1 {
-        //             //         ret.push_str(", ")
-        //             //     }
-        //             // }
-        //             // ret.push_str(")");
-        //             // ret
-        //         } // TreeNode::Root => "".to_string(),
-        //     }
-        // }
-    }
+    // impl TreeNode {
+    //     pub(crate) fn replace_var_by_int(&mut self,var:&str,n:i32)->bool
+    //     {
+    //         if let TreeNode::Operator(_,ve) = self
+    //         {
+    //
+    //             for (i,e) in ve.iter().enumerate()
+    //             {
+    //                 if let TreeNode::Variable(v) = e
+    //                 {
+    //                     if v.eq(var)
+    //                     {
+    //                         let ele = &mut ve[i];
+    //                         *ele = TreeNode::Argument(n);
+    //                          return true
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         false
+    //     }
+    // }
 
     #[derive(Clone)]
     pub struct ExpressionTree {
@@ -196,6 +194,10 @@ pub mod xcsp3_utils {
             }
             scope
         }
+        // fn replace_var_by_int(&mut self,var:&str,n:i32)
+        // {
+        //
+        // }
         pub fn get(&self, set: &XVariableSet) -> Vec<XVarVal> {
             let mut scope: Vec<XVarVal> = vec![];
             for e in self.first_order_iter() {
@@ -216,25 +218,6 @@ pub mod xcsp3_utils {
             scope
         }
 
-        //
-        // pub fn to_string(&self) -> String {
-        //     let mut ret = String::new();
-        //     for e in self.first_order_iter() {
-        //         ret += &*e.to_string();
-        //         match e {
-        //             TreeNode::Variable(_) => ret += ",",
-        //             TreeNode::Argument(_) => ret += ",",
-        //             TreeNode::Constant(_) => ret += ",",
-        //             _ => {}
-        //         }
-        //     }
-        //     ret
-        //     // format!(
-        //     //     " expression = {}, expression_str = {}, ",
-        //     //     self.root.to_string(),
-        //     //     self.expression,
-        //     // )
-        // }
         pub fn from_string(expression: &str) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::parse(expression) {
                 Ok(e) => Ok(ExpressionTree {
@@ -289,7 +272,6 @@ pub mod xcsp3_utils {
                     }
                 }
             }
-
             None
         }
 

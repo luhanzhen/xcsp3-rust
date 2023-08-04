@@ -157,7 +157,7 @@ pub mod xcsp3_core {
             if let Some(n) = &self.start_index {
                 ret.push_str(&format!(" start_index = {}, ", n))
             }
-            write!(f, "XChannel: scope =  {}", ret,)
+            write!(f, "XChannel: list  =  {}", ret,)
         }
     }
 }

@@ -65,7 +65,7 @@ pub mod xcsp3_core {
                 ret.push_str("), ")
             }
             ret.push_str(&format!("transitions = {:?}", self.transitions));
-            write!(f, "XMdd: scope =  {}", ret)
+            write!(f, "XMdd: list =  {}", ret)
         }
     }
 

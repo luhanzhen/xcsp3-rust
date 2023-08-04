@@ -56,7 +56,7 @@ pub mod xcsp3_core {
         map: HashMap<String, &'a XDomainInteger>,
         scope: Vec<XVarVal>,
         set: &'a XVariableSet,
-        except: Vec<i32>,
+        except: Vec<XVarVal>,
     }
 
     impl Display for XAllDifferentExcept<'_> {
@@ -67,7 +67,14 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            write!(f, "XAllDifferentExcept: scope =  {}", ret)
+            ret.push_str("except = (");
+            for (i, e) in self.except.iter().enumerate() {
+                ret.push_str(&e.to_string());
+                if i != self.except.len() - 1 {
+                    ret.push_str(", ");
+                }
+            }
+            write!(f, "XAllDifferentExcept: list =  {})", ret)
         }
     }
 
@@ -111,7 +118,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn new(scope: Vec<XVarVal>, set: &'a XVariableSet, except: Vec<i32>) -> Self {
+        pub fn new(scope: Vec<XVarVal>, set: &'a XVariableSet, except: Vec<XVarVal>) -> Self {
             XAllDifferentExcept {
                 map: Default::default(),
                 scope,
@@ -121,7 +128,7 @@ pub mod xcsp3_core {
         }
 
         /// return the except vec of the XAllDifferentExcept constraint
-        pub fn get_except(&self) -> &Vec<i32> {
+        pub fn get_except(&self) -> &Vec<XVarVal> {
             &self.except
         }
     }

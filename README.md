@@ -85,7 +85,10 @@ xcsp3-rust = "0.1.0"
                     XObjective::XObjectiveElement(_) => {}
                     XObjective::XObjectiveExpression(_) => {}
                 },
-                XObjectivesType::Maximize(_) => {}
+                XObjectivesType::Maximize(e) => match e {
+                    XObjective::XObjectiveElement(_) => {}
+                    XObjective::XObjectiveExpression(_) => {}
+                },
             }
         }
     }

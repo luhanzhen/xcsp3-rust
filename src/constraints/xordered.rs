@@ -55,7 +55,7 @@ pub mod xcsp3_core {
         scope: Vec<XVarVal>,
         map: HashMap<String, &'a XDomainInteger>,
         set: &'a XVariableSet,
-        lengths: Vec<XVarVal>,
+        lengths: Option<Vec<XVarVal>>,
         operator: Operator,
     }
 
@@ -67,13 +67,15 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            if !self.lengths.is_empty() {
-                ret.push_str("lengths = [");
-                for e in self.lengths.iter() {
+            if let Some(vc) = &self.lengths {
+                ret.push_str("lengths = (");
+                for (i, e) in vc.iter().enumerate() {
                     ret.push_str(&e.to_string());
-                    ret.push_str(", ")
+                    if i != vc.len() - 1 {
+                        ret.push_str(", ")
+                    }
                 }
-                ret.push_str("], ")
+                ret.push_str("), ")
             }
             write!(
                 f,
@@ -121,7 +123,9 @@ pub mod xcsp3_core {
                         None => Err(Xcsp3Error::get_constraint_list_of_values_error(
                             "parse the list of values error. ",
                         )),
-                        Some(ope) => Ok(XOrdered::new(scope_vec_str, set, length_vec_str, ope)),
+                        Some(ope) => {
+                            Ok(XOrdered::new(scope_vec_str, set, Some(length_vec_str), ope))
+                        }
                     },
                     Err(e) => Err(e),
                 },
@@ -139,7 +143,7 @@ pub mod xcsp3_core {
                     None => Err(Xcsp3Error::get_constraint_list_of_values_error(
                         "parse the list of values error. ",
                     )),
-                    Some(ope) => Ok(XOrdered::new(scope_vec_str, set, vec![], ope)),
+                    Some(ope) => Ok(XOrdered::new(scope_vec_str, set, None, ope)),
                 },
                 Err(e) => Err(e),
             }
@@ -148,7 +152,7 @@ pub mod xcsp3_core {
         pub fn new(
             scope: Vec<XVarVal>,
             set: &'a XVariableSet,
-            lengths: Vec<XVarVal>,
+            lengths: Option<Vec<XVarVal>>,
             operator: Operator,
         ) -> Self {
             XOrdered {
@@ -159,7 +163,7 @@ pub mod xcsp3_core {
                 operator,
             }
         }
-        pub fn get_lengths(&self) -> &Vec<XVarVal> {
+        pub fn get_lengths(&self) -> &Option<Vec<XVarVal>> {
             &self.lengths
         }
         pub fn get_operator(&self) -> &Operator {

@@ -65,7 +65,7 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "scope =  {}, expression = {:?}",
+                "list =  {}, expression = {:?}",
                 ret,
                 self.expression.to_string()
             )
@@ -101,18 +101,19 @@ pub mod xcsp3_core {
         pub fn from_expr(expr: &str, set: &'a XVariableSet) -> Result<Self, Xcsp3Error> {
             match ExpressionTree::from_string(expr) {
                 Ok(tree) => {
-                    let mut scope: Vec<XVarVal> = vec![];
-                    for e in tree.get_scope() {
-                        match set.find_variable(&e) {
-                            Ok(_) => {
-                                // println!("{}", r);
-                                scope.push(XVarVal::IntVar(e))
-                            }
-                            Err(err) => {
-                                return Err(err);
-                            }
-                        }
-                    }
+                    // let mut scope: Vec<XVarVal> = vec![];
+                    let scope: Vec<XVarVal> = tree.get(set);
+                    // for e in tree.get() {
+                    // match set.find_variable(&e) {
+                    //     Ok(_) => {
+                    //         // println!("{}", r);
+                    //         scope.push(XVarVal::IntVar(e))
+                    //     }
+                    //     Err(err) => {
+                    //         return Err(err);
+                    //     }
+                    // }
+                    // }
                     // Ok(Self::new(scope, set, tree))
                     Ok(Self::new(tree, scope, set))
                 }

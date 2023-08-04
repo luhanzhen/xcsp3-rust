@@ -66,7 +66,7 @@ pub mod xcsp3_core {
                 ret.push_str("), ")
             }
             ret.push_str(&format!("values = {:?}", self.values));
-            write!(f, "XInstantiation: scope =  {}", ret)
+            write!(f, "XInstantiation: list =  {}", ret)
         }
     }
 

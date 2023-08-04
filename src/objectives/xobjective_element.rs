@@ -167,7 +167,7 @@ pub mod xcsp3_core {
             }
             write!(
                 f,
-                "operator = {:?} scope =  {}, coeffs = {}",
+                "operator = {:?}, list =  {}, coeffs = {}",
                 self.operator, ret1, ret2
             )
         }

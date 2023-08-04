@@ -74,7 +74,7 @@ pub mod xcsp3_core {
             ret.push_str("), ");
             write!(
                 f,
-                "XCount: scope =  {}, Operator = {:?}, Operand = {:?}",
+                "XCount: list =  {}, condition = ({:?},{:?})",
                 ret, self.operator, self.operand
             )
         }

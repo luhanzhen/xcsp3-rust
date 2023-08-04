@@ -64,14 +64,7 @@ pub mod xcsp3_core {
                 ret.push_str("), ")
             }
             ret.push_str("  values = ");
-
             for e in self.values.iter() {
-                ret.push('(');
-                ret.push_str(&e.to_string());
-                ret.push_str("), ")
-            }
-            ret.push_str("  occurs = ");
-            for e in self.occurs.iter() {
                 ret.push('(');
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
@@ -79,8 +72,14 @@ pub mod xcsp3_core {
             if let Some(c) = self.closed {
                 ret.push_str(&format!("  closed = {}", c));
             }
+            ret.push_str("  occurs = ");
+            for e in self.occurs.iter() {
+                ret.push('(');
+                ret.push_str(&e.to_string());
+                ret.push_str("), ")
+            }
 
-            write!(f, "XCardinality: scope =  {},  ", ret,)
+            write!(f, "XCardinality: list =  {},  ", ret,)
         }
     }
 

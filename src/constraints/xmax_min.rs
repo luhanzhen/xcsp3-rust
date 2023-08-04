@@ -64,9 +64,9 @@ pub mod xcsp3_core {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret: String;
             if self.is_maximum() {
-                ret = "XMaximum: scope =  ".to_string();
+                ret = "XMaximum: list =  ".to_string();
             } else {
-                ret = "XMinimum: scope =  ".to_string();
+                ret = "XMinimum: list =  ".to_string();
             }
             for e in self.scope.iter() {
                 ret.push('(');
@@ -74,7 +74,7 @@ pub mod xcsp3_core {
                 ret.push_str("), ")
             }
             ret.push_str(&format!(
-                " Operator = {:?}, Operand = {:?}",
+                " condition = ({:?}, {:?})",
                 self.operator, self.operand
             ));
             write!(f, "{}", ret)

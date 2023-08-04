@@ -217,13 +217,13 @@ pub mod xcsp3_utils {
 
     /// return the list of values,
     /// eg str"(1, 3, 5, 76)" -> vec[1,3,5,76],
-    pub fn list_with_bracket_comma_to_values(list: &str) -> Result<Vec<i32>, Xcsp3Error> {
-        let mut ret: Vec<i32> = Vec::new();
+    pub fn list_with_bracket_comma_to_values(list: &str) -> Result<Vec<XVarVal>, Xcsp3Error> {
+        let mut ret: Vec<XVarVal> = Vec::new();
         let list = list.to_string().replace(['(', ')', ','], " ");
         let lists: Vec<&str> = list.split_whitespace().collect();
         for e in lists.iter() {
             match e.parse::<i32>() {
-                Ok(n) => ret.push(n),
+                Ok(n) => ret.push(XVarVal::IntArgument(n)),
                 Err(_) => {
                     return Err(Xcsp3Error::get_constraint_list_of_values_error(
                         "parse the list of values error. ",

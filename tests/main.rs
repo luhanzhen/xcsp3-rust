@@ -24,8 +24,8 @@ fn main() {
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
     // println!("{:?}", e);
-    // test_single();
-    test_all();
+    test_single();
+    // test_all();
 }
 
 fn test_single() {
@@ -85,7 +85,10 @@ fn test_single() {
                 XObjective::XObjectiveElement(_) => {}
                 XObjective::XObjectiveExpression(_) => {}
             },
-            XObjectivesType::Maximize(_) => {}
+            XObjectivesType::Maximize(e) => match e {
+                XObjective::XObjectiveElement(_) => {}
+                XObjective::XObjectiveExpression(_) => {}
+            },
         }
     }
 }

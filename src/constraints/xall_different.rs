@@ -65,7 +65,7 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            write!(f, "XAllDifferent: scope =  {}", ret)
+            write!(f, "XAllDifferent: list =  {}", ret)
         }
     }
 

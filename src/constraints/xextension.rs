@@ -68,11 +68,16 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            ret.push_str(&format!(
-                "tuples = {:?}, is_support = {}",
-                self.tuples, self.is_support
-            ));
-            write!(f, "XExtension: scope = {}", ret)
+            if self.is_support {
+                ret.push_str("supports = ")
+            } else {
+                ret.push_str("conflicts = ")
+            }
+            // ret.push_str(&format!(
+            //     "tuples = {:?}, is_support = {}",
+            //     self.tuples, self.is_support
+            // ));
+            write!(f, "XExtension: list = {}", ret)
         }
     }
 

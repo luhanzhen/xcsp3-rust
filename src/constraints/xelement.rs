@@ -143,7 +143,7 @@ pub mod xcsp3_core {
             if let XVarVal::IntNone = self.index {
                 ret.push_str(&format!(" index = {} ", self.index))
             }
-            write!(f, "XElement: scope =  {}, value = {}", ret, self.value,)
+            write!(f, "XElement: list   =  {}, value = {}", ret, self.value,)
         }
     }
 

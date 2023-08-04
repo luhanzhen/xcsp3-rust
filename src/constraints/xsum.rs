@@ -57,7 +57,7 @@ pub mod xcsp3_core {
         set: &'a XVariableSet,
         operator: Operator,
         operand: Operand,
-        coeffs: Vec<XVarVal>,
+        coeffs: Option<Vec<XVarVal>>,
     }
 
     impl Display for XSum<'_> {
@@ -68,9 +68,9 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            if !self.coeffs.is_empty() {
+            if let Some(coeffs) = &self.coeffs {
                 ret.push_str("coeffs = (");
-                for e in self.coeffs.iter() {
+                for e in coeffs.iter() {
                     ret.push_str(&e.to_string());
                     ret.push_str(", ")
                 }
@@ -78,7 +78,7 @@ pub mod xcsp3_core {
             ret.push_str(") ");
             write!(
                 f,
-                "XSum: scope =  {}, Operator = {:?}, Operand = {:?}",
+                "XSum: list =  {},  condition = ({:?},{:?})",
                 ret, self.operator, self.operand
             )
         }
@@ -118,11 +118,11 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
-                    let coe: Vec<XVarVal> = if coeffs.is_empty() {
-                        vec![]
+                    let coe = if coeffs.is_empty() {
+                        None
                     } else {
                         match list_to_vec_var_val(coeffs) {
-                            Ok(coe_vec) => coe_vec,
+                            Ok(coe_vec) => Some(coe_vec),
                             Err(e) => return Err(e),
                         }
                     };
@@ -157,7 +157,7 @@ pub mod xcsp3_core {
             set: &'a XVariableSet,
             operator: Operator,
             operand: Operand,
-            coeffs: Vec<XVarVal>,
+            coeffs: Option<Vec<XVarVal>>,
         ) -> Self {
             Self {
                 scope,
@@ -169,7 +169,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn get_coeffs(&self) -> &Vec<XVarVal> {
+        pub fn get_coeffs(&self) -> &Option<Vec<XVarVal>> {
             &self.coeffs
         }
         pub fn get_operand(&self) -> &Operand {

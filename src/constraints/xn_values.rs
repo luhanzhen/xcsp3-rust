@@ -55,7 +55,7 @@ pub mod xcsp3_core {
         set: &'a XVariableSet,
         operator: Operator,
         operand: Operand,
-        except: Vec<XVarVal>,
+        except: Option<Vec<XVarVal>>,
     }
     impl Display for XNValues<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -65,18 +65,18 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            if !self.except.is_empty() {
+            if let Some(except) = &self.except {
                 ret.push_str("except = (");
-                for e in self.except.iter() {
+                for e in except.iter() {
                     ret.push_str(&e.to_string());
                     ret.push_str(", ")
                 }
+                ret.push_str(") ");
             }
 
-            ret.push_str(") ");
             write!(
                 f,
-                "XNValues: scope =  {}, Operator = {:?}, Operand = {:?}",
+                "XNValues: scope =  {}, condition = ({:?}, {:?})",
                 ret, self.operator, self.operand
             )
         }
@@ -115,11 +115,11 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => {
-                    let except: Vec<XVarVal> = if except_str.is_empty() {
-                        vec![]
+                    let except = if except_str.is_empty() {
+                        None
                     } else {
                         match list_to_vec_var_val(except_str) {
-                            Ok(coe_vec) => coe_vec,
+                            Ok(coe_vec) => Some(coe_vec),
                             Err(e) => return Err(e),
                         }
                     };
@@ -154,7 +154,7 @@ pub mod xcsp3_core {
             set: &'a XVariableSet,
             operator: Operator,
             operand: Operand,
-            except: Vec<XVarVal>,
+            except: Option<Vec<XVarVal>>,
         ) -> Self {
             Self {
                 scope,
@@ -166,7 +166,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn get_except(&self) -> &Vec<XVarVal> {
+        pub fn get_except(&self) -> &Option<Vec<XVarVal>> {
             &self.except
         }
         pub fn get_operand(&self) -> &Operand {

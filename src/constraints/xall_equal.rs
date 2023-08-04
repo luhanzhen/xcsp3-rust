@@ -64,7 +64,7 @@ pub mod xcsp3_core {
                 ret.push_str(&e.to_string());
                 ret.push_str("), ")
             }
-            write!(f, "XAllEqual: scope =  {}", ret)
+            write!(f, "XAllEqual: list =  {}", ret)
         }
     }
 

@@ -63,8 +63,8 @@ pub mod xcsp3_core {
         ) -> Result<Self, Xcsp3Error> {
             let scope: Vec<Vec<XVarVal>> = {
                 let mut sc = vec![];
-                let binding = list.replace(['(', ',', ')'], " ");
-                let spilt: Vec<&str> = binding.split_whitespace().collect();
+                let binding = list.replace(")(", "@").replace(['(', ',', ')'], " ");
+                let spilt: Vec<&str> = binding.split("@").collect();
                 for e in spilt.iter() {
                     sc.push(match list_to_vec_var_val(e) {
                         Ok(n) => n,
@@ -77,8 +77,8 @@ pub mod xcsp3_core {
             };
             let lengths = {
                 let mut le = vec![];
-                let binding = lengths_str.replace(['(', ',', ')'], " ");
-                let spilt: Vec<&str> = binding.split_whitespace().collect();
+                let binding = lengths_str.replace(")(", "@").replace(['(', ',', ')'], " ");
+                let spilt: Vec<&str> = binding.split("@").collect();
                 for e in spilt.iter() {
                     le.push(match list_to_vec_var_val(e) {
                         Ok(n) => n,
@@ -120,53 +120,67 @@ pub mod xcsp3_core {
         pub fn lengths(&self) -> &Vec<Vec<XVarVal>> {
             &self.lengths
         }
+
         pub fn zero_ignored(&self) -> Option<bool> {
             self.zero_ignored
         }
 
-        fn get_scope_string(&self) -> &Vec<Vec<XVarVal>> {
+        pub fn get_scope_string(&self) -> &Vec<Vec<XVarVal>> {
             &self.scope
         }
 
-        // fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
-        //
-        //     for e in &self.scope {
-        //         if let XVarVal::IntVar(s) = e {
-        //             if !self.map.contains_key(s) {
-        //                 if let Ok(vec) = self.set.construct_scope(&[s]) {
-        //                     for (vs, vv) in vec.into_iter() {
-        //                         self.map.insert(vs, vv);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
-        //     for e in self.map.iter() {
-        //         scope_vec_var.push((e.0, e.1))
-        //     }
-        //     scope_vec_var
-        // }
+        pub fn get_scope(&mut self) -> Vec<(&String, &XDomainInteger)> {
+            for vc in &self.scope {
+                for e in vc.iter() {
+                    if let XVarVal::IntVar(s) = e {
+                        if !self.map.contains_key(s) {
+                            if let Ok(vec) = self.set.construct_scope(&[s]) {
+                                for (vs, vv) in vec.into_iter() {
+                                    self.map.insert(vs, vv);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            let mut scope_vec_var: Vec<(&String, &XDomainInteger)> = vec![];
+            for e in self.map.iter() {
+                scope_vec_var.push((e.0, e.1))
+            }
+            scope_vec_var
+        }
     }
 
     impl Display for XNoOverlapKDim<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             let mut ret = String::default();
-            // for e in self.scope.iter() {
-            //     ret.push('(');
-            //     ret.push_str(&e.to_string());
-            //     ret.push_str("), ")
-            // }
+            for vc in self.scope.iter() {
+                ret.push('(');
+                for (j, e) in vc.iter().enumerate() {
+                    ret.push_str(&e.to_string());
+                    if j != vc.len() - 1 {
+                        ret.push_str(", ");
+                    }
+                }
+                ret.push_str(")");
+            }
+
             ret.push_str("  lengths = ");
-            // for e in self.lengths.iter() {
-            //     ret.push('(');
-            //     ret.push_str(&e.to_string());
-            //     ret.push_str("), ")
-            // }
+            for vc in self.lengths.iter() {
+                ret.push('(');
+                for (j, e) in vc.iter().enumerate() {
+                    ret.push_str(&e.to_string());
+                    if j != vc.len() - 1 {
+                        ret.push_str(", ");
+                    }
+                }
+                ret.push_str(")");
+            }
+
             if let Some(n) = &self.zero_ignored {
                 ret.push_str(&format!(" zeroIgnored = {}, ", n))
             }
-            write!(f, "XNoOverlap: scope =  {}, ", ret,)
+            write!(f, "XNoOverlap: origins =  {}, ", ret,)
         }
     }
 }
