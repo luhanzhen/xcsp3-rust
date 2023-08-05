@@ -53,9 +53,6 @@ impl Display for ParseVariableError {
 }
 
 impl ParseVariableError {
-    // pub(crate) fn to_string(&self) -> String {
-    //     format!("{:?}: {}", self.r#type, self.msg)
-    // }
 
     pub(crate) fn get_not_found_error(s: &str) -> ParseVariableError {
         const WEBSITE: &str = " please visit http://xcsp.org/specifications/variables/integer/";

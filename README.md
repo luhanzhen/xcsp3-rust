@@ -149,6 +149,7 @@ graph LR
     XConstraintType -->XChannel(XChannel)-.scope.-> Scope
     XConstraintType -->XCumulative(XCumulative)-.scope.-> Scope
     XConstraintType -->XNoOverlap(XNoOverlap)-.scope.-> Scope
+    XConstraintType -->XNoOverlapKDim(XNoOverlap)-.scope.-> Scope
     XConstraintType --> XStretch(XStretch)-.scope.-> Scope
     Scope -->IntVar(IntVar is a variable)
     Scope -->IntVal(IntVal is a value)

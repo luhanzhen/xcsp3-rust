@@ -5,7 +5,7 @@ edition = "2021"
 rust-version = "1.70"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 keywords = [
-    "constraint",
+    "xml",
     "csp",
     "xcsp3",
     "combinatorial",
@@ -20,9 +20,9 @@ include = [
     "LICENSE",
 ]
 
-description = "xcsp3-rust is a library that read XCSP files into constraint programming solvers implemented by Rust."
+description = "xcsp3-rust is a library that help constraint programming solvers implemented by Rust to read XCSP3 files."
 readme = "README.md"
-categories = ["gui"]
+categories = ["Text processing"]
 license = "MIT"
 repository = "https://github.com/luhanzhen/xcsp3-rust"
 
