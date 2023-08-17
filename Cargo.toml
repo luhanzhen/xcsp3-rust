@@ -20,6 +20,9 @@ include = [
     "LICENSE",
 ]
 
+
+
+
 description = "xcsp3-rust is a library that help constraint programming solvers implemented by Rust to read XCSP3 files."
 readme = "README.md"
 categories = ["Text processing"]
@@ -35,10 +38,10 @@ regex = "1.9.1"
 
 
 
-#[[bin]]
-#name = "main"
-#doc = false
-#path = "tests/main.rs"
+[[bin]]
+name = "main"
+doc = false
+path = "tests/main.rs"
 
 
 [lib]

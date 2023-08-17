@@ -36,65 +36,75 @@
  * </p>
  */
 
-// pub mod xcsp3_core {
-//     use crate::constraints::xconstraint_set::xcsp3_core::XConstraintSet;
-//     use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
-//     use crate::objectives::xobjectives_set::xcsp3_core::XObjectivesSet;
-//     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
-//     use crate::xcsp_xml::xcsp_xml_model::xcsp3_xml::{InstanceType, XcspXmlModel};
-//
-//     pub struct XCSP3<'a> {
-//         model: XcspXmlModel,
-//         variables: XVariableSet,
-//         constraints: Option<XConstraintSet<'a>>,
-//         objectives: Option<XObjectivesSet<'a>>,
-//     }
-//
-//     // impl Drop for XCSP3<'_> {
-//     //     fn drop(&mut self) {
-//     //         drop(&self.objectives);
-//     //         drop(&self.constraints);
-//     //         drop(&self.variables);
-//     //         drop(&self.model);
-//     //     }
-//     // }
-//
-//     impl<'a> XCSP3<'a> {
-//         pub fn get_variables(&'a self) -> &'a XVariableSet {
-//             &self.variables
-//         }
-//
-//         pub fn from_path(xml_file: &str) -> Result<XCSP3<'a>, Xcsp3Error> {
-//             match XcspXmlModel::from_path(xml_file) {
-//                 Ok(model) => {
-//                     let variable = model.build_variables();
-//
-//                     let mut a = XCSP3::new(model, variable);
-//                     a.constraints = Some(a.model.build_constraints(&a.variables));
-//                     // let obj = if let InstanceType::Cop = model.get_instance_type()
-//                     // {
-//                     //     Some(model.build_objectives(&variable))
-//                     // } else {
-//                     //     None
-//                     // };
-//                     Ok(a)
-//                 }
-//                 Err(e) => Err(Xcsp3Error::get_read_xml_error(e)),
-//             }
-//         }
-//
-//         pub fn new(
-//             model: XcspXmlModel,
-//             variables: XVariableSet,
-//             // constraints: XConstraintSet<'a>,
-//             // objectives: Option<XObjectivesSet<'a>>
-//         ) -> XCSP3<'a> {
-//             XCSP3 {
-//                 model,
-//                 variables,
-//                 constraints: None,
-//                 objectives: None,
-//             }
-//         }
-//     }
-// }
+pub mod xcsp3_core {
+    use crate::constraints::xconstraint_set::xcsp3_core::XConstraintSet;
+    use crate::errors::xcsp3error::xcsp3_core::Xcsp3Error;
+    use crate::objectives::xobjectives_set::xcsp3_core::XObjectivesSet;
+    use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
+    use crate::xcsp_xml::xcsp_xml_model::xcsp3_xml::{InstanceType, XcspXmlModel};
+    use std::ptr::NonNull;
+
+    pub struct XCSP3<'a> {
+        model: XcspXmlModel,
+        variables: Option<XVariableSet>,
+        constraints: Option<XConstraintSet<'a>>,
+        objectives: Option<XObjectivesSet<'a>>,
+    }
+
+    impl<'a> XCSP3<'a> {
+        pub fn get_variables(&'a self) -> &Option<XVariableSet> {
+            &self.variables
+        }
+
+        pub fn from_path(xml_file: &str) -> Result<Self, Xcsp3Error> {
+            match XcspXmlModel::from_path(xml_file) {
+                Ok(model) => {
+                    let variable = model.build_variables();
+                    // let mut a = Self::new(model, Some(variable), None, None);
+                    // a.build();
+                    // Ok(a)
+                    Ok(Self::new(model, Some(variable), None, None))
+                }
+                Err(e) => Err(Xcsp3Error::get_read_xml_error(e)),
+            }
+        }
+
+        pub fn build(&'a mut self) {
+            match &self.variables {
+                None => {}
+                Some(variable) => {
+                    self.constraints = Some(self.model.build_constraints(variable));
+                    if let InstanceType::Cop = self.model.get_instance_type() {
+                        self.objectives = Some(self.model.build_objectives(variable));
+                    }
+                }
+            }
+        }
+
+        pub fn new(
+            model: XcspXmlModel,
+            variables: Option<XVariableSet>,
+            constraints: Option<XConstraintSet<'a>>,
+            objectives: Option<XObjectivesSet<'a>>,
+        ) -> XCSP3<'a> {
+            XCSP3 {
+                model,
+                variables,
+                constraints,
+                objectives,
+            }
+        }
+        pub fn model(&self) -> &XcspXmlModel {
+            &self.model
+        }
+        pub fn variables(&self) -> &Option<XVariableSet> {
+            &self.variables
+        }
+        pub fn constraints(&mut self) -> &Option<XConstraintSet<'a>> {
+            &self.constraints
+        }
+        pub fn objectives(&mut self) -> &Option<XObjectivesSet<'a>> {
+            &self.objectives
+        }
+    }
+}
