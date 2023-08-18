@@ -1,7 +1,11 @@
+
+// use quick_xml::de::from_str;
+// use serde::Deserialize;
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
+use xcsp3_rust::variables::xvariable_set::xcsp3_core::XVariableSet;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
 use xcsp3_rust::xcsp3::xcsp3_core::XCSP3;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
@@ -21,78 +25,91 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
+
+
+
 fn main() {
+    // let str = "{\"tuples\":[[0,0,0],[0,1,1],[1,0,1],[1,3,0]] }";
+    // println!("{:?}",from_str(str));
+
+
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
     // println!("{:?}", e);
-    // test_single();
-    test_xcsp3();
+    test_single();
+    // test_xcsp3();
     // test_all();
 }
 
-fn test_xcsp3() {
-    let xml_file = ".//instances//my-example.xml";
-    let mut xcsp3 = XCSP3::from_path(xml_file).unwrap();
-    // {
-    //     xcsp3.build();
-    // }
-
-    println!("variables:");
-    for v in xcsp3.variables().as_ref().unwrap().iter() {
-        println!("\t{}", v);
-        match v {
-            XVariableType::XVariableNone(_) => {}
-            XVariableType::XVariableArray(_) => {}
-            XVariableType::XVariableInt(_) => {}
-            XVariableType::XVariableTree(_) => {}
-        }
-    }
-    println!("constraints:");
-    for c in xcsp3.constraints().as_ref().unwrap().iter() {
-        println!("\t{}", c);
-        match c {
-            XConstraintType::XConstraintNone(_) => {}
-            XConstraintType::XExtension(_) => {}
-            XConstraintType::XAllDifferent(_) => {}
-            XConstraintType::XAllDifferentExcept(_) => {}
-            XConstraintType::XInstantiation(_) => {}
-            XConstraintType::XAllEqual(_) => {}
-            XConstraintType::XOrdered(_) => {}
-            XConstraintType::XRegular(_) => {}
-            XConstraintType::XMdd(_) => {}
-            XConstraintType::XIntention(_) => {}
-            XConstraintType::XGroup(_) => {}
-            XConstraintType::XSum(_) => {}
-            XConstraintType::XMaximum(_) => {}
-            XConstraintType::XMinimum(_) => {}
-            XConstraintType::XElement(_) => {}
-            XConstraintType::XSlide(_) => {}
-            XConstraintType::XCount(_) => {}
-            XConstraintType::XNValues(_) => {}
-            XConstraintType::XCardinality(_) => {}
-            XConstraintType::XChannel(_) => {}
-            XConstraintType::XCumulative(_) => {}
-            XConstraintType::XNoOverlap(_) => {}
-            XConstraintType::XStretch(_) => {}
-            XConstraintType::XNoOverlapKDim(_) => {}
-        }
-    }
-    println!("objectives:");
-    for o in xcsp3.objectives().as_ref().unwrap().iter() {
-        println!("\t{}", o);
-        match o {
-            XObjectivesType::XObjectiveNone(_) => {}
-            XObjectivesType::Minimize(e) => match e {
-                XObjective::XObjectiveElement(_) => {}
-                XObjective::XObjectiveExpression(_) => {}
-            },
-            XObjectivesType::Maximize(e) => match e {
-                XObjective::XObjectiveElement(_) => {}
-                XObjective::XObjectiveExpression(_) => {}
-            },
-        }
-    }
-}
+// fn test_xcsp3() {
+//     let xml_file = ".//instances//my-example.xml";
+//     let mut xcsp3 = XCSP3::from_path(xml_file).unwrap();
+//     xcsp3.build();
+//
+//
+//     println!("variables:");
+//     // let mut vars = xcsp3.variables();
+//     match  XCSP3::variables(&xcsp3){
+//         None => {}
+//         Some(vars) => {
+//             for v in vars.iter() {
+//                 println!("\t{}", v);
+//                 match v {
+//                     XVariableType::XVariableNone(_) => {}
+//                     XVariableType::XVariableArray(_) => {}
+//                     XVariableType::XVariableInt(_) => {}
+//                     XVariableType::XVariableTree(_) => {}
+//                 }
+//             }
+//         }
+//     }
+//
+//     println!("constraints:");
+//     for c in xcsp3.constraints().unwrap().iter() {
+//         println!("\t{}", c);
+//         match c {
+//             XConstraintType::XConstraintNone(_) => {}
+//             XConstraintType::XExtension(_) => {}
+//             XConstraintType::XAllDifferent(_) => {}
+//             XConstraintType::XAllDifferentExcept(_) => {}
+//             XConstraintType::XInstantiation(_) => {}
+//             XConstraintType::XAllEqual(_) => {}
+//             XConstraintType::XOrdered(_) => {}
+//             XConstraintType::XRegular(_) => {}
+//             XConstraintType::XMdd(_) => {}
+//             XConstraintType::XIntention(_) => {}
+//             XConstraintType::XGroup(_) => {}
+//             XConstraintType::XSum(_) => {}
+//             XConstraintType::XMaximum(_) => {}
+//             XConstraintType::XMinimum(_) => {}
+//             XConstraintType::XElement(_) => {}
+//             XConstraintType::XSlide(_) => {}
+//             XConstraintType::XCount(_) => {}
+//             XConstraintType::XNValues(_) => {}
+//             XConstraintType::XCardinality(_) => {}
+//             XConstraintType::XChannel(_) => {}
+//             XConstraintType::XCumulative(_) => {}
+//             XConstraintType::XNoOverlap(_) => {}
+//             XConstraintType::XStretch(_) => {}
+//             XConstraintType::XNoOverlapKDim(_) => {}
+//         }
+//     }
+//     println!("objectives:");
+//     for o in xcsp3.objectives().as_ref().unwrap().iter() {
+//         println!("\t{}", o);
+//         match o {
+//             XObjectivesType::XObjectiveNone(_) => {}
+//             XObjectivesType::Minimize(e) => match e {
+//                 XObjective::XObjectiveElement(_) => {}
+//                 XObjective::XObjectiveExpression(_) => {}
+//             },
+//             XObjectivesType::Maximize(e) => match e {
+//                 XObjective::XObjectiveElement(_) => {}
+//                 XObjective::XObjectiveExpression(_) => {}
+//             },
+//         }
+//     }
+// }
 
 fn test_single() {
     let xml_file = ".//instances//my-example.xml";

@@ -246,7 +246,17 @@ pub mod xcsp3_utils {
     //     }
     //     Some(n)
     // }
-
+    fn str_to_2vec(string:&str)->Vec<Vec<i32>>
+    {
+        use serde::{Deserialize};
+        #[derive(Debug, Deserialize)]
+        struct Tuples
+        {
+            tuples: Vec<Vec<i32>>
+        }
+        let s: Tuples = serde_json::from_str(string).unwrap();
+        s.tuples
+    }
     pub fn tuple_to_vector1(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
         // let ti = TimeInterval::new();
         let mut ret: Vec<Vec<i32>> = Vec::new();
@@ -289,68 +299,68 @@ pub mod xcsp3_utils {
                 }
             }
         } else {
-            // let chars = tuple_str.chars();
 
-            // if let Some(left) = tuple_str.find('(') {
-            //     if let Some(right) = tuple_str.find(')') {
+            let mut tuple_str = tuple_str.replace('(', "[").replace(')', "]").replace("*", "18446744073709551615");
+            tuple_str = "{\"tuples\":".to_owned() + &tuple_str + "}";
+            println!("{}",tuple_str);
+            ret = str_to_2vec(&tuple_str);
+
             //
+            // let mut rightbracket = 0usize;
+            // let mut comma = 0usize;
+            // for x in tuple_str.chars() {
+            //     if x == ')' {
+            //         rightbracket += 1
+            //     } else if x == ',' {
+            //         comma += 1
             //     }
             // }
-            let mut rightbracket = 0usize;
-            let mut comma = 0usize;
-            for x in tuple_str.chars() {
-                if x == ')' {
-                    rightbracket += 1
-                } else if x == ',' {
-                    comma += 1
-                }
-            }
-            let mut tt: Vec<i32> = vec![];
-            tt.resize((comma / rightbracket) + 1, i32::MAX);
-            ret.resize(rightbracket, tt);
-            let mut rows = 0usize;
-            let mut cols = 0usize;
-
-            let mut last = 0usize;
-            for (i, x) in tuple_str.chars().enumerate() {
-                if x == '(' {
-                    // tt.clear();
-                    // tt.reserve(n);
-
-                    last = i;
-                } else if x == ')' {
-                    // println!("{}",&tuple_str[last+1..i]);
-                    match tuple_str[last + 1..i].parse::<i32>() {
-                        Ok(num) => {
-                            let tmp = &mut ret[rows][cols];
-                            *tmp = num;
-                        }
-                        Err(_) => {
-                            if &tuple_str[last + 1..i] != "*" {
-                                return Err(err);
-                            }
-                        }
-                    }
-                    cols = 0;
-                    // ret.push(tt.clone())
-                    rows += 1;
-                } else if x == ',' {
-                    // println!("{}",&tuple_str[last+1..i]);
-                    match tuple_str[last + 1..i].parse::<i32>() {
-                        Ok(num) => {
-                            let tmp = &mut ret[rows][cols];
-                            *tmp = num;
-                        }
-                        Err(_) => {
-                            if &tuple_str[last + 1..i] != "*" {
-                                return Err(err);
-                            }
-                        }
-                    }
-                    cols += 1;
-                    last = i;
-                }
-            }
+            // let mut tt: Vec<i32> = vec![];
+            // tt.resize((comma / rightbracket) + 1, i32::MAX);
+            // ret.resize(rightbracket, tt);
+            // let mut rows = 0usize;
+            // let mut cols = 0usize;
+            //
+            // let mut last = 0usize;
+            // for (i, x) in tuple_str.chars().enumerate() {
+            //     if x == '(' {
+            //         // tt.clear();
+            //         // tt.reserve(n);
+            //
+            //         last = i;
+            //     } else if x == ')' {
+            //         // println!("{}",&tuple_str[last+1..i]);
+            //         match tuple_str[last + 1..i].parse::<i32>() {
+            //             Ok(num) => {
+            //                 let tmp = &mut ret[rows][cols];
+            //                 *tmp = num;
+            //             }
+            //             Err(_) => {
+            //                 if &tuple_str[last + 1..i] != "*" {
+            //                     return Err(err);
+            //                 }
+            //             }
+            //         }
+            //         cols = 0;
+            //         // ret.push(tt.clone())
+            //         rows += 1;
+            //     } else if x == ',' {
+            //         // println!("{}",&tuple_str[last+1..i]);
+            //         match tuple_str[last + 1..i].parse::<i32>() {
+            //             Ok(num) => {
+            //                 let tmp = &mut ret[rows][cols];
+            //                 *tmp = num;
+            //             }
+            //             Err(_) => {
+            //                 if &tuple_str[last + 1..i] != "*" {
+            //                     return Err(err);
+            //                 }
+            //             }
+            //         }
+            //         cols += 1;
+            //         last = i;
+            //     }
+            // }
         }
         // println!("parse Extension {:?}",ti.get());
         Ok(ret)

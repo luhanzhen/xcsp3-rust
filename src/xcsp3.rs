@@ -81,7 +81,7 @@ pub mod xcsp3_core {
             }
         }
 
-        pub fn new(
+        fn new(
             model: XcspXmlModel,
             variables: Option<XVariableSet>,
             constraints: Option<XConstraintSet<'a>>,
@@ -100,10 +100,10 @@ pub mod xcsp3_core {
         pub fn variables(&self) -> &Option<XVariableSet> {
             &self.variables
         }
-        pub fn constraints(&mut self) -> &Option<XConstraintSet<'a>> {
+        pub fn constraints(&self) -> &Option<XConstraintSet<'a>> {
             &self.constraints
         }
-        pub fn objectives(&mut self) -> &Option<XObjectivesSet<'a>> {
+        pub fn objectives(&self) -> &Option<XObjectivesSet<'a>> {
             &self.objectives
         }
     }
