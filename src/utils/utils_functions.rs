@@ -246,125 +246,69 @@ pub mod xcsp3_utils {
     //     }
     //     Some(n)
     // }
-    fn str_to_2vec(string:&str)->Vec<Vec<i32>>
-    {
-        use serde::{Deserialize};
-        #[derive(Debug, Deserialize)]
-        struct Tuples
-        {
-            tuples: Vec<Vec<i32>>
-        }
-        let s: Tuples = serde_json::from_str(string).unwrap();
-        s.tuples
-    }
-    pub fn tuple_to_vector1(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
-        // let ti = TimeInterval::new();
-        let mut ret: Vec<Vec<i32>> = Vec::new();
-        let err = Xcsp3Error::get_constraint_extension_error("parse the tuple of extension error");
-        if is_unary {
-            let tuples: Vec<&str> = tuple_str.split_whitespace().collect();
-            for tuple in tuples.iter() {
-                if tuple.contains("..") {
-                    let interval: Vec<&str> = tuple.split("..").collect();
-                    if interval.len() == 2 {
-                        let left = interval[0].parse::<i32>();
-                        let right = interval[1].parse::<i32>();
-                        match left {
-                            Ok(l) => match right {
-                                Ok(r) => {
-                                    if l <= r {
-                                        for i in l..r + 1 {
-                                            ret.push(vec![i])
-                                        }
-                                    } else {
-                                        return Err(err);
-                                    }
-                                }
-                                Err(_) => {
-                                    return Err(err);
-                                }
-                            },
-                            Err(_) => {
-                                return Err(err);
-                            }
-                        }
-                    }
-                } else {
-                    match tuple.parse::<i32>() {
-                        Ok(v) => ret.push(vec![v]),
-                        Err(_) => {
-                            return Err(err);
-                        }
-                    }
-                }
-            }
-        } else {
-
-            let mut tuple_str = tuple_str.replace('(', "[").replace(')', "]").replace("*", "18446744073709551615");
-            tuple_str = "{\"tuples\":".to_owned() + &tuple_str + "}";
-            println!("{}",tuple_str);
-            ret = str_to_2vec(&tuple_str);
-
-            //
-            // let mut rightbracket = 0usize;
-            // let mut comma = 0usize;
-            // for x in tuple_str.chars() {
-            //     if x == ')' {
-            //         rightbracket += 1
-            //     } else if x == ',' {
-            //         comma += 1
-            //     }
-            // }
-            // let mut tt: Vec<i32> = vec![];
-            // tt.resize((comma / rightbracket) + 1, i32::MAX);
-            // ret.resize(rightbracket, tt);
-            // let mut rows = 0usize;
-            // let mut cols = 0usize;
-            //
-            // let mut last = 0usize;
-            // for (i, x) in tuple_str.chars().enumerate() {
-            //     if x == '(' {
-            //         // tt.clear();
-            //         // tt.reserve(n);
-            //
-            //         last = i;
-            //     } else if x == ')' {
-            //         // println!("{}",&tuple_str[last+1..i]);
-            //         match tuple_str[last + 1..i].parse::<i32>() {
-            //             Ok(num) => {
-            //                 let tmp = &mut ret[rows][cols];
-            //                 *tmp = num;
-            //             }
-            //             Err(_) => {
-            //                 if &tuple_str[last + 1..i] != "*" {
-            //                     return Err(err);
-            //                 }
-            //             }
-            //         }
-            //         cols = 0;
-            //         // ret.push(tt.clone())
-            //         rows += 1;
-            //     } else if x == ',' {
-            //         // println!("{}",&tuple_str[last+1..i]);
-            //         match tuple_str[last + 1..i].parse::<i32>() {
-            //             Ok(num) => {
-            //                 let tmp = &mut ret[rows][cols];
-            //                 *tmp = num;
-            //             }
-            //             Err(_) => {
-            //                 if &tuple_str[last + 1..i] != "*" {
-            //                     return Err(err);
-            //                 }
-            //             }
-            //         }
-            //         cols += 1;
-            //         last = i;
-            //     }
-            // }
-        }
-        // println!("parse Extension {:?}",ti.get());
-        Ok(ret)
-    }
+    // fn str_to_2vec(string: &str) -> Vec<Vec<i32>> {
+    //     use serde::Deserialize;
+    //     #[derive(Debug, Deserialize)]
+    //     struct Tuples {
+    //         tuples: Vec<Vec<i32>>,
+    //     }
+    //     let s: Tuples = serde_json::from_str(string).unwrap();
+    //     s.tuples
+    // }
+    // pub fn tuple_to_vector1(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
+    //     let err = Xcsp3Error::get_constraint_extension_error("parse the tuple of extension error");
+    //     if is_unary {
+    //         let mut ret: Vec<Vec<i32>> = Vec::new();
+    //         let tuples: Vec<&str> = tuple_str.split_whitespace().collect();
+    //         for tuple in tuples.iter() {
+    //             if tuple.contains("..") {
+    //                 let interval: Vec<&str> = tuple.split("..").collect();
+    //                 if interval.len() == 2 {
+    //                     let left = interval[0].parse::<i32>();
+    //                     let right = interval[1].parse::<i32>();
+    //                     match left {
+    //                         Ok(l) => match right {
+    //                             Ok(r) => {
+    //                                 if l <= r {
+    //                                     for i in l..r + 1 {
+    //                                         ret.push(vec![i])
+    //                                     }
+    //                                 } else {
+    //                                     return Err(err);
+    //                                 }
+    //                             }
+    //                             Err(_) => {
+    //                                 return Err(err);
+    //                             }
+    //                         },
+    //                         Err(_) => {
+    //                             return Err(err);
+    //                         }
+    //                     }
+    //                 }
+    //             } else {
+    //                 match tuple.parse::<i32>() {
+    //                     Ok(v) => ret.push(vec![v]),
+    //                     Err(_) => {
+    //                         return Err(err);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         Ok(ret)
+    //     } else {
+    //         let mut tuple_str = tuple_str
+    //             .replace(")(", "],[")
+    //             .replace('(', "[")
+    //             .replace(')', "]")
+    //             .replace("*", &i32::MAX.to_string());
+    //         tuple_str = "{\"tuples\":[".to_owned() + &tuple_str + "]}";
+    //         // println!("{}",tuple_str);
+    //         Ok(str_to_2vec(&tuple_str))
+    //         // println!("{:?}",ret);
+    //     }
+    //     // println!("parse Extension {:?}",ti.get());
+    // }
     ///return the tuples by given string,
     /// eg (0,0,1)(0,1,0)(1,0,0)(1,1,1) -> [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]
     pub fn tuple_to_vector(tuple_str: &str, is_unary: bool) -> Result<Vec<Vec<i32>>, Xcsp3Error> {
@@ -419,7 +363,6 @@ pub mod xcsp3_utils {
                     n = (right - left - 1) / 2;
                 }
             }
-
             for (i, x) in chars.enumerate() {
                 if x == '(' {
                     tt.clear();
@@ -457,69 +400,6 @@ pub mod xcsp3_utils {
                     last = i;
                 }
             }
-            // let chars = tuple_str.chars();
-            // let mut last = 0;
-            //
-            // if let Some(left) = tuple_str.find('(')
-            // {
-            //     if let Some(right) = tuple_str.find(')')
-            //     {
-            //         ret.reserve(tuple_str.len()/(right-left));
-            //         let mut tt: Vec<i32> = vec![];
-            //         tt.resize((right-left)/2,0);
-            //         ret.resize(tuple_str.len()/(right-left),tt);
-            //     }
-            // }
-            // let mut tuple_index = 0;
-            // let mut tuple_in_index = 0;
-            // for (i, x) in chars.enumerate() {
-            //     if x == '(' {
-            //         // tt.clear();
-            //         tuple_in_index = 0;
-            //         last = i;
-            //     } else if x == ')' {
-            //         // println!("{}",&tuple_str[last+1..i]);
-            //         match i32::from_str(&tuple_str[last + 1..i]) {
-            //             Ok(num) => {
-            //                 // tt.push(num);
-            //                 ret[tuple_index][tuple_in_index] = num;
-            //                 tuple_in_index+=1;
-            //             }
-            //             Err(_) => {
-            //                 if &tuple_str[last + 1..i] == "*" {
-            //                     // tt.push(i32::max);
-            //                     ret[tuple_index][tuple_in_index] = i32::max;
-            //                     tuple_in_index+=1;
-            //                 } else {
-            //                     return Err(Xcsp3Error::get_constraint_extension_error(
-            //                         "parse the tuple of extension error",
-            //                     ));
-            //                 }
-            //             }
-            //         }
-            //         tuple_index += 1;
-            //         // ret.push(tt.clone())
-            //     } else if x == ',' {
-            //         // println!("{}",&tuple_str[last+1..i]);
-            //         match i32::from_str(&tuple_str[last + 1..i]) {
-            //             Ok(num) => {
-            //                 ret[tuple_index][tuple_in_index] = num;
-            //                 tuple_in_index+=1;
-            //             }
-            //             Err(_) => {
-            //                 if &tuple_str[last + 1..i] == "*" {
-            //                     ret[tuple_index][tuple_in_index] = i32::max;
-            //                     tuple_in_index+=1;
-            //                 } else {
-            //                     return Err(Xcsp3Error::get_constraint_extension_error(
-            //                         "parse the tuple of extension error",
-            //                     ));
-            //                 }
-            //             }
-            //         }
-            //         last = i;
-            //     }
-            // }
         }
         // println!("parse Extension {:?}",ti.get());
         Ok(ret)

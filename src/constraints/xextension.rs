@@ -77,7 +77,7 @@ pub mod xcsp3_core {
             //     "tuples = {:?}, is_support = {}",
             //     self.tuples, self.is_support
             // ));
-            write!(f, "XExtension: list = {}", ret)
+            write!(f, "XExtension: list = {}{:?}", ret, self.tuples)
         }
     }
 
@@ -117,7 +117,10 @@ pub mod xcsp3_core {
             // let tt= TimeInterval::new();
             let a = match list_to_vec_var_val(list) {
                 Ok(scope_vec_str) => match tuple_to_vector(tuple, !tuple.contains('(')) {
-                    Ok(tuples) => Ok(XExtension::new(scope_vec_str, set, tuples, is_support)),
+                    Ok(tuples) => {
+                        // println!("{:?}", &tuples);
+                        Ok(XExtension::new(scope_vec_str, set, tuples, is_support))
+                    }
                     Err(e) => Err(e),
                 },
                 Err(e) => Err(e),

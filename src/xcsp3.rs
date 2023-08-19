@@ -42,7 +42,7 @@ pub mod xcsp3_core {
     use crate::objectives::xobjectives_set::xcsp3_core::XObjectivesSet;
     use crate::variables::xvariable_set::xcsp3_core::XVariableSet;
     use crate::xcsp_xml::xcsp_xml_model::xcsp3_xml::{InstanceType, XcspXmlModel};
-    use std::ptr::NonNull;
+    // use std::ptr::NonNull;
 
     pub struct XCSP3<'a> {
         model: XcspXmlModel,

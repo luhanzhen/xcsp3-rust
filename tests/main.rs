@@ -1,13 +1,10 @@
-
 // use quick_xml::de::from_str;
 // use serde::Deserialize;
 use walkdir::WalkDir;
 use xcsp3_rust::constraints::xconstraint_type::xcsp3_core::XConstraintType;
 use xcsp3_rust::objectives::xobjectives_type::xcsp3_core::{XObjective, XObjectivesType};
 use xcsp3_rust::utils::time_interval::xcsp3_utils::TimeInterval;
-use xcsp3_rust::variables::xvariable_set::xcsp3_core::XVariableSet;
 use xcsp3_rust::variables::xvariable_type::xcsp3_core::XVariableType;
-use xcsp3_rust::xcsp3::xcsp3_core::XCSP3;
 use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 
 /*
@@ -25,13 +22,9 @@ use xcsp3_rust::xcsp_xml::xcsp_xml_model::xcsp3_xml::XcspXmlModel;
 * </p>
  **/
 
-
-
-
 fn main() {
     // let str = "{\"tuples\":[[0,0,0],[0,1,1],[1,0,1],[1,3,0]] }";
     // println!("{:?}",from_str(str));
-
 
     // let mut e: Bitmap<100> = Bitmap::new();
     // e.set(3, true);
@@ -182,13 +175,13 @@ fn test_all() {
     // let aa = WalkDir::new("D://XCSP3")
     //     let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
     // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
-    // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
-    // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
-    // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
-    let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
+    let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
+        // let aa = WalkDir::new("D:\\XCSP3\\Subisomorphism\\Subisomorphism-m1-LV")
+        // let aa = WalkDir::new("D:\\XCSP3\\AllInterval\\AllInterval-m1-s1")
+        // let aa = WalkDir::new("D:\\XCSP3\\Bibd")
+        // let aa = WalkDir::new("D:\\XCSP3\\Basic\\Basic-m1-s1")
         .into_iter()
         .filter_map(|file| file.ok());
 
