@@ -32,5 +32,4 @@ pub mod objectives;
 pub mod utils;
 pub mod variables;
 // pub mod xcsp3;
-pub mod xcsp3;
 pub mod xcsp_xml;

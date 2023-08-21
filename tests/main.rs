@@ -34,75 +34,6 @@ fn main() {
     // test_all();
 }
 
-// fn test_xcsp3() {
-//     let xml_file = ".//instances//my-example.xml";
-//     let mut xcsp3 = XCSP3::from_path(xml_file).unwrap();
-//     xcsp3.build();
-//
-//
-//     println!("variables:");
-//     // let mut vars = xcsp3.variables();
-//     match  XCSP3::variables(&xcsp3){
-//         None => {}
-//         Some(vars) => {
-//             for v in vars.iter() {
-//                 println!("\t{}", v);
-//                 match v {
-//                     XVariableType::XVariableNone(_) => {}
-//                     XVariableType::XVariableArray(_) => {}
-//                     XVariableType::XVariableInt(_) => {}
-//                     XVariableType::XVariableTree(_) => {}
-//                 }
-//             }
-//         }
-//     }
-//
-//     println!("constraints:");
-//     for c in xcsp3.constraints().unwrap().iter() {
-//         println!("\t{}", c);
-//         match c {
-//             XConstraintType::XConstraintNone(_) => {}
-//             XConstraintType::XExtension(_) => {}
-//             XConstraintType::XAllDifferent(_) => {}
-//             XConstraintType::XAllDifferentExcept(_) => {}
-//             XConstraintType::XInstantiation(_) => {}
-//             XConstraintType::XAllEqual(_) => {}
-//             XConstraintType::XOrdered(_) => {}
-//             XConstraintType::XRegular(_) => {}
-//             XConstraintType::XMdd(_) => {}
-//             XConstraintType::XIntention(_) => {}
-//             XConstraintType::XGroup(_) => {}
-//             XConstraintType::XSum(_) => {}
-//             XConstraintType::XMaximum(_) => {}
-//             XConstraintType::XMinimum(_) => {}
-//             XConstraintType::XElement(_) => {}
-//             XConstraintType::XSlide(_) => {}
-//             XConstraintType::XCount(_) => {}
-//             XConstraintType::XNValues(_) => {}
-//             XConstraintType::XCardinality(_) => {}
-//             XConstraintType::XChannel(_) => {}
-//             XConstraintType::XCumulative(_) => {}
-//             XConstraintType::XNoOverlap(_) => {}
-//             XConstraintType::XStretch(_) => {}
-//             XConstraintType::XNoOverlapKDim(_) => {}
-//         }
-//     }
-//     println!("objectives:");
-//     for o in xcsp3.objectives().as_ref().unwrap().iter() {
-//         println!("\t{}", o);
-//         match o {
-//             XObjectivesType::XObjectiveNone(_) => {}
-//             XObjectivesType::Minimize(e) => match e {
-//                 XObjective::XObjectiveElement(_) => {}
-//                 XObjective::XObjectiveExpression(_) => {}
-//             },
-//             XObjectivesType::Maximize(e) => match e {
-//                 XObjective::XObjectiveElement(_) => {}
-//                 XObjective::XObjectiveExpression(_) => {}
-//             },
-//         }
-//     }
-// }
 
 fn test_single() {
     let xml_file = ".//instances//my-example.xml";
@@ -171,10 +102,6 @@ fn test_single() {
 
 fn test_all() {
     let start = TimeInterval::new();
-    // let aa = WalkDir::new("./instances")
-    // let aa = WalkDir::new("D://XCSP3")
-    //     let aa = WalkDir::new("D:\\XCSP3\\Hanoi\\Hanoi-m1-s1")
-    // let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-regular-gp")
     let aa = WalkDir::new("D:\\XCSP3\\Nonogram\\Nonogram-table-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\MagicSquare\\MagicSquare-mdd-s1")
         // let aa = WalkDir::new("D:\\XCSP3\\BinPacking\\BinPacking-tab-sw100")
