@@ -35,13 +35,6 @@ walkdir = {version = "2.3.3"}
 regex = "1.9.1"
 
 
-
-[[bin]]
-name = "main"
-doc = false
-path = "tests/main.rs"
-
-
 [lib]
 name = "xcsp3_rust"
 path = "src/lib.rs"
